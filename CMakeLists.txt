@@ -1,6 +1,7 @@
 #---------------------------------------------------------------------------------------------------
 # CMake Build Configuration for the Ray Tracing Weekend Series
 # A modified version of the CMakeLists.txt provided by the author of the series
+# https://github.com/RayTracing/raytracing.github.io/blob/release/CMakeLists.txt
 #---------------------------------------------------------------------------------------------------
 
 cmake_minimum_required ( VERSION 3.1.0...4.0.0 )
