@@ -3,6 +3,9 @@
 #include <cmath>
 #include <iostream>
 
+// As the book stated, it might be more efficient to use float instead of double
+// for now we are going to use double as we are not working in limited memory conditions
+
 class Vec3 {
     public:
         double e[3];
