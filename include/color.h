@@ -1,0 +1,7 @@
+#pragma once
+
+#include <vec3.h>
+
+using color = Vec3;
+
+void write_color(std::ostream& out, const color& pixel_color);
