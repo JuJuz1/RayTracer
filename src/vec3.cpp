@@ -1,6 +1,5 @@
 #include <vec3.h>
 
-// Public
 Vec3::Vec3() : e{0,0,0} {}
 
 Vec3::Vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
@@ -36,7 +35,7 @@ Vec3& Vec3::operator*=(double t) {
 }
 
 Vec3& Vec3::operator/=(double t) {
-    return *this *= 1/t;
+    return *this *= (1/t);
 }
 
 double Vec3::length() const {
