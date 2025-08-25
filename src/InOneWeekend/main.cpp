@@ -1,9 +1,8 @@
 #include <iostream>
-#include <vec3.h>
 #include <color.h>
+#include <ray.h>
 
 int main() {
-
     // Image
     const int image_width = 256;
     const int image_height = 256;

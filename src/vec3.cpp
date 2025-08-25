@@ -1,6 +1,6 @@
 #include <vec3.h>
 
-Vec3::Vec3() : e{0,0,0} {}
+Vec3::Vec3() : e{0, 0, 0} {}
 
 Vec3::Vec3(double e0, double e1, double e2) : e{e0, e1, e2} {}
 
@@ -48,7 +48,7 @@ double Vec3::length_squared() const {
 
 // Utility functions
 std::ostream& operator<<(std::ostream& out, const Vec3& v) {
-    out << v.e[0] << ", " << v.e[1] << ", " << v.e[2] << "\n"; 
+    out << v.e[0] << ", " << v.e[1] << ", " << v.e[2];
     return out;
 }
 

@@ -32,6 +32,9 @@ class Vec3 {
         double length_squared() const;
 };
 
+// An alias for geometric clarity (t. ex. ray.h)
+using Point3 = Vec3;
+
 // Utility functions
 std::ostream& operator<<(std::ostream& out, const Vec3& v);
 
