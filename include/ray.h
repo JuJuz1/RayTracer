@@ -4,15 +4,15 @@
 
 class Ray {
     public:
-        Ray();
-        Ray(const Point3& origin, const Vec3& direction);
+        Ray() noexcept;
+        Ray(const Point3& origin, const Vec3& direction) noexcept;
 
-        const Point3& origin() const;
-        const Vec3& direction() const;
+        const Point3& origin() const noexcept;
+        const Vec3& direction() const noexcept;
 
         // TODO: better comment
         // Returns the point along the ray when moving the amount t in the direction
-        Point3 at(double t);
+        Point3 at(double t) noexcept;
 
     private:
         Point3 orig;
