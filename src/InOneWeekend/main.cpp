@@ -3,7 +3,12 @@
 #include <ray.h>
 
 color ray_color(const Ray& r) {
-    return color{0, 0, 0};
+    // Normalize the ray and get the unit vector
+    const Vec3 unit_direction{unit_vector(r.direction())};
+    // Linear interpolation by scaling the y-coordinate to the range [0, 1]
+    const double a = 0.5 * (unit_direction.y() + 1.0);
+    // From blue to white for now...
+    return color{1.0, 1.0, 1.0} * (1.0 - a) + color{0.5, 0.7, 1.0} * a;
 }
 
 int main() {
