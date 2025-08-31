@@ -6,16 +6,16 @@
 // Use the quadratic formula to determine if the ray hits the sphere
 double hit_sphere(const Point3& center, double radius, const Ray& r) {
     Vec3 oc{center - r.origin()};
-    const double a = dot(r.direction(), r.direction());
-    const double b = -2.0 * dot(r.direction(), oc);
-    const double c = dot(oc, oc) - radius * radius;
-    const double discriminant = b * b - 4 * a * c;
+    const double a = r.direction().length_squared();
+    const double h = dot(r.direction(), oc);
+    const double c = oc.length_squared() - radius * radius;
+    const double discriminant = h * h - 4 * a * c;
 
     // No roots
     if (discriminant < 0)
         return -1.0;
 
-    return (-b - std::sqrt(discriminant)) / (2.0 * a);
+    return (-h - std::sqrt(discriminant)) / (2.0 * a);
 }
 
 // Calculates the color of a pixel with a given ray from the camera
