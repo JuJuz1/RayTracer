@@ -1,8 +1,25 @@
 #include <iostream>
-#include <color.h>
-#include <ray.h>
+#include "vec3.h"
+#include "color.h"
+#include "ray.h"
+
+// Use the quadratic formula to determine if the ray hits the sphere
+bool hit_sphere(const Point3& center, double radius, const Ray& ray) {
+    Vec3 oc{center - ray.origin()};
+    const double a = dot(ray.direction(), ray.direction());
+    const double b = -2.0 * dot(ray.direction(), oc);
+    const double c = dot(oc, oc) - radius * radius;
+    const double discriminant = b * b - 4 * a * c;
+    // If discriminant >= 0 -> at least 1 solution so the ray hits the sphere
+    return (discriminant >= 0);
+}
 
 color ray_color(const Ray& r) {
+    const Point3 sphere{0, 0, -1};
+    // Return red if we hit, for now...
+    if (hit_sphere(sphere, 0.5, r))
+        return color{1, 0, 0};
+
     // Normalize the ray and get the unit vector
     const Vec3 unit_direction{unit_vector(r.direction())};
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
@@ -12,7 +29,6 @@ color ray_color(const Ray& r) {
 }
 
 int main() {
-
     // Image
 
     constexpr float aspect_ratio = 16.0f / 9.0f;
@@ -27,19 +43,17 @@ int main() {
     
     constexpr double viewport_height = 2.0;
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
-    // but gets pretty close nonetheless
     constexpr double viewport_width = viewport_height * (image_width / image_height);
     const Point3 camera_center{0, 0, 0};
 
-    // Calculate the vectors across the horizontal and down the vertical viewport edges
-    const Vec3 viewport_u{viewport_width, 0, 0}; // Left to right
-    const Vec3 viewport_v{0, -viewport_height, 0}; // Up to down
+    // Calculate the vectors for horizontal and vertical traversing of the viewport
+    const Vec3 viewport_u{viewport_width, 0, 0};
+    const Vec3 viewport_v{0, -viewport_height, 0};
 
-    // Calculate the horizontal and vertical delta vectors from pixel to pixel
-    const Vec3 pixel_delta_u = viewport_u / image_width;
-    const Vec3 pixel_delta_v = viewport_v / image_height;
+    // Horizontal and vertical delta vectors from pixel to pixel
+    const Vec3 pixel_delta_u{viewport_u / image_width};
+    const Vec3 pixel_delta_v{viewport_v / image_height};
 
-    // Calculate the location of the upper left pixel
     const Point3 viewport_upper_left{
         camera_center - Vec3{0, 0, focal_length} - viewport_u / 2 - viewport_v / 2};
     const Point3 pixel00_loc{viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5};
@@ -53,8 +67,8 @@ int main() {
             const Point3 pixel_center{pixel00_loc + (pixel_delta_u * i) + (pixel_delta_v * j)};
             const Vec3 ray_direction{pixel_center - camera_center};
             const Ray r{camera_center, ray_direction};
-
-            const color pixel_color = ray_color(r);
+            
+            const color pixel_color{ray_color(r)};
             write_color(std::cout, pixel_color);
         }
     }

@@ -1,4 +1,4 @@
-#include <color.h>
+#include "color.h"
 
 void write_color(std::ostream& out, const color& pixel_color) {
     const double multiplier = 255.999;

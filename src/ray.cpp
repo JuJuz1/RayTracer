@@ -1,4 +1,4 @@
-#include <ray.h>
+#include "ray.h"
 
 Ray::Ray() noexcept : orig(Point3()), dir(Vec3()) {}
 
