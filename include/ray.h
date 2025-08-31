@@ -12,7 +12,7 @@ class Ray {
 
         // TODO: better comment
         // Returns the point along the ray when moving the amount t in the direction
-        Point3 at(double t) noexcept;
+        Point3 at(double t) const noexcept;
 
     private:
         Point3 orig;

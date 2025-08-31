@@ -4,21 +4,28 @@
 #include "ray.h"
 
 // Use the quadratic formula to determine if the ray hits the sphere
-bool hit_sphere(const Point3& center, double radius, const Ray& ray) {
-    Vec3 oc{center - ray.origin()};
-    const double a = dot(ray.direction(), ray.direction());
-    const double b = -2.0 * dot(ray.direction(), oc);
+double hit_sphere(const Point3& center, double radius, const Ray& r) {
+    Vec3 oc{center - r.origin()};
+    const double a = dot(r.direction(), r.direction());
+    const double b = -2.0 * dot(r.direction(), oc);
     const double c = dot(oc, oc) - radius * radius;
     const double discriminant = b * b - 4 * a * c;
-    // If discriminant >= 0 -> at least 1 solution so the ray hits the sphere
-    return (discriminant >= 0);
+
+    // No roots
+    if (discriminant < 0)
+        return -1.0;
+
+    return (-b - std::sqrt(discriminant)) / (2.0 * a);
 }
 
+// Calculates the color of a pixel with a given ray from the camera
 color ray_color(const Ray& r) {
     const Point3 sphere{0, 0, -1};
-    // Return red if we hit, for now...
-    if (hit_sphere(sphere, 0.5, r))
-        return color{1, 0, 0};
+    const double t = hit_sphere(sphere, 0.5, r);
+    if (t > 0.0) {
+        const Vec3 N = unit_vector(r.at(t) - Vec3{0, 0, -1});
+        return color{N.x() + 1, N.y() + 1, N.z() + 1} * 0.5;
+    }
 
     // Normalize the ray and get the unit vector
     const Vec3 unit_direction{unit_vector(r.direction())};
