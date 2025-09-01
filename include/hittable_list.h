@@ -1,10 +1,11 @@
 #pragma once
 
-#include "hittable.h"
-
 #include <memory>
 #include <vector>
 
+#include "hittable.h"
+
+// A class for all hittable objects
 class Hittable_list : public Hittable {
     public:
         std::vector<std::shared_ptr<Hittable>> objects;
