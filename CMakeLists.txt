@@ -19,6 +19,9 @@ set ( SOURCE_ONE_WEEKEND
   src/vec3.cpp
   src/color.cpp
   src/ray.cpp
+  src/sphere.cpp
+  src/hittable.cpp
+  src/hittable_list.cpp
 )
 
 #include_directories(src)

@@ -2,29 +2,15 @@
 #include "vec3.h"
 #include "color.h"
 #include "ray.h"
-
-// Use the quadratic formula to determine if the ray hits the sphere
-double hit_sphere(const Point3& center, double radius, const Ray& r) {
-    Vec3 oc{center - r.origin()};
-    const double a = r.direction().length_squared();
-    const double h = dot(r.direction(), oc);
-    const double c = oc.length_squared() - radius * radius;
-    const double discriminant = h * h - 4 * a * c;
-
-    // No roots
-    if (discriminant < 0)
-        return -1.0;
-
-    return (-h - std::sqrt(discriminant)) / (2.0 * a);
-}
+#include "sphere.h"
+#include "hittable_list.h"
 
 // Calculates the color of a pixel with a given ray from the camera
-color ray_color(const Ray& r) {
-    const Point3 sphere{0, 0, -1};
-    const double t = hit_sphere(sphere, 0.5, r);
+color ray_color(const Ray& r, const Hittable_list& world) {
+    Hit_record rec;
+    const double t = world.hit(r, 0, INFINITY, rec);
     if (t > 0.0) {
-        const Vec3 N = unit_vector(r.at(t) - Vec3{0, 0, -1});
-        return color{N.x() + 1, N.y() + 1, N.z() + 1} * 0.5;
+        return (rec.normal + color{1, 1, 1}) * 0.5;
     }
 
     // Normalize the ray and get the unit vector
@@ -43,8 +29,14 @@ int main() {
     // Calculate height, has to be at least 1 pixel
     constexpr int image_height = std::max(static_cast<int>(image_width / aspect_ratio), 1);
 
-    // Camera
+    // World
 
+    Hittable_list world;
+    world.add(std::make_shared<Sphere>(Point3{0, 0, -1}, 0.5));
+    world.add(std::make_shared<Sphere>(Point3{0, -100.5, -1}, 100));
+
+    // Camera
+    
     // Distance from the eye to the viewport
     const double focal_length = 1.0;
     
@@ -75,7 +67,7 @@ int main() {
             const Vec3 ray_direction{pixel_center - camera_center};
             const Ray r{camera_center, ray_direction};
             
-            const color pixel_color{ray_color(r)};
+            const color pixel_color{ray_color(r, world)};
             write_color(std::cout, pixel_color);
         }
     }

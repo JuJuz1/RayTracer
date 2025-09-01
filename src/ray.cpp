@@ -1,6 +1,6 @@
 #include "ray.h"
 
-Ray::Ray() noexcept : orig(Point3()), dir(Vec3()) {}
+Ray::Ray() noexcept : orig{Point3{}}, dir{Vec3{}} {}
 
 Ray::Ray(const Point3& origin, const Vec3& direction) noexcept : orig(origin), dir(direction) {}
 

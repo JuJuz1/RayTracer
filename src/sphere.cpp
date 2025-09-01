@@ -1,7 +1,7 @@
 #include "sphere.h"
 
 Sphere::Sphere(const Point3& center, double radius) noexcept 
-    : center(center), radius(std::fmax(0.0, radius)) {}
+    : center(center), radius(std::fmax(radius, 0.0)) {}
 
 bool Sphere::hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec) const {
     Vec3 oc{center - r.origin()};
@@ -25,7 +25,8 @@ bool Sphere::hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec
 
     rec.t = root;
     rec.p = r.at(rec.t);
-    rec.normal = (rec.p - center) / radius;
+    const Vec3 outward_normal{(rec.p - center) / radius};
+    rec.set_face_normal(r, outward_normal);
 
     return true;
 }
