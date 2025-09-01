@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VEC3_H
+#define VEC3_H
 
 #include <cmath>
 #include <iostream>
@@ -49,3 +50,5 @@ double dot(const Vec3& v1, const Vec3& v2) noexcept;
 Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
 
 Vec3 unit_vector(const Vec3& v) noexcept;
+
+#endif

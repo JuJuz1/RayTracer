@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SPHERE_H
+#define SPHERE_H
 
 #include "hittable.h"
 #include "vec3.h"
@@ -13,3 +14,5 @@ class Sphere final : public Hittable {
         Point3 center;
         double radius;
 };
+
+#endif

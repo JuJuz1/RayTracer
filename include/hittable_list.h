@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HITTABLE_LIST_H
+#define HITTABLE_LIST_H
 
 #include <memory>
 #include <vector>
@@ -18,3 +19,5 @@ class Hittable_list : public Hittable {
 
         bool hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec) const override;
 };
+
+#endif
