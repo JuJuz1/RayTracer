@@ -22,6 +22,7 @@ set ( SOURCE_ONE_WEEKEND
   src/sphere.cpp
   src/hittable.cpp
   src/hittable_list.cpp
+  src/interval.cpp
 )
 
 #include_directories(src)

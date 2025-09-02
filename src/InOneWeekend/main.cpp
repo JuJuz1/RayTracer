@@ -1,6 +1,6 @@
 #include <iostream>
-#include <limits>
 
+#include "rtweekend.h"
 #include "vec3.h"
 #include "color.h"
 #include "ray.h"
@@ -10,7 +10,7 @@
 // Calculates the color of a pixel with a given ray from the camera
 color ray_color(const Ray& r, const Hittable_list& world) {
     Hit_record rec;
-    if (world.hit(r, 0, std::numeric_limits<double>::infinity(), rec)) {
+    if (world.hit(r, Interval{0.0, rt::infinity}, rec)) {
         return (rec.normal + color{1, 1, 1}) * 0.5;
     }
 
@@ -22,16 +22,18 @@ color ray_color(const Ray& r, const Hittable_list& world) {
     return color{1.0, 1.0, 1.0} * (1.0 - a) + color{0.5, 0.7, 1.0} * a;
 }
 
+
 int main() {
     // Image
 
     constexpr float aspect_ratio = 16.0f / 9.0f;
     const int image_width = 400;
     // Calculate height, has to be at least 1 pixel
-    constexpr int image_height = std::max(static_cast<int>(image_width / aspect_ratio), 1);
+    static constexpr int image_height = std::max(static_cast<int>(image_width / aspect_ratio), 1);
 
     // World
 
+    // Contains every hittable object
     Hittable_list world;
     // This is very strange, for example radius of 0.88 makes the sphere almost 2 times smaller
     // Values below 0.8 don't even produce the sphere at all...

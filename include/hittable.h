@@ -2,6 +2,7 @@
 #define HITTABLE_H
 
 #include "ray.h"
+#include "interval.h"
 
 // Stores the information about the collision
 struct Hit_record {
@@ -20,7 +21,7 @@ class Hittable {
     public:
         virtual ~Hittable() = default;
 
-        virtual bool hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec) const = 0;
+        virtual bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const = 0;
 };
 
 #endif

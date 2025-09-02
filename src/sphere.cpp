@@ -1,9 +1,10 @@
 #include "sphere.h"
+#include "interval.h"
 
 Sphere::Sphere(const Point3& center, double radius) noexcept 
     : center(center), radius(std::fmax(radius, 0.0)) {}
 
-bool Sphere::hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec) const {
+bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const {
     Vec3 oc{center - r.origin()};
     const double a = r.direction().length_squared();
     const double h = dot(r.direction(), oc);
@@ -17,9 +18,9 @@ bool Sphere::hit(const Ray& r, double ray_tmin, double ray_tmax, Hit_record& rec
     const double sqrt_d = std::sqrt(discriminant);
     // Find the nearest root in the acceptable range: ray_tmin < t < ray_tmax
     double root = (h - sqrt_d) / a;
-    if (root <= ray_tmin || ray_tmax <= root) {
+    if (!ray_t.contains(root, false)) {
         root = (h + sqrt_d) / a;
-        if (root <= ray_tmin || ray_tmax <= root)
+        if (!ray_t.contains(root, false))
             return false;
     }
 
