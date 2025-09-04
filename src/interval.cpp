@@ -16,5 +16,11 @@ bool Interval::contains(double x, bool inclusive) const {
     return min < x && x < max;
 }
 
+double Interval::clamp(double x) const {
+    if (x < min) return min;
+    if (max < x) return max;
+    return x;
+}
+
 const Interval Interval::empty    = Interval(+rt::infinity, -rt::infinity);
 const Interval Interval::universe = Interval(-rt::infinity, +rt::infinity);

@@ -8,18 +8,20 @@
 
 class Camera {
     public:
-        double aspect_ratio = 1.0; // Ratio of image over height
-        int image_width = 100;     // Rendered image width
+        double aspect_ratio = 1.0;  // Ratio of image over height
+        int image_width = 100;      // Rendered image width
+        int samples_per_pixel = 10; // Count of random samples per pixel
         
         // Use Hittable so now we can also use Hittable_list
         void render(const Hittable& world);
 
     private:
-        int image_height;   // Rendered image height
-        Point3 center;      // Camera center
-        Point3 pixel00_loc; // Location of pixel (0, 0)
-        Vec3 pixel_delta_u; // Horizontal offset of a pixel
-        Vec3 pixel_delta_v; // Vertical -||-
+        int image_height;          // Rendered image height
+        double pixel_sample_scale; // Color scale factor for a sum of pixel samples
+        Point3 center;             // Camera center
+        Point3 pixel00_loc;        // Location of pixel (0, 0)
+        Vec3 pixel_delta_u;        // Horizontal offset of a pixel
+        Vec3 pixel_delta_v;        // Vertical -||-
 
         // Called at the start of render() to initialize
         // private variables according to the public ones
@@ -28,6 +30,13 @@ class Camera {
         // Calculates the color of a pixel with a given ray from the camera
         // Takes into account the passed Hittable object(s)
         color ray_color(const Ray& r, const Hittable& world) const;
+
+        // Construct a camera ray originating from the origin and directed at randomly sampled
+        // point around the pixel location i, j
+        Ray get_ray(int i, int j) const;
+
+        // Returns the vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square
+        Vec3 sample_square() const;
 };
 
 #endif

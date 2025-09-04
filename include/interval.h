@@ -14,6 +14,9 @@ class Interval {
         // If inclusive is false -> range is ]min, max[
         bool contains(double x, bool inclusive = true) const;
 
+        // Clamps x to the range [min, max]
+        double clamp(double x) const;
+
         static const Interval empty, universe;
 };
 
