@@ -65,10 +65,7 @@ color Camera::ray_color(const Ray& r, const Hittable& world) const {
     const Vec3 unit_direction{unit_vector(r.direction())};
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    // From blue to white for now...
-    // TODO: make a color enum or smth to have the colors
-    // Access with t. ex. COLOR.Blue?
-    return color{1.0, 1.0, 1.0} * (1.0 - a) + color{0.5, 0.7, 1.0} * a;
+    return Color::White * (1.0 - a) + Color::LightBlue * a;
 }
 
 Ray Camera::get_ray(int i, int j) const {
