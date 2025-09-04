@@ -23,6 +23,7 @@ set ( SOURCE_ONE_WEEKEND
   src/hittable.cpp
   src/hittable_list.cpp
   src/interval.cpp
+  src/camera.cpp
 )
 
 #include_directories(src)
