@@ -113,6 +113,7 @@ Vec3 random_unit_vector() noexcept {
 
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     const Vec3 on_unit_sphere{random_unit_vector()};
+    // Same hemisphere as normal
     if (dot(on_unit_sphere, normal) > 0.0)
         return on_unit_sphere;
     

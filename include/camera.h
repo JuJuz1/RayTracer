@@ -8,9 +8,10 @@
 
 class Camera {
     public:
-        double aspect_ratio = 1.0;  // Ratio of image over height
-        int image_width = 100;      // Rendered image width
-        int samples_per_pixel = 10; // Count of random samples per pixel
+        double aspect_ratio   = 1.0; // Ratio of image over height
+        int image_width       = 100; // Rendered image width
+        int samples_per_pixel = 10;  // Count of random samples per pixel
+        int max_depth         = 10;  // Maximum ray bounces (recursion calls)
         
         // Use Hittable so now we can also use Hittable_list
         void render(const Hittable& world) noexcept;
@@ -29,7 +30,7 @@ class Camera {
 
         // Calculates the color of a pixel with a given ray from the camera
         // Takes into account the passed Hittable object(s)
-        color ray_color(const Ray& r, const Hittable& world) const noexcept;
+        color ray_color(const Ray& r, int depth, const Hittable& world) const noexcept;
 
         // Construct a camera ray originating from the origin and directed at randomly sampled
         // point around the pixel location i, j

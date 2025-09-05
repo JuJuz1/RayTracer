@@ -12,7 +12,7 @@ void Camera::render(const Hittable& world) noexcept {
             color pixel_color{0, 0, 0};
             for (int sample = 0; sample < samples_per_pixel; ++sample) {
                 const Ray r{get_ray(i, j)};
-                pixel_color += ray_color(r, world);
+                pixel_color += ray_color(r, max_depth, world);
             }
             
             write_color(std::cout, pixel_color * pixel_sample_scale);
@@ -48,11 +48,15 @@ void Camera::initialize() noexcept {
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
 }
 
-color Camera::ray_color(const Ray& r, const Hittable& world) const noexcept {
+color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const noexcept {
+    // Hit ray bounce limit (max_depth)
+    if (depth <= 0)
+        return Color::White;
+    
     Hit_record rec;
     if (world.hit(r, Interval{0.0, rt::infinity}, rec)) {
         const Vec3 direction{random_on_hemisphere(rec.normal)};
-        return ray_color(Ray{rec.p, direction}, world) * Color::Gray;
+        return ray_color(Ray{rec.p, direction}, depth - 1, world) * Color::Gray;
     }
 
     const Vec3 unit_direction{unit_vector(r.direction())};
