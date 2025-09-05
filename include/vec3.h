@@ -31,12 +31,15 @@ class Vec3 {
 
         double length() const noexcept;
         double length_squared() const noexcept;
+
+        
 };
 
 // An alias for geometric clarity (t. ex. ray.h)
 using Point3 = Vec3;
 
 // Utility functions
+
 std::ostream& operator<<(std::ostream& out, const Vec3& v);
 
 Vec3 operator+(const Vec3& v1, const Vec3& v2) noexcept;

@@ -9,7 +9,7 @@ class Sphere final : public Hittable {
     public:
         Sphere(const Point3& center, double radius) noexcept;
 
-        bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const override;
+        bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept override;
 
     private:
         Point3 center;

@@ -3,12 +3,12 @@
 
 Hittable_list::Hittable_list() noexcept {};
 
-Hittable_list::Hittable_list(std::unique_ptr<Hittable> object) noexcept { add(std::move(object)); }
+Hittable_list::Hittable_list(std::unique_ptr<Hittable> object) { add(std::move(object)); }
 
 void Hittable_list::clear() { objects.clear(); }
 void Hittable_list::add(std::unique_ptr<Hittable> object) { objects.push_back(std::move(object)); }
 
-bool Hittable_list::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const {
+bool Hittable_list::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept {
     Hit_record temp_rec;
     bool hit = false;
     double closest_so_far = ray_t.max;

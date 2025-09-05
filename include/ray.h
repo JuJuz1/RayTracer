@@ -11,8 +11,7 @@ class Ray {
         const Point3& origin() const noexcept;
         const Vec3& direction() const noexcept;
 
-        // TODO: better comment
-        // Returns the point along the ray when moving the amount t in the direction
+        // Returns the point along the ray when moving t in the direction
         Point3 at(double t) const noexcept;
 
     private:

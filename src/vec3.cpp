@@ -47,6 +47,7 @@ double Vec3::length_squared() const noexcept {
 }
 
 // Utility functions
+
 std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     out << v.e[0] << ", " << v.e[1] << ", " << v.e[2];
     return out;

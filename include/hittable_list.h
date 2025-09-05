@@ -12,12 +12,12 @@ class Hittable_list : public Hittable {
         std::vector<std::unique_ptr<Hittable>> objects;
 
         Hittable_list() noexcept;
-        Hittable_list(std::unique_ptr<Hittable>) noexcept;
+        Hittable_list(std::unique_ptr<Hittable>);
 
         void clear();
         void add(std::unique_ptr<Hittable> object);
 
-        bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const override;
+        bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept override;
 };
 
 #endif
