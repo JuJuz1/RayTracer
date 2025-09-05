@@ -32,7 +32,8 @@ class Vec3 {
         double length() const noexcept;
         double length_squared() const noexcept;
 
-        
+        static Vec3 random() noexcept;
+        static Vec3 random(double min, double max) noexcept;
 };
 
 // An alias for geometric clarity (t. ex. ray.h)

@@ -69,5 +69,5 @@ Ray Camera::get_ray(int i, int j) const noexcept {
 }
 
 Vec3 Camera::sample_square() const noexcept {
-    return Vec3(rt::random_double() - 0.5, rt::random_double() - 0.5, 0);
+    return Vec3{rt::random_double() - 0.5, rt::random_double() - 0.5, 0};
 }

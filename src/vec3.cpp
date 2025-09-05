@@ -1,4 +1,5 @@
 #include "vec3.h"
+#include "rtweekend.h"
 
 Vec3::Vec3() noexcept : e{0, 0, 0} {}
 
@@ -8,7 +9,7 @@ double Vec3::x() const noexcept { return e[0]; }
 double Vec3::y() const noexcept { return e[1]; }
 double Vec3::z() const noexcept { return e[2]; }
 
-Vec3 Vec3::operator-() const noexcept { return Vec3( -e[0], -e[1], -e[2]); }
+Vec3 Vec3::operator-() const noexcept { return Vec3{-e[0], -e[1], -e[2]}; }
 
 double Vec3::operator[](int i) const noexcept { return e[i]; }
 double& Vec3::operator[](int i) noexcept { return e[i]; }
@@ -46,6 +47,16 @@ double Vec3::length_squared() const noexcept {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
+Vec3 Vec3::random() noexcept {
+    return Vec3{rt::random_double(), rt::random_double(), rt::random_double()};
+}
+
+Vec3 Vec3::random(double min, double max) noexcept {
+    return Vec3{rt::random_double(min, max), 
+                rt::random_double(min, max), 
+                rt::random_double(min, max)};
+}
+
 // Utility functions
 
 std::ostream& operator<<(std::ostream& out, const Vec3& v) {
@@ -54,19 +65,19 @@ std::ostream& operator<<(std::ostream& out, const Vec3& v) {
 }
 
 Vec3 operator+(const Vec3& v1, const Vec3& v2) noexcept {
-    return Vec3(v1.e[0] + v2.e[0], v1.e[1] + v2.e[1], v1.e[2] + v2.e[2]);
+    return Vec3{v1.e[0] + v2.e[0], v1.e[1] + v2.e[1], v1.e[2] + v2.e[2]};
 }
 
 Vec3 operator-(const Vec3& v1, const Vec3& v2) noexcept {
-    return Vec3(v1.e[0] - v2.e[0], v1.e[1] - v2.e[1], v1.e[2] - v2.e[2]);
+    return Vec3{v1.e[0] - v2.e[0], v1.e[1] - v2.e[1], v1.e[2] - v2.e[2]};
 }
 
 Vec3 operator*(const Vec3& v1, const Vec3& v2) noexcept {
-    return Vec3(v1.e[0] * v2.e[0], v1.e[1] * v2.e[1], v1.e[2] * v2.e[2]);
+    return Vec3{v1.e[0] * v2.e[0], v1.e[1] * v2.e[1], v1.e[2] * v2.e[2]};
 }
 
 Vec3 operator*(const Vec3& v, double t) noexcept {
-    return Vec3(v.e[0] * t, v.e[1] * t, v.e[2] * t);
+    return Vec3{v.e[0] * t, v.e[1] * t, v.e[2] * t};
 }
 
 Vec3 operator/(const Vec3& v, double t) noexcept {
@@ -80,9 +91,9 @@ double dot(const Vec3& v1, const Vec3& v2) noexcept {
 }
 
 Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept {
-    return Vec3(v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
+    return Vec3{v1.e[1] * v2.e[2] - v1.e[2] * v2.e[1],
                 v1.e[2] * v2.e[0] - v1.e[0] * v2.e[2],
-                v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]);
+                v1.e[0] * v2.e[1] - v1.e[1] * v2.e[0]};
 }
 
 Vec3 unit_vector(const Vec3& v) noexcept {
