@@ -14,6 +14,7 @@ struct Color {
     static const Vec3 Blue;
     static const Vec3 LightBlue;
     static const Vec3 White;
+    static const Vec3 Gray;
     static const Vec3 Black;
 };
 

@@ -55,4 +55,11 @@ Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
 
 Vec3 unit_vector(const Vec3& v) noexcept;
 
+// Returns a random unit vector that is inside a unit sphere
+Vec3 random_unit_vector() noexcept;
+
+// Finds a random vector from a point where the ray hit
+// and checks whether the vector is in the correct hemisphere
+Vec3 random_on_hemisphere(const Vec3& normal) noexcept;
+
 #endif

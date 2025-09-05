@@ -50,8 +50,10 @@ void Camera::initialize() noexcept {
 
 color Camera::ray_color(const Ray& r, const Hittable& world) const noexcept {
     Hit_record rec;
-    if (world.hit(r, Interval{0.0, rt::infinity}, rec))
-        return (rec.normal + color{1, 1, 1}) * 0.5;
+    if (world.hit(r, Interval{0.0, rt::infinity}, rec)) {
+        const Vec3 direction{random_on_hemisphere(rec.normal)};
+        return ray_color(Ray{rec.p, direction}, world) * Color::Gray;
+    }
 
     const Vec3 unit_direction{unit_vector(r.direction())};
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]

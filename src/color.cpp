@@ -6,6 +6,7 @@ const Vec3 Color::Green     {0.0, 1.0, 0.0};
 const Vec3 Color::Blue      {0.0, 0.0, 1.0};
 const Vec3 Color::LightBlue {0.5, 0.7, 1.0};
 const Vec3 Color::White     {1.0, 1.0, 1.0};
+const Vec3 Color::Gray      {0.5, 0.5, 0.5};
 const Vec3 Color::Black     {0.0, 0.0, 0.0};
 
 void write_color(std::ostream& out, const color& pixel_color) {

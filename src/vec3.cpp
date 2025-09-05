@@ -99,3 +99,22 @@ Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept {
 Vec3 unit_vector(const Vec3& v) noexcept {
     return v / v.length();
 }
+
+Vec3 random_unit_vector() noexcept {
+    Vec3 p;
+    while (true) {
+        p = Vec3::random(-1, 1);
+        const double lensq = p.length_squared();
+        // Prevent lensq underflow to zero
+        if (1e-160 < lensq && lensq <= 1)
+            return p / std::sqrt(lensq);
+    }
+}
+
+Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
+    const Vec3 on_unit_sphere{random_unit_vector()};
+    if (dot(on_unit_sphere, normal) > 0.0)
+        return on_unit_sphere;
+    
+    return -on_unit_sphere;
+}
