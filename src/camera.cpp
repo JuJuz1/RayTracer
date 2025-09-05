@@ -51,10 +51,12 @@ void Camera::initialize() noexcept {
 color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
-        return Color::White;
+        return Color::Black;
     
     Hit_record rec;
-    if (world.hit(r, Interval{0.0, rt::infinity}, rec)) {
+    // If they ray's origin is just below the surface it might hit the surface immediately
+    // 0.001 ignores hits that are very close
+    if (world.hit(r, Interval{0.001, rt::infinity}, rec)) {
         const Vec3 direction{random_on_hemisphere(rec.normal)};
         return ray_color(Ray{rec.p, direction}, depth - 1, world) * Color::Gray;
     }

@@ -16,7 +16,7 @@ bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noe
         return false;
 
     const double sqrt_d = std::sqrt(discriminant);
-    // Find the nearest root in the acceptable range: ray_tmin < t < ray_tmax
+    // Find the nearest root in the acceptable range: ray_t.min < t < ray_t.max
     double root = (h - sqrt_d) / a;
     if (!ray_t.contains(root, false)) {
         root = (h + sqrt_d) / a;
