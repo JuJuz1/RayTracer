@@ -29,10 +29,10 @@ void Camera::initialize() noexcept {
 
     // Distance from the eye to the viewport
     constexpr double focal_length = 1.0;
-    
+
     constexpr double viewport_height = 2.0;
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
-    const double viewport_width = viewport_height * (image_width / image_height);
+    const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
 
     // Calculate the vectors for horizontal and vertical traversing of the viewport
     const Vec3 viewport_u{viewport_width, 0, 0};
@@ -57,7 +57,7 @@ color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const no
     // If they ray's origin is just below the surface it might hit the surface immediately
     // 0.001 ignores hits that are very close
     if (world.hit(r, Interval{0.001, rt::infinity}, rec)) {
-        const Vec3 direction{random_on_hemisphere(rec.normal)};
+        const Vec3 direction{rec.normal + random_unit_vector()};
         return ray_color(Ray{rec.p, direction}, depth - 1, world) * Color::Gray;
     }
 

@@ -8,7 +8,7 @@
 
 class Camera {
     public:
-        double aspect_ratio   = 1.0; // Ratio of image over height
+        double aspect_ratio   = 1.0; // Ratio of image width over height
         int image_width       = 100; // Rendered image width
         int samples_per_pixel = 10;  // Count of random samples per pixel
         int max_depth         = 10;  // Maximum ray bounces (recursion calls)
