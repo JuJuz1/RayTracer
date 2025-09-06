@@ -18,6 +18,9 @@ struct Color {
     static const Vec3 Black;     // {0.0, 0.0, 0.0};
 };
 
+// Returns the gamma 2 transform for a linear component
+double linear_to_gamma_two(double linear_component) noexcept;
+
 void write_color(std::ostream& out, const color& pixel_color);
 
 #endif

@@ -58,7 +58,8 @@ color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const no
     // 0.001 ignores hits that are very close
     if (world.hit(r, Interval{0.001, rt::infinity}, rec)) {
         const Vec3 direction{rec.normal + random_unit_vector()};
-        return ray_color(Ray{rec.p, direction}, depth - 1, world) * Color::Gray;
+        // 30%
+        return ray_color(Ray{rec.p, direction}, depth - 1, world) * 0.3;
     }
 
     const Vec3 unit_direction{unit_vector(r.direction())};
