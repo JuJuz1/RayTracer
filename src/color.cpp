@@ -11,7 +11,7 @@ const Vec3 Color::White     {1.0, 1.0, 1.0};
 const Vec3 Color::Gray      {0.5, 0.5, 0.5};
 const Vec3 Color::Black     {0.0, 0.0, 0.0};
 
-double linear_to_gamma_two(double linear_component) noexcept {
+constexpr double linear_to_gamma_two(double linear_component) noexcept {
     if (linear_component > 0)
         return std::sqrt(linear_component);
 
