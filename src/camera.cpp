@@ -1,17 +1,38 @@
+#include <string>
+#include <iomanip>
+#include <chrono>
+
 #include "camera.h"
 #include "rtweekend.h"
 
 void Camera::render(const Hittable& world) noexcept {
     initialize();
 
+    auto print_property_formatted = [](const std::string& property, int value){
+        static constexpr int format_width_left{ 18 };
+        static constexpr int format_width_right{ 3 };
+        std::clog << std::left << std::setw(format_width_left) << property 
+                << std::right << std::setw(format_width_right) << value << "\n";
+    };
+
+    std::clog << "\nRendering an image with properties:\n";
+    print_property_formatted("Width", image_width);
+    print_property_formatted("Height", image_height);
+    print_property_formatted("Samples per pixel", samples_per_pixel);
+    print_property_formatted("Max depth", max_depth);
+    std::clog << "\n";
+
+    using namespace std::chrono;
+    const auto start = high_resolution_clock::now();
+
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    for (int j = 0; j < image_height; ++j) {
+    for (int j{ 0 }; j < image_height; ++j) {
         std::clog << "\rScanlines remaining: " << (image_height - 1 - j) << ' ' << std::flush;
-        for (int i = 0; i < image_width; ++i) {
+        for (int i{ 0 }; i < image_width; ++i) {
             color pixel_color{0, 0, 0};
-            for (int sample = 0; sample < samples_per_pixel; ++sample) {
-                const Ray r{get_ray(i, j)};
+            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+                const Ray r{ get_ray(i, j) };
                 pixel_color += ray_color(r, max_depth, world);
             }
             
@@ -19,7 +40,9 @@ void Camera::render(const Hittable& world) noexcept {
         }
     }
 
-    std::clog << "\nDone.\n";
+    const auto end{high_resolution_clock::now()}; 
+    const auto ms{duration_cast<milliseconds>(end - start).count()};
+    std::clog << "\nRendering took: " << std::setprecision(3) << ms / 1000.0 << "s";
 }
 
 void Camera::initialize() noexcept {
@@ -27,24 +50,24 @@ void Camera::initialize() noexcept {
 
     pixel_sample_scale = 1.0 / samples_per_pixel;
 
-    // Distance from the eye to the viewport
-    constexpr double focal_length = 1.0;
-
     constexpr double viewport_height = 2.0;
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
     const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
 
     // Calculate the vectors for horizontal and vertical traversing of the viewport
-    const Vec3 viewport_u{viewport_width, 0, 0};
-    const Vec3 viewport_v{0, -viewport_height, 0};
+    const Vec3 viewport_u{ viewport_width, 0, 0 };
+    const Vec3 viewport_v{ 0, -viewport_height, 0 };
     
     // Horizontal and vertical delta vectors from pixel to pixel
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
     
-    center = Point3{0, 0, 0};
+    // Distance from the eye to the viewport
+    constexpr double focal_length = 1.0;
+
+    center = Point3{ 0, 0, 0 };
     const Point3 viewport_upper_left{
-        center - Vec3{0, 0, focal_length} - viewport_u / 2 - viewport_v / 2};
+        center - Vec3{0, 0, focal_length} - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
 }
 
@@ -56,13 +79,13 @@ color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const no
     Hit_record rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // 0.001 ignores hits that are very close
-    if (world.hit(r, Interval{0.001, rt::infinity}, rec)) {
+    if (world.hit(r, Interval{ 0.001, rt::infinity }, rec)) {
         const Vec3 direction{rec.normal + random_unit_vector()};
         // 30%
-        return ray_color(Ray{rec.p, direction}, depth - 1, world) * 0.3;
+        return ray_color(Ray{ rec.p, direction }, depth - 1, world) * 0.3;
     }
 
-    const Vec3 unit_direction{unit_vector(r.direction())};
+    const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
     return Color::White * (1.0 - a) + Color::LightBlue * a;

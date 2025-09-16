@@ -13,7 +13,7 @@ class Camera {
         int samples_per_pixel = 10;  // Count of random samples per pixel
         int max_depth         = 10;  // Maximum ray bounces (recursion calls)
         
-        // Use Hittable so now we can also use Hittable_list
+        // Use Hittable so we can also use Hittable_list
         void render(const Hittable& world) noexcept;
 
     private:
@@ -24,8 +24,7 @@ class Camera {
         Vec3 pixel_delta_u;        // Horizontal offset of a pixel
         Vec3 pixel_delta_v;        // Vertical -||-
 
-        // Called at the start of render() to initialize
-        // private variables according to the public ones
+        // Called at the start of render() to initialize private variables
         void initialize() noexcept;
 
         // Calculates the color of a pixel with a given ray from the camera

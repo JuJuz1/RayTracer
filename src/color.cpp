@@ -3,6 +3,7 @@
 #include "color.h"
 #include "interval.h"
 
+// Colors
 const Vec3 Color::Red       {1.0, 0.0, 0.0};
 const Vec3 Color::Green     {0.0, 1.0, 0.0};
 const Vec3 Color::Blue      {0.0, 0.0, 1.0};
