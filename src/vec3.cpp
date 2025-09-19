@@ -1,15 +1,15 @@
 #include "vec3.h"
 #include "rtweekend.h"
 
-Vec3::Vec3() noexcept : e{0, 0, 0} {}
+Vec3::Vec3() noexcept : e{ 0, 0, 0 } {}
 
-Vec3::Vec3(double e0, double e1, double e2) noexcept : e{e0, e1, e2} {}
+Vec3::Vec3(double e0, double e1, double e2) noexcept : e{ e0, e1, e2 } {}
 
 double Vec3::x() const noexcept { return e[0]; }
 double Vec3::y() const noexcept { return e[1]; }
 double Vec3::z() const noexcept { return e[2]; }
 
-Vec3 Vec3::operator-() const noexcept { return Vec3{-e[0], -e[1], -e[2]}; }
+Vec3 Vec3::operator-() const noexcept { return Vec3{ -e[0], -e[1], -e[2] }; }
 
 double Vec3::operator[](int i) const noexcept { return e[i]; }
 double& Vec3::operator[](int i) noexcept { return e[i]; }
@@ -91,7 +91,7 @@ Vec3 unit_vector(const Vec3& v) noexcept {
 }
 
 Vec3 random_vector() noexcept {
-    return Vec3{rt::random_double(), rt::random_double(), rt::random_double()};
+    return Vec3{ rt::random_double(), rt::random_double(), rt::random_double() };
 }
 
 Vec3 random_vector(double min, double max) noexcept {

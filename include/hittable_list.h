@@ -1,8 +1,8 @@
 #ifndef HITTABLE_LIST_H
 #define HITTABLE_LIST_H
 
-#include <memory>
 #include <vector>
+#include <memory>
 
 #include "hittable.h"
 
@@ -17,7 +17,7 @@ class Hittable_list : public Hittable {
         void clear();
         void add(std::unique_ptr<Hittable> object);
 
-        bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept override;
+        bool hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const noexcept override;
 };
 
 #endif

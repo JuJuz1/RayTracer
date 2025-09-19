@@ -26,7 +26,7 @@ int main() {
     cam.image_width       = 400; 
     cam.samples_per_pixel = 100; 
     cam.max_depth         = 50;  
-    cam.ray_attenuation   = 0.3; // 30% seems good atm with gamma correction
+    cam.ray_attenuation   = 0.3; // 30% seems good with gamma correction
 
     cam.render(world);
 

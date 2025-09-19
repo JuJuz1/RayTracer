@@ -67,7 +67,7 @@ void Camera::initialize() noexcept {
 
     center = Point3{ 0, 0, 0 };
     const Point3 viewport_upper_left{
-        center - Vec3{0, 0, focal_length} - viewport_u / 2 - viewport_v / 2 };
+        center - Vec3{ 0, 0, focal_length } - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
 }
 
@@ -100,5 +100,5 @@ Ray Camera::get_ray(int i, int j) const noexcept {
 }
 
 Vec3 Camera::sample_square() const noexcept {
-    return Vec3{rt::random_double() - 0.5, rt::random_double() - 0.5, 0};
+    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
 }

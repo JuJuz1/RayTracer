@@ -24,7 +24,7 @@ void write_color(std::ostream& out, const color& pixel_color) {
     
     constexpr double multiplier = 256;
     // Translate from range [0, 1] to byte range [0, 255]
-    const Interval intensity{0.000, 0.999};
+    const Interval intensity{ 0.000, 0.999 };
     const int rbyte = static_cast<int>(intensity.clamp(r) * multiplier);
     const int gbyte = static_cast<int>(intensity.clamp(g) * multiplier);
     const int bbyte = static_cast<int>(intensity.clamp(b) * multiplier);
