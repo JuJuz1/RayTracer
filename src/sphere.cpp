@@ -4,7 +4,7 @@
 Sphere::Sphere(const Point3& center, double radius) noexcept 
     : center(center), radius(std::fmax(radius, 0.0)) {}
 
-bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept {
+bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const noexcept {
     Vec3 oc{center - r.origin()};
     const double a = r.direction().length_squared();
     const double h = dot(r.direction(), oc);
@@ -24,10 +24,10 @@ bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noe
             return false;
     }
 
-    rec.t = root;
-    rec.p = r.at(rec.t);
-    const Vec3 outward_normal{(rec.p - center) / radius};
-    rec.set_face_normal(r, outward_normal);
+    out_rec.t = root;
+    out_rec.p = r.at(out_rec.t);
+    const Vec3 outward_normal{(out_rec.p - center) / radius};
+    out_rec.set_face_normal(r, outward_normal);
 
     return true;
 }

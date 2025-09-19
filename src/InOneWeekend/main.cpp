@@ -9,7 +9,6 @@
 #include "camera.h"
 
 int main() {
-    // TODO: change brace initialization to have spaces e.g. { 1, 5 }
 
     // World
 
@@ -24,9 +23,10 @@ int main() {
 
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
-    cam.max_depth         = 50;
+    cam.image_width       = 400; 
+    cam.samples_per_pixel = 100; 
+    cam.max_depth         = 50;  
+    cam.ray_attenuation   = 0.3; // 30% seems good atm with gamma correction
 
     cam.render(world);
 

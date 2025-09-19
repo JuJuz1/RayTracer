@@ -47,16 +47,6 @@ double Vec3::length_squared() const noexcept {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
-Vec3 Vec3::random() noexcept {
-    return Vec3{rt::random_double(), rt::random_double(), rt::random_double()};
-}
-
-Vec3 Vec3::random(double min, double max) noexcept {
-    return Vec3{rt::random_double(min, max), 
-                rt::random_double(min, max), 
-                rt::random_double(min, max)};
-}
-
 // Utility functions
 
 std::ostream& operator<<(std::ostream& out, const Vec3& v) {
@@ -100,10 +90,20 @@ Vec3 unit_vector(const Vec3& v) noexcept {
     return v / v.length();
 }
 
+Vec3 random_vector() noexcept {
+    return Vec3{rt::random_double(), rt::random_double(), rt::random_double()};
+}
+
+Vec3 random_vector(double min, double max) noexcept {
+    return Vec3{rt::random_double(min, max), 
+                rt::random_double(min, max), 
+                rt::random_double(min, max)};
+}
+
 Vec3 random_unit_vector() noexcept {
     Vec3 p;
     while (true) {
-        p = Vec3::random(-1, 1);
+        p = random_vector(-1, 1);
         const double lensq = p.length_squared();
         // Prevent lensq underflow to zero
         if (1e-160 < lensq && lensq <= 1)
@@ -112,7 +112,7 @@ Vec3 random_unit_vector() noexcept {
 }
 
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
-    const Vec3 on_unit_sphere{random_unit_vector()};
+    const Vec3 on_unit_sphere{ random_unit_vector() };
     // Same hemisphere as normal
     if (dot(on_unit_sphere, normal) > 0.0)
         return on_unit_sphere;

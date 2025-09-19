@@ -9,10 +9,10 @@ void Camera::render(const Hittable& world) noexcept {
     initialize();
 
     auto print_property_formatted = [](const std::string& property, int value){
-        static constexpr int format_width_left{ 18 };
-        static constexpr int format_width_right{ 3 };
+        constexpr int format_width_left{ 18 };
+        constexpr int format_width_right{ 3 };
         std::clog << std::left << std::setw(format_width_left) << property 
-                << std::right << std::setw(format_width_right) << value << "\n";
+                  << std::right << std::setw(format_width_right) << value << "\n";
     };
 
     std::clog << "\nRendering an image with properties:\n";
@@ -40,8 +40,8 @@ void Camera::render(const Hittable& world) noexcept {
         }
     }
 
-    const auto end{high_resolution_clock::now()}; 
-    const auto ms{duration_cast<milliseconds>(end - start).count()};
+    const auto end{ high_resolution_clock::now() }; 
+    const auto ms{ duration_cast<milliseconds>(end - start).count() };
     std::clog << "\nRendering took: " << std::setprecision(3) << ms / 1000.0 << "s";
 }
 
@@ -80,9 +80,8 @@ color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const no
     // If they ray's origin is just below the surface it might hit the surface immediately
     // 0.001 ignores hits that are very close
     if (world.hit(r, Interval{ 0.001, rt::infinity }, rec)) {
-        const Vec3 direction{rec.normal + random_unit_vector()};
-        // 30%
-        return ray_color(Ray{ rec.p, direction }, depth - 1, world) * 0.3;
+        const Vec3 direction{ rec.normal + random_unit_vector() };
+        return ray_color(Ray{ rec.p, direction }, depth - 1, world) * ray_attenuation;
     }
 
     const Vec3 unit_direction{ unit_vector(r.direction()) };
@@ -92,12 +91,12 @@ color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const no
 }
 
 Ray Camera::get_ray(int i, int j) const noexcept {
-    const Vec3 offset{sample_square()};
+    const Vec3 offset{ sample_square() };
     const Point3 pixel_sample{pixel00_loc
                         + (pixel_delta_u * (i + offset.x()))
                         + (pixel_delta_v * (j + offset.y()))};
 
-    return Ray{center, pixel_sample - center};
+    return Ray{ center, pixel_sample - center };
 }
 
 Vec3 Camera::sample_square() const noexcept {

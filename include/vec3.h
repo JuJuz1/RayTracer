@@ -31,12 +31,9 @@ class Vec3 {
 
         double length() const noexcept;
         double length_squared() const noexcept;
-
-        static Vec3 random() noexcept;
-        static Vec3 random(double min, double max) noexcept;
 };
 
-// An alias for geometric clarity (t. ex. ray.h)
+// An alias for geometric clarity (e.g. ray.h)
 using Point3 = Vec3;
 
 // Utility functions
@@ -55,6 +52,8 @@ Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
 
 Vec3 unit_vector(const Vec3& v) noexcept;
 
+Vec3 random_vector() noexcept;
+Vec3 random_vector(double min, double max) noexcept;
 // Returns a random unit vector that is inside a unit sphere
 Vec3 random_unit_vector() noexcept;
 
