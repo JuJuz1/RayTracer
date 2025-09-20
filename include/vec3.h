@@ -8,20 +8,19 @@
 
 class Vec3 {
     public:
-        double e[3];
-
         Vec3() noexcept;
+
         Vec3(double e0, double e1, double e2) noexcept;
 
-        double x() const noexcept;
-        double y() const noexcept;
-        double z() const noexcept;
+        constexpr double x() const noexcept;
+        constexpr double y() const noexcept;
+        constexpr double z() const noexcept;
 
         // Operators
         Vec3 operator-() const noexcept;
 
-        double operator[](int i) const noexcept;
-        double& operator[](int i) noexcept;
+        constexpr double operator[](int i) const noexcept;
+        constexpr double& operator[](int i) noexcept;
 
         Vec3& operator+=(const Vec3& other) noexcept;
         Vec3& operator-=(const Vec3& other) noexcept;
@@ -29,10 +28,13 @@ class Vec3 {
         Vec3& operator/=(double t) noexcept;
 
         double length() const noexcept;
-        double length_squared() const noexcept;
+        constexpr double length_squared() const noexcept;
 
         // Checks if a vector is close to zero in all dimensions
         bool is_near_zero() const noexcept;
+    
+    private:
+        double e[3];
 };
 
 // An alias for geometric clarity (e.g. ray.h)
@@ -49,7 +51,7 @@ Vec3 operator*(const Vec3& v1, const Vec3& v2) noexcept;
 Vec3 operator*(const Vec3& v, double t) noexcept;
 Vec3 operator/(const Vec3& v, double t) noexcept;
 
-double dot(const Vec3& v1, const Vec3& v2) noexcept;
+constexpr double dot(const Vec3& v1, const Vec3& v2) noexcept;
 Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
 
 Vec3 unit_vector(const Vec3& v) noexcept;

@@ -1,9 +1,12 @@
 #include "color.h"
 #include "interval.h"
 
+// https://rgbcolorpicker.com/0-1
+
 // Colors
 const Vec3 Color::Red       {1.0, 0.0, 0.0};
 const Vec3 Color::Orange    {0.8, 0.6, 0.2};
+const Vec3 Color::Pink      {0.8, 0.1, 0.7};
 const Vec3 Color::Green     {0.0, 1.0, 0.0};
 const Vec3 Color::Lime      {0.7, 0.8, 0.1};
 const Vec3 Color::Blue      {0.0, 0.0, 1.0};

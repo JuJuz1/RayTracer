@@ -26,7 +26,7 @@ int main() {
     world.add(make_unique<Sphere>(Point3{  0.0, -100.5, -1.0 }, 100.0, mat_ground));
     world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.5, mat_left));
     world.add(make_unique<Sphere>(Point3{  0.0,    0.0, -1.3 },   0.5, mat_center));
-    world.add(make_unique<Sphere>(Point3{  1.0,    0.3, -1.0 },   0.5, mat_right));
+    world.add(make_unique<Sphere>(Point3{  1.1,    0.3, -1.0 },   0.55, mat_right));
 
     // Camera
 
