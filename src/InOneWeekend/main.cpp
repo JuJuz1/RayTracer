@@ -14,10 +14,10 @@ int main() {
 
     // Materials
     
-    const auto mat_ground = make_shared<Lambertian>(color{ 0.8, 0.8, 0.0 });
-    const auto mat_center = make_shared<Lambertian>(color{ 0.1, 0.2, 0.5 });
-    const auto mat_left   = make_shared<Metal>(color{ 0.8, 0.8, 0.8 });
-    const auto mat_right  = make_shared<Metal>(color{ 0.8, 0.6, 0.2 });
+    const auto mat_ground = make_shared<Lambertian>(Color::Lime);
+    const auto mat_center = make_shared<Lambertian>(Color::DarkBlue);
+    const auto mat_left   = make_shared<Metal>(Color::LightGray);
+    const auto mat_right  = make_shared<Metal>(Color::Orange);
 
     // World
 
@@ -32,10 +32,11 @@ int main() {
 
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400; 
-    cam.samples_per_pixel = 100; 
-    cam.max_depth         = 50;  
-    cam.ray_attenuation   = 0.3; // 30% seems good with gamma correction
+    cam.image_width       = 400;
+    cam.samples_per_pixel = 100;
+    cam.max_depth         = 50;
+    // Material attenuation overrides Camera::ray_attenuation now
+    //cam.ray_attenuation   = 0.3; // 30% seems good with gamma correction
 
     cam.render(world);
 

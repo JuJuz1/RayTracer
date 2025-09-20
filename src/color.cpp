@@ -3,11 +3,15 @@
 
 // Colors
 const Vec3 Color::Red       {1.0, 0.0, 0.0};
+const Vec3 Color::Orange    {0.8, 0.6, 0.2};
 const Vec3 Color::Green     {0.0, 1.0, 0.0};
+const Vec3 Color::Lime      {0.7, 0.8, 0.1};
 const Vec3 Color::Blue      {0.0, 0.0, 1.0};
 const Vec3 Color::LightBlue {0.5, 0.7, 1.0};
+const Vec3 Color::DarkBlue  {0.1, 0.2, 0.5};
 const Vec3 Color::White     {1.0, 1.0, 1.0};
 const Vec3 Color::Gray      {0.5, 0.5, 0.5};
+const Vec3 Color::LightGray {0.8, 0.8, 0.8};
 const Vec3 Color::Black     {0.0, 0.0, 0.0};
 
 constexpr double linear_to_gamma_two(double linear_component) noexcept {

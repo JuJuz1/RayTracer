@@ -13,7 +13,7 @@ bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const
     const double h = dot(r.direction(), oc);
     const double c = oc.length_squared() - radius * radius;
     // Had this scalar of 4 here for a very long time
-    // probably since chapter 6.4 of refactoring the formula...
+    // probably since chapter 6.2 of refactoring the formula...
     // Now works correctly, was a pain in the ass to try to find out the issue
     //const double discriminant = h * h - 4 * a * c;
     const double discriminant = h * h - a * c;
