@@ -2,7 +2,6 @@
 #define VEC3_H
 
 #include <iostream>
-#include <cmath>
 
 // As the book stated, it might be more efficient to use float instead of double
 // for now we are going to use double as we are not working in limited memory conditions
@@ -31,6 +30,9 @@ class Vec3 {
 
         double length() const noexcept;
         double length_squared() const noexcept;
+
+        // Checks if a vector is close to zero in all dimensions
+        bool is_near_zero() const noexcept;
 };
 
 // An alias for geometric clarity (e.g. ray.h)
@@ -60,5 +62,8 @@ Vec3 random_unit_vector() noexcept;
 // Finds a random vector from a point where the ray hit
 // and checks whether the vector is in the correct hemisphere
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept;
+
+// Returns the reflection of v about the surface normal n
+Vec3 reflect(const Vec3& v, const Vec3& n) noexcept;
 
 #endif

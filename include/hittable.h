@@ -7,6 +7,9 @@
 #include "ray.h"
 #include "interval.h"
 
+// TODO: maybe just include material.h
+// Forward declare Material to allow Hit_record
+// to contain shared ptr of Material
 class Material;
 
 // Stores the information about the collision

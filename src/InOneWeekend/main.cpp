@@ -1,18 +1,32 @@
-#include "vec3.h"
-#include "sphere.h"
+#include <memory>
+
+#include "material.h"
+#include "color.h"
 #include "hittable_list.h"
+#include "sphere.h"
+#include "vec3.h"
 #include "camera.h"
 
 int main() {
+
+    using std::make_shared;
+    using std::make_unique;
+
+    // Materials
+    
+    const auto mat_ground = make_shared<Lambertian>(color{ 0.8, 0.8, 0.0 });
+    const auto mat_center = make_shared<Lambertian>(color{ 0.1, 0.2, 0.5 });
+    const auto mat_left   = make_shared<Metal>(color{ 0.8, 0.8, 0.8 });
+    const auto mat_right  = make_shared<Metal>(color{ 0.8, 0.6, 0.2 });
 
     // World
 
     // Contains every hittable object
     Hittable_list world;
-    // This is very strange, for example radius of 0.88 makes the sphere almost 2 times smaller
-    // Values below 0.8 don't even produce the sphere at all...
-    world.add(std::make_unique<Sphere>(Point3{ 0, 0, -1.0 }, 0.9));
-    world.add(std::make_unique<Sphere>(Point3{ 0, -100.5, -1 }, 100));
+    world.add(make_unique<Sphere>(Point3{  0.0, -100.5, -1.0 }, 100.0, mat_ground));
+    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.5, mat_left));
+    world.add(make_unique<Sphere>(Point3{  0.0,    0.0, -1.3 },   0.5, mat_center));
+    world.add(make_unique<Sphere>(Point3{  1.0,    0.3, -1.0 },   0.5, mat_right));
 
     // Camera
 

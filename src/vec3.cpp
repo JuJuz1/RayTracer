@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "vec3.h"
 #include "rtweekend.h"
 
@@ -45,6 +47,13 @@ double Vec3::length() const noexcept {
 
 double Vec3::length_squared() const noexcept {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+}
+
+bool Vec3::is_near_zero() const noexcept {
+    const double s = 1e-8;
+    return std::fabs(e[0]) < s 
+        && std::fabs(e[1]) < s 
+        && std::fabs(e[2]) < s;
 }
 
 // Utility functions
@@ -118,4 +127,8 @@ Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
         return on_unit_sphere;
     
     return -on_unit_sphere;
+}
+
+Vec3 reflect(const Vec3& v, const Vec3& n) noexcept {
+    return v - n * dot(v, n) * 2;
 }

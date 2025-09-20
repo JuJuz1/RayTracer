@@ -1,19 +1,22 @@
+#include <memory>
 #include <cmath>
 
 #include "sphere.h"
 #include "interval.h"
 
-Sphere::Sphere(const Point3& center, double radius) noexcept 
-    : center(center), radius(std::fmax(radius, 0.0)) {
-        // TODO: initialize material pointer
-    }
+Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept 
+    : center(center), radius(std::fmax(radius, 0)), mat(mat) {}
 
 bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const noexcept {
     Vec3 oc{ center - r.origin() };
     const double a = r.direction().length_squared();
     const double h = dot(r.direction(), oc);
     const double c = oc.length_squared() - radius * radius;
-    const double discriminant = h * h - 4 * a * c;
+    // Had this scalar of 4 here for a very long time
+    // probably since chapter 6.4 of refactoring the formula...
+    // Now works correctly, was a pain in the ass to try to find out the issue
+    //const double discriminant = h * h - 4 * a * c;
+    const double discriminant = h * h - a * c;
 
     // No roots
     if (discriminant < 0)

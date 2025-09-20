@@ -14,10 +14,26 @@ Lambertian::Lambertian(const color& albedo) : albedo(albedo) {};
 bool Lambertian::scatter(
     const Ray& in_r, 
     const Hit_record& rec, 
-    color& attenuation, 
-    Ray& scattered) const noexcept {
-        const Vec3 scatter_direction{ rec.normal + random_unit_vector() };
-        scattered = Ray{ rec.p, scatter_direction };
-        attenuation = albedo;
+    color& out_attenuation, 
+    Ray& out_scattered) const noexcept {
+        Vec3 scatter_direction{ rec.normal + random_unit_vector() };
+        if (scatter_direction.is_near_zero())
+            scatter_direction = rec.normal;
+        
+        out_scattered = Ray{ rec.p, scatter_direction };
+        out_attenuation = albedo;
+        return true;
+}
+
+Metal::Metal(const color& albedo) : albedo(albedo) {};
+
+bool Metal::scatter(
+    const Ray& in_r, 
+    const Hit_record& rec, 
+    color& out_attenuation, 
+    Ray& out_scattered) const noexcept {
+        Vec3 reflected{ reflect(in_r.direction(), rec.normal) };
+        out_scattered = Ray{ rec.p, reflected };
+        out_attenuation = albedo;
         return true;
 }
