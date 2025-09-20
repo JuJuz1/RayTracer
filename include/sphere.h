@@ -3,6 +3,7 @@
 
 #include "hittable.h"
 #include "vec3.h"
+#include "ray.h"
 #include "interval.h"
 
 class Sphere final : public Hittable {
@@ -14,6 +15,8 @@ class Sphere final : public Hittable {
     private:
         Point3 center;
         double radius;
+        // Sphere also needs to know the material
+        std::shared_ptr<Material> mat;
 };
 
 #endif

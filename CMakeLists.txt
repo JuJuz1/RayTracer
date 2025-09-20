@@ -16,14 +16,15 @@ set ( CMAKE_CXX_EXTENSIONS        OFF )
 # To be extended as more source files are added
 set ( SOURCE_ONE_WEEKEND
   src/InOneWeekend/main.cpp
-  src/vec3.cpp
+  src/camera.cpp
   src/color.cpp
+  src/hittable_list.cpp
+  src/hittable.cpp
+  src/material.cpp
+  src/interval.cpp
   src/ray.cpp
   src/sphere.cpp
-  src/hittable.cpp
-  src/hittable_list.cpp
-  src/interval.cpp
-  src/camera.cpp
+  src/vec3.cpp
 )
 
 # Specific compiler flags below. We're not going to add options for all possible compilers, but if

@@ -1,13 +1,21 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
+#include <memory>
+
+#include "vec3.h"
 #include "ray.h"
 #include "interval.h"
+
+class Material;
 
 // Stores the information about the collision
 struct Hit_record {
     Point3 p;
     Vec3 normal;
+    // Aby object which inherits hittable 
+    // needs to have a material reference, hence the shared ptr
+    std::shared_ptr<Material> mat;
     double t;
     bool front_face;
     

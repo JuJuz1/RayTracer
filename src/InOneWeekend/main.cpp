@@ -1,9 +1,4 @@
-#include <iostream>
-
-#include "rtweekend.h"
 #include "vec3.h"
-#include "color.h"
-#include "ray.h"
 #include "sphere.h"
 #include "hittable_list.h"
 #include "camera.h"

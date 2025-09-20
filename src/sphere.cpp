@@ -1,8 +1,12 @@
+#include <cmath>
+
 #include "sphere.h"
 #include "interval.h"
 
 Sphere::Sphere(const Point3& center, double radius) noexcept 
-    : center(center), radius(std::fmax(radius, 0.0)) {}
+    : center(center), radius(std::fmax(radius, 0.0)) {
+        // TODO: initialize material pointer
+    }
 
 bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const noexcept {
     Vec3 oc{ center - r.origin() };
@@ -28,6 +32,7 @@ bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const
     out_rec.p = r.at(out_rec.t);
     const Vec3 outward_normal{ (out_rec.p - center) / radius };
     out_rec.set_face_normal(r, outward_normal);
+    out_rec.mat = mat;
 
     return true;
 }
