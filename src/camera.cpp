@@ -1,6 +1,5 @@
-#include <string>
-#include <iomanip>
 #include <chrono>
+#include <cmath>
 
 #include "camera.h"
 #include "rtweekend.h"
@@ -9,20 +8,7 @@
 void Camera::render(const Hittable& world) noexcept {
     initialize();
 
-    auto print_property_formatted = [](const std::string& property, double value){
-        constexpr int format_width_left{ 18 }; // Length of "Samples per pixel" - 1
-        constexpr int format_width_right{ 3 };
-        std::clog << std::left << std::setw(format_width_left) << property 
-                  << std::right << std::setw(format_width_right) << value << "\n";
-    };
-
-    std::clog << "\nRendering an image with properties:\n";
-    print_property_formatted("Width", image_width);
-    print_property_formatted("Height", image_height);
-    print_property_formatted("Samples per pixel", samples_per_pixel);
-    print_property_formatted("Max depth", max_depth);
-    print_property_formatted("Focal length", focal_length);
-    std::clog << "\n";
+    print_properties();
 
     using namespace std::chrono;
     const auto start = high_resolution_clock::now();
@@ -52,22 +38,46 @@ void Camera::initialize() noexcept {
 
     pixel_sample_scale = 1.0 / samples_per_pixel;
     
-    constexpr double viewport_height{ 2.0 };
+    center = lookfrom;
+
+    // Viewport dimensions
+    const double focal_length{ (lookfrom - lookat).length() };
+    const double theta{ rt::degrees_to_radians(vfov) };
+    const double h{ std::tan(theta / 2) };
+    const double viewport_height{ 2 * h * focal_length };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
     const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
 
+    // Unit basis vectors
+    w = unit_vector(lookfrom - lookat);
+    u = unit_vector(cross(vup, w));
+    v = cross(w, u);
+
     // Calculate the vectors for horizontal and vertical traversing of the viewport
-    const Vec3 viewport_u{ viewport_width, 0, 0 };
-    const Vec3 viewport_v{ 0, -viewport_height, 0 };
+    const Vec3 viewport_u{ u * viewport_width };
+    const Vec3 viewport_v{ -v * viewport_height };
     
     // Horizontal and vertical delta vectors from pixel to pixel
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
     
-    center = Point3{ 0, 0, 0 };
     const Point3 viewport_upper_left{
-        center - Vec3{ 0, 0, focal_length } - viewport_u / 2 - viewport_v / 2 };
+        center - (w * focal_length) - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
+}
+
+void Camera::print_properties() const noexcept {
+    std::clog << "\nRendering an image with properties:\n";
+    rt::print_camera_property_formatted("Width", image_width);
+    rt::print_camera_property_formatted("Height", image_height);
+    rt::print_camera_property_formatted("Samples per pixel", samples_per_pixel);
+    rt::print_camera_property_formatted("Max depth", max_depth);
+
+    std::clog << "\nViewport properties:\n";
+    rt::print_camera_property_formatted("Vertical fov", vfov);
+    rt::print_camera_property_formatted("Look from", lookfrom);
+    rt::print_camera_property_formatted("Look at", lookat);
+    std::clog << "\n";
 }
 
 color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const noexcept {
