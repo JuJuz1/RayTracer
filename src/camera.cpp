@@ -9,8 +9,8 @@
 void Camera::render(const Hittable& world) noexcept {
     initialize();
 
-    auto print_property_formatted = [](const std::string& property, int value){
-        constexpr int format_width_left{ 18 };
+    auto print_property_formatted = [](const std::string& property, double value){
+        constexpr int format_width_left{ 18 }; // Length of "Samples per pixel" - 1
         constexpr int format_width_right{ 3 };
         std::clog << std::left << std::setw(format_width_left) << property 
                   << std::right << std::setw(format_width_right) << value << "\n";
@@ -21,6 +21,7 @@ void Camera::render(const Hittable& world) noexcept {
     print_property_formatted("Height", image_height);
     print_property_formatted("Samples per pixel", samples_per_pixel);
     print_property_formatted("Max depth", max_depth);
+    print_property_formatted("Focal length", focal_length);
     std::clog << "\n";
 
     using namespace std::chrono;
@@ -51,8 +52,7 @@ void Camera::initialize() noexcept {
 
     pixel_sample_scale = 1.0 / samples_per_pixel;
     
-    constexpr double viewport_height = 2.0;
-    
+    constexpr double viewport_height{ 2.0 };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
     const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
 
@@ -64,9 +64,6 @@ void Camera::initialize() noexcept {
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
     
-    // Distance from the eye to the viewport
-    constexpr double focal_length = 1.0;
-
     center = Point3{ 0, 0, 0 };
     const Point3 viewport_upper_left{
         center - Vec3{ 0, 0, focal_length } - viewport_u / 2 - viewport_v / 2 };

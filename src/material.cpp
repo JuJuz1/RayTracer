@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "material.h"
 #include "vec3.h"
 
@@ -9,7 +11,7 @@ bool Material::scatter(
         return false;
 }
 
-Lambertian::Lambertian(const color& albedo) : albedo(albedo) {};
+Lambertian::Lambertian(const color& albedo) : albedo{ albedo } {};
 
 bool Lambertian::scatter(
     const Ray& in_r, 
@@ -25,7 +27,7 @@ bool Lambertian::scatter(
         return true;
 }
 
-Metal::Metal(const color& albedo) : albedo(albedo) {};
+Metal::Metal(const color& albedo, double fuzz) : albedo{ albedo }, fuzz{ std::fmax(fuzz, 0.0) } {};
 
 bool Metal::scatter(
     const Ray& in_r, 
@@ -33,7 +35,8 @@ bool Metal::scatter(
     color& out_attenuation, 
     Ray& out_scattered) const noexcept {
         Vec3 reflected{ reflect(in_r.direction(), rec.normal) };
+        reflected = unit_vector(reflected) + (random_unit_vector() * fuzz);
         out_scattered = Ray{ rec.p, reflected };
         out_attenuation = albedo;
-        return true;
+        return (dot(out_scattered.direction(), rec.normal) > 0);
 }

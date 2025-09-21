@@ -13,6 +13,7 @@ class Camera {
         int samples_per_pixel  = 10;  // Count of random samples per pixel
         int max_depth          = 10;  // Maximum ray bounces (recursion calls)
         double ray_attenuation = 0.1; // Fraction of light the ray preserves per bounce
+        double focal_length    = 1.0; // Distance from the eye to the viewport
         
         // Use Hittable so we can also use Hittable_list
         void render(const Hittable& world) noexcept;

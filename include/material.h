@@ -25,8 +25,6 @@ class Material {
 // A material to always scatter a ray
 class Lambertian : public Material {
     public:
-        color albedo;
-    
         Lambertian(const color& albedo);
 
         bool scatter(
@@ -34,20 +32,26 @@ class Lambertian : public Material {
             const Hit_record& rec, 
             color& out_attenuation, 
             Ray& out_scattered) const noexcept override;
+    
+    private:
+        color albedo;
 };
 
-// Metal
+// Reflects a ray
 class Metal : public Material {
     public:
-        color albedo;
-    
-        Metal(const color& albedo);
+        Metal(const color& albedo, double fuzz);
 
+        // Fuzzy reflection
         bool scatter(
             const Ray& in_r, 
             const Hit_record& rec, 
             color& out_attenuation, 
             Ray& out_scattered) const noexcept override;
+        
+    private:
+        color albedo;
+        double fuzz;
 };
 
 #endif
