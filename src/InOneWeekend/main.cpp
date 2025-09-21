@@ -14,10 +14,13 @@ int main() {
 
     // Materials
     
+    const double glass_refraction_index{ 1.50 };
+
     const auto mat_ground = make_shared<Lambertian>(Color::Lime);
     const auto mat_center = make_shared<Lambertian>(Color::DarkBlue);
     //const auto mat_left   = make_shared<Metal>(Color::LightGray, 0.3);
-    const auto mat_left   = make_shared<Dielectric>(1.50);
+    const auto mat_left   = make_shared<Dielectric>(glass_refraction_index);
+    const auto mat_bubble = make_shared<Dielectric>(1.0 / glass_refraction_index);
     const auto mat_right  = make_shared<Metal>(Color::Orange, 0.8);
 
     // World
@@ -25,8 +28,9 @@ int main() {
     // Contains every hittable object
     Hittable_list world;
     world.add(make_unique<Sphere>(Point3{  0.0, -100.5, -1.0 }, 100.0,  mat_ground));
-    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.5,  mat_left));
     world.add(make_unique<Sphere>(Point3{  0.0,    0.0, -1.3 },   0.5,  mat_center));
+    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.5,  mat_left));
+    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.4,  mat_bubble));
     world.add(make_unique<Sphere>(Point3{  1.1,    0.3, -1.0 },   0.55, mat_right));
 
     // Camera

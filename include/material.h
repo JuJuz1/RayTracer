@@ -67,6 +67,9 @@ class Dielectric : public Material {
         
     private:
         double refraction_index;
+        
+        // Shlick's appromixation for reflectance
+        static double reflectance(double cosine, double refraction_index) noexcept;
 };
 
 #endif
