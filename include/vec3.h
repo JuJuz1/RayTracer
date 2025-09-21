@@ -68,4 +68,9 @@ Vec3 random_on_hemisphere(const Vec3& normal) noexcept;
 // Returns the reflection of v about the surface normal n
 Vec3 reflect(const Vec3& v, const Vec3& n) noexcept;
 
+// Returns a refracted vector of v passing through a surface with normal n
+// etai_over_etat is the ratio of indices of refraction
+// -> refractive index of the material / the material v is entering
+Vec3 refract(const Vec3& v, const Vec3& n, double etai_over_etat) noexcept;
+
 #endif

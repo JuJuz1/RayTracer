@@ -54,4 +54,19 @@ class Metal : public Material {
         double fuzz;
 };
 
+class Dielectric : public Material {
+    public:
+        Dielectric(double refraction_index);
+
+        // Refraction
+        bool scatter(
+            const Ray& in_r, 
+            const Hit_record& rec, 
+            color& out_attenuation, 
+            Ray& out_scattered) const noexcept override;
+        
+    private:
+        double refraction_index;
+};
+
 #endif

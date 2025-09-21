@@ -40,3 +40,19 @@ bool Metal::scatter(
         out_attenuation = albedo;
         return (dot(out_scattered.direction(), rec.normal) > 0);
 }
+
+Dielectric::Dielectric(double refraction_index) : refraction_index{ refraction_index} {};
+
+bool Dielectric::scatter(
+    const Ray& in_r, 
+    const Hit_record& rec, 
+    color& out_attenuation, 
+    Ray& out_scattered) const noexcept {
+        out_attenuation = Color::White;
+        const double ri{ rec.front_face ? (1.0 / refraction_index) : refraction_index };
+
+        const Vec3 unit_direction{ unit_vector(in_r.direction()) };
+        const Vec3 refracted{ refract(unit_direction, rec.normal, ri) };
+        out_scattered = Ray{ rec.p, refracted };
+        return true;
+}
