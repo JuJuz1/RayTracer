@@ -1,54 +1,93 @@
 #include <memory>
+#include <cmath>
+#include <iostream>
 
-#include "material.h"
-#include "color.h"
 #include "hittable_list.h"
-#include "sphere.h"
+#include "material.h"
 #include "vec3.h"
+#include "color.h"
+#include "rtweekend.h"
+#include "sphere.h"
 #include "camera.h"
 
 int main() {
 
     using std::make_shared;
     using std::make_unique;
-
-    // Materials
     
-    const auto mat_ground = make_shared<Lambertian>(Colors::Lime);
-    const auto mat_center = make_shared<Lambertian>(Colors::DarkBlue);
-    const auto mat_left   = make_shared<Dielectric>(1.50);
-    const auto mat_bubble = make_shared<Dielectric>(1.0 / 1.50);
-    const auto mat_right  = make_shared<Metal>(Colors::Orange, 0.8);
-
-    // World
-
     // Contains every hittable object
-    Hittable_list world;
-    world.add(make_unique<Sphere>(Point3{  0.0, -100.5, -1.0 }, 100.0, mat_ground));
-    world.add(make_unique<Sphere>(Point3{  0.0,    0.0, -1.0 },   0.5, mat_center));
-    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.5, mat_left));
-    world.add(make_unique<Sphere>(Point3{ -1.0,    0.0, -1.0 },   0.4, mat_bubble));
-    world.add(make_unique<Sphere>(Point3{  1.1,    0.0, -1.0 },   0.5, mat_right));
+    HittableList world;
+
+    const auto mat_ground = make_shared<Lambertian>(Colors::Gray);
+    world.add(make_unique<Sphere>(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground));
+
+    const auto mat_glass{ make_shared<Dielectric>(1.5) };
+    
+    // Generate lots of small random spheres
+    // The amount is: x <= (sphere_position_edge * 2)^2
+    // as we discard those which overlap with the big spheres
+    constexpr int sphere_position_edge{ 11 };
+    constexpr double sphere_radius{ 0.2 };
+    for (int a{ -sphere_position_edge }; a < sphere_position_edge; ++a) {
+        for (int b{ -sphere_position_edge }; b < sphere_position_edge; ++b) {
+            const double choose_mat{ rt::random_double() };
+            const Point3 sphere_position{
+                a + rt::random_double() * 0.9, 0.2, b + rt::random_double() * 0.9};
+            
+            // Check for overlap with big spheres
+            if ((sphere_position - Point3{ 4, sphere_radius, 0 }).length() > 0.9) {
+                std::shared_ptr<Material> mat;
+
+                if (choose_mat < 0.8) {
+                    // Diffuse
+                    const Color albedo{ random_vector() * random_vector() };
+                    mat = make_shared<Lambertian>(albedo);
+                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
+                } else if (choose_mat < 0.95) {
+                    // Metal
+                    const Color albedo{ random_vector(0.5, 1.0) };
+                    const double fuzz{ rt::random_double(0, 0.5) };
+                    mat = make_shared<Metal>(albedo, fuzz);
+                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
+                } else {
+                    // Glass
+                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat_glass));
+                }
+            }
+        }
+    }
+
+    // Big spheres left to right
+    const auto mat_diffuse{ make_shared<Lambertian>(Colors::Orange) };
+    world.add(make_unique<Sphere>(Point3{ -4, 1, 0 }, 1.0, mat_diffuse));
+
+    world.add(make_unique<Sphere>(Point3{ 0, 1, 0 }, 1.0, mat_glass));
+    
+    const auto mat_metal{ make_shared<Metal>(Colors::Brown, 0.0) };
+    world.add(make_unique<Sphere>(Point3{ 4, 1, 0 }, 1.0, mat_metal));
 
     // Camera
-
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400;
-    cam.samples_per_pixel = 100;
-    cam.max_depth         =  50;
+    cam.image_width       = 1200; // 400
+    cam.samples_per_pixel =  500; // 100
+    cam.max_depth         =   50;
 
     // Viewport
     cam.vfov     = 20.0;
-    cam.lookfrom = Point3{ -2, 2,  1 };
-    cam.lookat   = Point3{  0, 0, -1 };
-    cam.vup      = Vec3  {  0, 1,  0 };
+    cam.lookfrom = Point3{ 13, 2, 3 };
+    cam.lookat   = Point3{  0, 0, 0 };
+    cam.vup      = Vec3  {  0, 1, 0 };
 
     // Lens
-    cam.defocus_angle = 10.0;
-    cam.focus_dist    =  3.4;
+    cam.defocus_angle =  0.6;
+    cam.focus_dist    = 10.0;
 
     cam.render(world);
+
+    const int objects{ world.count() };
+    std::clog << "Small spheres created: " << objects - 3 << "\n";
+    std::clog << "Total spheres: " << objects;
 
     return 0;
 }

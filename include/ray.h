@@ -1,6 +1,8 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include <ostream>
+
 #include "vec3.h"
 
 class Ray {

@@ -1,9 +1,10 @@
 #include "interval.h"
+
 #include "rtweekend.h"
 
-Interval::Interval() noexcept : min(+rt::infinity), max(-rt::infinity) {};
+Interval::Interval() noexcept : min{ +rt::infinity }, max{ -rt::infinity } {};
 
-Interval::Interval(double min, double max) noexcept : min(min), max(max) {};
+Interval::Interval(double min, double max) noexcept : min{ min }, max{ max } {};
 
 double Interval::size() const noexcept {
     return max - min;

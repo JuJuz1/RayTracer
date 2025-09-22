@@ -1,8 +1,6 @@
-#include <memory>
-#include <cmath>
-
 #include "sphere.h"
-#include "interval.h"
+
+#include <cmath>
 
 Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept 
     : center{ center }, radius{ std::fmax(radius, 0.0) }, mat{ mat } {}

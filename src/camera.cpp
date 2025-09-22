@@ -1,7 +1,10 @@
+#include "camera.h"
+
 #include <chrono>
+#include <iostream>
 #include <cmath>
 
-#include "camera.h"
+#include "color.h"
 #include "rtweekend.h"
 #include "material.h"
 
@@ -21,7 +24,7 @@ void Camera::render(const Hittable& world) noexcept {
             Color pixel_color{};
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };
-                pixel_color += send_ray(r, max_depth, world);
+                pixel_color += trace_ray(r, max_depth, world);
             }
 
             write_color(std::cout, pixel_color * pixel_sample_scale);
@@ -30,7 +33,7 @@ void Camera::render(const Hittable& world) noexcept {
 
     const auto end{ high_resolution_clock::now() }; 
     const auto ms{ duration_cast<milliseconds>(end - start).count() };
-    std::clog << "\nRendering took: " << std::setprecision(3) << ms / 1000.0 << "s";
+    std::clog << "\nRendering took: " << std::setprecision(3) << ms / 1000.0 << "s\n";
 }
 
 void Camera::initialize() noexcept {
@@ -88,7 +91,7 @@ void Camera::print_properties() const noexcept {
     std::clog << "\n";
 }
 
-Color Camera::send_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
+Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
         return Colors::Black;
@@ -100,7 +103,7 @@ Color Camera::send_ray(const Ray& r, int depth, const Hittable& world) const noe
         Ray scattered;
         Color attenuation;
         if (rec.mat->scatter(r, rec, attenuation, scattered))
-            return attenuation * send_ray(scattered, depth - 1, world);
+            return attenuation * trace_ray(scattered, depth - 1, world);
         
         return Colors::Black;
     }

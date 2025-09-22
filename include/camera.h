@@ -1,9 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "hittable.h"
 #include "vec3.h"
-#include "color.h"
+#include "hittable.h"
 #include "ray.h"
 
 class Camera {
@@ -22,7 +21,7 @@ class Camera {
         double defocus_angle = 0;    // Variation angle of rays through each pixel
         double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
         
-        // Use Hittable so we can also use Hittable_list
+        // Use Hittable so we can also use HittableList
         void render(const Hittable& world) noexcept;
 
     private:
@@ -43,7 +42,7 @@ class Camera {
 
         // Calculates the color of a pixel with a given ray from the camera
         // Takes into account the passed Hittable object(s)
-        Color send_ray(const Ray& r, int depth, const Hittable& world) const noexcept;
+        Color trace_ray(const Ray& r, int depth, const Hittable& world) const noexcept;
 
         // Construct a camera ray originating from the origin and directed at randomly sampled
         // point around the pixel location i, j

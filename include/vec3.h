@@ -1,7 +1,7 @@
 #ifndef VEC3_H
 #define VEC3_H
 
-#include <iostream>
+#include <ostream>
 
 // As the book stated, it might be more efficient to use float instead of double
 // for now we are going to use double as we are not working in limited memory conditions

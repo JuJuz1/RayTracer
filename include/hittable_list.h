@@ -7,17 +7,20 @@
 #include "hittable.h"
 
 // A class for all hittable objects
-class Hittable_list : public Hittable {
+class HittableList : public Hittable {
     public:
         std::vector<std::unique_ptr<Hittable>> objects;
 
-        Hittable_list() noexcept;
-        Hittable_list(std::unique_ptr<Hittable>);
+        HittableList() noexcept;
+        HittableList(std::unique_ptr<Hittable>);
 
         void clear();
         void add(std::unique_ptr<Hittable> object);
 
         bool hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept override;
+
+        // Get the count of hittable objects
+        int count() const noexcept;
 };
 
 #endif

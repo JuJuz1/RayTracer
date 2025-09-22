@@ -1,14 +1,13 @@
 #include "hittable_list.h"
-#include "interval.h"
 
-Hittable_list::Hittable_list() noexcept {};
+HittableList::HittableList() noexcept {};
 
-Hittable_list::Hittable_list(std::unique_ptr<Hittable> object) { add(std::move(object)); }
+HittableList::HittableList(std::unique_ptr<Hittable> object) { add(std::move(object)); }
 
-void Hittable_list::clear() { objects.clear(); }
-void Hittable_list::add(std::unique_ptr<Hittable> object) { objects.push_back(std::move(object)); }
+void HittableList::clear() { objects.clear(); }
+void HittableList::add(std::unique_ptr<Hittable> object) { objects.push_back(std::move(object)); }
 
-bool Hittable_list::hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {
+bool HittableList::hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {
     HitRecord temp_rec;
     bool hit = false;
     double closest_so_far = ray_t.max;
@@ -22,4 +21,8 @@ bool Hittable_list::hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec)
     }
 
     return hit;
+}
+
+int HittableList::count() const noexcept {
+    return static_cast<int>(objects.size());
 }

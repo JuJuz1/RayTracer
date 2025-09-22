@@ -1,6 +1,7 @@
+#include "vec3.h"
+
 #include <cmath>
 
-#include "vec3.h"
 #include "rtweekend.h"
 
 Vec3::Vec3() noexcept : e{ 0, 0, 0 } {}
