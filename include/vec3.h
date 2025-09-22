@@ -61,6 +61,9 @@ Vec3 random_vector(double min, double max) noexcept;
 // Returns a random unit vector that is inside a unit sphere
 Vec3 random_unit_vector() noexcept;
 
+// Retrurns a random (2D) vector that is inside a unit disk
+Vec3 random_in_unit_disk() noexcept;
+
 // Finds a random vector from a point where the ray hit
 // and checks whether the vector is in the correct hemisphere
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept;

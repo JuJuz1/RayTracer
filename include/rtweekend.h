@@ -17,7 +17,7 @@ namespace rt {
 
     // Utility Functions
 
-    inline constexpr double degrees_to_radians(double degrees) noexcept {
+    constexpr double degrees_to_radians(double degrees) noexcept {
         return degrees * pi / 180.0;
     }
 

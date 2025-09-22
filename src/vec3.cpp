@@ -112,19 +112,29 @@ Vec3 random_vector(double min, double max) noexcept {
 
 Vec3 random_unit_vector() noexcept {
     Vec3 p;
+    double lensq;
     while (true) {
         p = random_vector(-1, 1);
-        const double lensq = p.length_squared();
+        lensq = p.length_squared();
         // Prevent lensq underflow to zero
         if (1e-160 < lensq && lensq <= 1)
             return p / std::sqrt(lensq);
     }
 }
 
+Vec3 random_in_unit_disk() noexcept {
+    Vec3 p;
+    while (true) {
+        p = Vec3{ rt::random_double(-1, 1), rt::random_double(-1.0, 1.0), 0 };
+        if (p.length_squared() < 1)
+            return p;
+    }
+}
+
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     const Vec3 on_unit_sphere{ random_unit_vector() };
     // Same hemisphere as normal
-    if (dot(on_unit_sphere, normal) > 0.0)
+    if (dot(on_unit_sphere, normal) > 0)
         return on_unit_sphere;
     
     return -on_unit_sphere;

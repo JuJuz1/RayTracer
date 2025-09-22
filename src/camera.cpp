@@ -18,12 +18,12 @@ void Camera::render(const Hittable& world) noexcept {
     for (int j{ 0 }; j < image_height; ++j) {
         std::clog << "\rScanlines remaining: " << (image_height - 1 - j) << ' ' << std::flush;
         for (int i{ 0 }; i < image_width; ++i) {
-            color pixel_color{0, 0, 0};
+            color pixel_color{};
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };
-                pixel_color += ray_color(r, max_depth, world);
+                pixel_color += send_ray(r, max_depth, world);
             }
-            
+
             write_color(std::cout, pixel_color * pixel_sample_scale);
         }
     }
@@ -37,18 +37,17 @@ void Camera::initialize() noexcept {
     image_height = std::max(static_cast<int>(image_width / aspect_ratio), 1);
 
     pixel_sample_scale = 1.0 / samples_per_pixel;
-    
+
     center = lookfrom;
 
     // Viewport dimensions
-    const double focal_length{ (lookfrom - lookat).length() };
     const double theta{ rt::degrees_to_radians(vfov) };
     const double h{ std::tan(theta / 2) };
-    const double viewport_height{ 2 * h * focal_length };
+    const double viewport_height{ 2 * h * focus_dist };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
     const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
 
-    // Unit basis vectors
+    // Camera unit basis vectors
     w = unit_vector(lookfrom - lookat);
     u = unit_vector(cross(vup, w));
     v = cross(w, u);
@@ -62,8 +61,13 @@ void Camera::initialize() noexcept {
     pixel_delta_v = viewport_v / image_height;
     
     const Point3 viewport_upper_left{
-        center - (w * focal_length) - viewport_u / 2 - viewport_v / 2 };
+        center - (w * focus_dist) - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
+
+    // Defocus disk basis vectors
+    const double defocus_radius{ focus_dist * std::tan(rt::degrees_to_radians(defocus_angle / 2)) };
+    defocus_disk_u = u * defocus_radius;
+    defocus_disk_v = v * defocus_radius;
 }
 
 void Camera::print_properties() const noexcept {
@@ -77,26 +81,32 @@ void Camera::print_properties() const noexcept {
     rt::print_camera_property_formatted("Vertical fov", vfov);
     rt::print_camera_property_formatted("Look from", lookfrom);
     rt::print_camera_property_formatted("Look at", lookat);
+    
+    std::clog << "\nLens properties:\n";
+    rt::print_camera_property_formatted("Defocus angle", defocus_angle);
+    rt::print_camera_property_formatted("Focus distance", focus_dist);
     std::clog << "\n";
 }
 
-color Camera::ray_color(const Ray& r, int depth, const Hittable& world) const noexcept {
+color Camera::send_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
         return Color::Black;
     
     Hit_record rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
-    // 0.001 ignores hits that are very close
+    // An interval with min of 0.001 ignores hits that are very close
     if (world.hit(r, Interval{ 0.001, rt::infinity }, rec)) {
         Ray scattered;
         color attenuation;
         if (rec.mat->scatter(r, rec, attenuation, scattered))
-            return attenuation * ray_color(scattered, depth - 1, world);
+            return attenuation * send_ray(scattered, depth - 1, world);
         
         return Color::Black;
     }
 
+    // Nothing was hit -> background gradient
+    // TODO: move background colors to camera class?
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
@@ -108,10 +118,17 @@ Ray Camera::get_ray(int i, int j) const noexcept {
     const Point3 pixel_sample{pixel00_loc
                            + (pixel_delta_u * (i + offset.x()))
                            + (pixel_delta_v * (j + offset.y()))};
-
-    return Ray{ center, pixel_sample - center };
+    
+    const Point3 ray_origin{ (defocus_angle <= 0) ? center : defocus_disk_sample() };
+    const Vec3 ray_direction{ pixel_sample - ray_origin };
+    return Ray{ ray_origin, ray_direction };
 }
 
 Vec3 Camera::sample_square() const noexcept {
     return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
+}
+
+Point3 Camera::defocus_disk_sample() const noexcept {
+    const Vec3 p{ random_in_unit_disk() };
+    return center + (defocus_disk_u * p.x()) + (defocus_disk_v * p.y());
 }
