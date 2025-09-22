@@ -6,18 +6,18 @@
 
 bool Material::scatter(
     const Ray& in_r, 
-    const Hit_record& rec, 
-    color& attenuation, 
+    const HitRecord& rec, 
+    Color& attenuation, 
     Ray& scattered) const noexcept {
         return false;
 }
 
-Lambertian::Lambertian(const color& albedo) : albedo{ albedo } {};
+Lambertian::Lambertian(const Color& albedo) : albedo{ albedo } {};
 
 bool Lambertian::scatter(
     const Ray& in_r, 
-    const Hit_record& rec, 
-    color& out_attenuation, 
+    const HitRecord& rec, 
+    Color& out_attenuation, 
     Ray& out_scattered) const noexcept {
         Vec3 scatter_direction{ rec.normal + random_unit_vector() };
         if (scatter_direction.is_near_zero())
@@ -28,12 +28,12 @@ bool Lambertian::scatter(
         return true;
 }
 
-Metal::Metal(const color& albedo, double fuzz) : albedo{ albedo }, fuzz{ std::fmax(fuzz, 0.0) } {};
+Metal::Metal(const Color& albedo, double fuzz) : albedo{ albedo }, fuzz{ std::fmax(fuzz, 0.0) } {};
 
 bool Metal::scatter(
     const Ray& in_r, 
-    const Hit_record& rec, 
-    color& out_attenuation, 
+    const HitRecord& rec, 
+    Color& out_attenuation, 
     Ray& out_scattered) const noexcept {
         Vec3 reflected{ reflect(in_r.direction(), rec.normal) };
         reflected = unit_vector(reflected) + (random_unit_vector() * fuzz);
@@ -46,10 +46,10 @@ Dielectric::Dielectric(double refraction_index) : refraction_index{ refraction_i
 
 bool Dielectric::scatter(
     const Ray& in_r, 
-    const Hit_record& rec, 
-    color& out_attenuation, 
+    const HitRecord& rec, 
+    Color& out_attenuation, 
     Ray& out_scattered) const noexcept {
-        out_attenuation = Color::White;
+        out_attenuation = Colors::White;
         const double ri{ rec.front_face ? (1.0 / refraction_index) : refraction_index };
 
         const Vec3 unit_direction{ unit_vector(in_r.direction()) };
@@ -67,8 +67,8 @@ bool Dielectric::scatter(
         return true;
 }
 
-double Dielectric::reflectance(double cosine, double refraction_index) noexcept {
-    double r0 = (1 - refraction_index) / (1 + refraction_index);
+double Dielectric::reflectance(double cosine, double ri) const noexcept {
+    double r0 = (1 - ri) / (1 + ri);
     r0 = r0 * r0;
     return r0 + (1 - r0) * std::pow((1 - cosine), 5);
 }

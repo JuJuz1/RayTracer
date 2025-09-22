@@ -14,11 +14,11 @@ int main() {
 
     // Materials
     
-    const auto mat_ground = make_shared<Lambertian>(Color::Lime);
-    const auto mat_center = make_shared<Lambertian>(Color::DarkBlue);
+    const auto mat_ground = make_shared<Lambertian>(Colors::Lime);
+    const auto mat_center = make_shared<Lambertian>(Colors::DarkBlue);
     const auto mat_left   = make_shared<Dielectric>(1.50);
     const auto mat_bubble = make_shared<Dielectric>(1.0 / 1.50);
-    const auto mat_right  = make_shared<Metal>(Color::Orange, 0.8);
+    const auto mat_right  = make_shared<Metal>(Colors::Orange, 0.8);
 
     // World
 

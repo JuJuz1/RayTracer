@@ -18,7 +18,7 @@ void Camera::render(const Hittable& world) noexcept {
     for (int j{ 0 }; j < image_height; ++j) {
         std::clog << "\rScanlines remaining: " << (image_height - 1 - j) << ' ' << std::flush;
         for (int i{ 0 }; i < image_width; ++i) {
-            color pixel_color{};
+            Color pixel_color{};
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += send_ray(r, max_depth, world);
@@ -88,29 +88,29 @@ void Camera::print_properties() const noexcept {
     std::clog << "\n";
 }
 
-color Camera::send_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
+Color Camera::send_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
-        return Color::Black;
+        return Colors::Black;
     
-    Hit_record rec;
+    HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
     if (world.hit(r, Interval{ 0.001, rt::infinity }, rec)) {
         Ray scattered;
-        color attenuation;
+        Color attenuation;
         if (rec.mat->scatter(r, rec, attenuation, scattered))
             return attenuation * send_ray(scattered, depth - 1, world);
         
-        return Color::Black;
+        return Colors::Black;
     }
 
     // Nothing was hit -> background gradient
-    // TODO: move background colors to camera class?
+    // TODO: move background Colors to camera class?
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    return Color::White * (1.0 - a) + Color::LightBlue * a;
+    return Colors::White * (1.0 - a) + Colors::LightBlue * a;
 }
 
 Ray Camera::get_ray(int i, int j) const noexcept {

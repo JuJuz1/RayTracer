@@ -3,19 +3,18 @@
 
 // https://rgbcolorpicker.com/0-1
 
-// Colors
-const Vec3 Color::Red       {1.0, 0.0, 0.0};
-const Vec3 Color::Orange    {0.8, 0.6, 0.2};
-const Vec3 Color::Pink      {0.8, 0.1, 0.7};
-const Vec3 Color::Green     {0.0, 1.0, 0.0};
-const Vec3 Color::Lime      {0.7, 0.8, 0.1};
-const Vec3 Color::Blue      {0.0, 0.0, 1.0};
-const Vec3 Color::LightBlue {0.5, 0.7, 1.0};
-const Vec3 Color::DarkBlue  {0.1, 0.2, 0.5};
-const Vec3 Color::White     {1.0, 1.0, 1.0};
-const Vec3 Color::Gray      {0.5, 0.5, 0.5};
-const Vec3 Color::LightGray {0.8, 0.8, 0.8};
-const Vec3 Color::Black     {0.0, 0.0, 0.0};
+const Vec3 Colors::Red       {1.0, 0.0, 0.0};
+const Vec3 Colors::Orange    {0.8, 0.6, 0.2};
+const Vec3 Colors::Pink      {0.8, 0.1, 0.7};
+const Vec3 Colors::Green     {0.0, 1.0, 0.0};
+const Vec3 Colors::Lime      {0.7, 0.8, 0.1};
+const Vec3 Colors::Blue      {0.0, 0.0, 1.0};
+const Vec3 Colors::LightBlue {0.5, 0.7, 1.0};
+const Vec3 Colors::DarkBlue  {0.1, 0.2, 0.5};
+const Vec3 Colors::White     {1.0, 1.0, 1.0};
+const Vec3 Colors::Gray      {0.5, 0.5, 0.5};
+const Vec3 Colors::LightGray {0.8, 0.8, 0.8};
+const Vec3 Colors::Black     {0.0, 0.0, 0.0};
 
 constexpr double linear_to_gamma_two(double linear_component) noexcept {
     if (linear_component > 0)
@@ -24,7 +23,7 @@ constexpr double linear_to_gamma_two(double linear_component) noexcept {
     return 0;
 }
 
-void write_color(std::ostream& out, const color& pixel_color) {
+void write_color(std::ostream& out, const Color& pixel_color) {
     const double r = linear_to_gamma_two(pixel_color.x());
     const double g = linear_to_gamma_two(pixel_color.y());
     const double b = linear_to_gamma_two(pixel_color.z());

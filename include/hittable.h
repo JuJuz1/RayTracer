@@ -8,12 +8,12 @@
 #include "interval.h"
 
 // TODO: maybe just include material.h
-// Forward declare Material to allow Hit_record
+// Forward declare Material to allow HitRecord
 // to contain shared ptr of Material
 class Material;
 
 // Stores the information about the collision
-struct Hit_record {
+struct HitRecord {
     Point3 p;
     Vec3 normal;
     // Aby object which inherits hittable 
@@ -32,7 +32,7 @@ class Hittable {
     public:
         virtual ~Hittable() = default;
 
-        virtual bool hit(const Ray& r, const Interval& ray_t, Hit_record& rec) const noexcept = 0;
+        virtual bool hit(const Ray& r, const Interval& ray_t, HitRecord& rec) const noexcept = 0;
 };
 
 #endif

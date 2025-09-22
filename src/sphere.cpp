@@ -7,7 +7,7 @@
 Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept 
     : center{ center }, radius{ std::fmax(radius, 0.0) }, mat{ mat } {}
 
-bool Sphere::hit(const Ray& r, const Interval& ray_t, Hit_record& out_rec) const noexcept {
+bool Sphere::hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {
     Vec3 oc{ center - r.origin() };
     const double a = r.direction().length_squared();
     const double h = dot(r.direction(), oc);

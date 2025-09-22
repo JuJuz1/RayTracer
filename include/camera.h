@@ -43,7 +43,7 @@ class Camera {
 
         // Calculates the color of a pixel with a given ray from the camera
         // Takes into account the passed Hittable object(s)
-        color send_ray(const Ray& r, int depth, const Hittable& world) const noexcept;
+        Color send_ray(const Ray& r, int depth, const Hittable& world) const noexcept;
 
         // Construct a camera ray originating from the origin and directed at randomly sampled
         // point around the pixel location i, j

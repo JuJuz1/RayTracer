@@ -17,40 +17,40 @@ class Material {
         // use this base class as the material and just return false
         virtual bool scatter(
             const Ray& in_r, 
-            const Hit_record& rec, 
-            color& attenuation, 
+            const HitRecord& rec, 
+            Color& attenuation, 
             Ray& scattered) const noexcept;
 };
 
 // A material to always scatter a ray
 class Lambertian : public Material {
     public:
-        Lambertian(const color& albedo);
+        Lambertian(const Color& albedo);
 
         bool scatter(
             const Ray& in_r, 
-            const Hit_record& rec, 
-            color& out_attenuation, 
+            const HitRecord& rec, 
+            Color& out_attenuation, 
             Ray& out_scattered) const noexcept override;
     
     private:
-        color albedo;
+        Color albedo;
 };
 
 // Reflects a ray
 class Metal : public Material {
     public:
-        Metal(const color& albedo, double fuzz);
+        Metal(const Color& albedo, double fuzz);
 
         // Fuzzy reflection
         bool scatter(
             const Ray& in_r, 
-            const Hit_record& rec, 
-            color& out_attenuation, 
+            const HitRecord& rec, 
+            Color& out_attenuation, 
             Ray& out_scattered) const noexcept override;
         
     private:
-        color albedo;
+        Color albedo;
         double fuzz;
 };
 
@@ -61,15 +61,15 @@ class Dielectric : public Material {
         // Refraction
         bool scatter(
             const Ray& in_r, 
-            const Hit_record& rec, 
-            color& out_attenuation, 
+            const HitRecord& rec, 
+            Color& out_attenuation, 
             Ray& out_scattered) const noexcept override;
         
     private:
         double refraction_index;
         
         // Shlick's appromixation for reflectance
-        static double reflectance(double cosine, double refraction_index) noexcept;
+        double reflectance(double cosine, double ri) const noexcept;
 };
 
 #endif
