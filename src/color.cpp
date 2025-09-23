@@ -1,6 +1,7 @@
 #include "color.h"
 
 #include <cmath>
+#include <cstdio>
 
 #include "interval.h"
 
@@ -33,12 +34,22 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     const double g = linear_to_gamma_two(pixel_color.y());
     const double b = linear_to_gamma_two(pixel_color.z());
     
-    constexpr double multiplier = 256;
+    // constexpr double multiplier = 256;
+    // static const Interval intensity{ 0.000, 0.999 };
+    // const int rbyte = static_cast<int>(intensity.clamp(r) * multiplier);
+    // const int gbyte = static_cast<int>(intensity.clamp(g) * multiplier);
+    // const int bbyte = static_cast<int>(intensity.clamp(b) * multiplier);
+    // out << rbyte << ' ' << gbyte << ' ' << bbyte << "\n";
+    
     // Translate from range [0, 1] to byte range [0, 255]
-    const Interval intensity{ 0.000, 0.999 };
-    const int rbyte = static_cast<int>(intensity.clamp(r) * multiplier);
-    const int gbyte = static_cast<int>(intensity.clamp(g) * multiplier);
-    const int bbyte = static_cast<int>(intensity.clamp(b) * multiplier);
+    // Use this for optimization reasons
+    const int rbyte = static_cast<int>(std::fmin(std::fmax(r, 0.000), 0.999) * 256);
+    const int gbyte = static_cast<int>(std::fmin(std::fmax(g, 0.000), 0.999) * 256);
+    const int bbyte = static_cast<int>(std::fmin(std::fmax(b, 0.000), 0.999) * 256);
 
-    out << rbyte << ' ' << gbyte << ' ' << bbyte << "\n";
+    // More optimized way of writing to the file
+    // 13 should be enough: XXX XXX XXX\n -> 13 including null terminator
+    char buf[13];
+    const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
+    out.write(buf, len);
 }

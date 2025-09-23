@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400; // 400
-    cam.samples_per_pixel = 100; // 100
+    cam.samples_per_pixel = 50; // 100
     cam.max_depth         = 50;  // 50
 
     // Viewport
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     }
 
     const int objects{ world.count() };
-    std::clog << "\nSpheres created: " << objects << " (3 big ones)\n";
+    std::cout << "\nSpheres created: " << objects << " (3 big ones)\n";
 
     return 0;
 }

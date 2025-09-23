@@ -13,10 +13,9 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
     initialize();
     print_properties();
 
-    std::ofstream out;
+    std::ofstream out{ "image.ppm" };
     // Open for output and clear existing content
-    out.open(filename);
-    if (!out) {
+    if (!out.is_open()) {
         std::cerr << "Error while opening file!\n";
         return false;
     }
@@ -24,11 +23,10 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
     using namespace std::chrono;
     const auto start{ high_resolution_clock::now() };
     auto last_print{ start };
-    constexpr double clog_elapsed_time_rate{ 1.0 };
+    constexpr double progress_refresh_rate{ 0.5 };
 
     // Render
-
-    std::cout << "Rendering output to file: " << filename << "\n";
+    std::cout << "Rendering output to file: " << filename;
     out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     for (int j{ 0 }; j < image_height; ++j) {
@@ -43,17 +41,16 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
         }
         
         // Progress indicators
-
         auto now{ high_resolution_clock::now() };
         double seconds_since_last{ duration<double>(now - last_print).count() };
-        if (clog_elapsed_time_rate < seconds_since_last) {
-            int scanlines_done{ j + 1 };
-            int scanlines_remaining = image_height - scanlines_done;
+        if (progress_refresh_rate < seconds_since_last) {
+            const int scanlines_done{ j + 1 };
+            const int scanlines_remaining{ image_height - scanlines_done };
 
             const double elapsed{ duration<double>(now - start).count() };
             const double eta{ elapsed / scanlines_done * scanlines_remaining };
 
-            std::clog << "\rScanlines remaining: " << (image_height - 1 - j)
+            std::cout << "\rScanlines remaining: " << (image_height - 1 - j)
                       << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
                       << " | ETA: " << eta << "s"
                       << ' ' // Padding
@@ -105,21 +102,21 @@ void Camera::initialize() noexcept {
 }
 
 void Camera::print_properties() const noexcept {
-    std::clog << "\nRendering an image with properties:\n";
+    std::cout << "\nRendering an image with properties:\n";
     rt::print_camera_property_formatted("Width", image_width);
     rt::print_camera_property_formatted("Height", image_height);
     rt::print_camera_property_formatted("Samples per pixel", samples_per_pixel);
     rt::print_camera_property_formatted("Max depth", max_depth);
 
-    std::clog << "\nViewport properties:\n";
+    std::cout << "\nViewport properties:\n";
     rt::print_camera_property_formatted("Vertical fov", vfov);
     rt::print_camera_property_formatted("Look from", lookfrom);
     rt::print_camera_property_formatted("Look at", lookat);
     
-    std::clog << "\nLens properties:\n";
+    std::cout << "\nLens properties:\n";
     rt::print_camera_property_formatted("Defocus angle", defocus_angle);
     rt::print_camera_property_formatted("Focus distance", focus_dist);
-    std::clog << "\n";
+    std::cout << "\n";
 }
 
 Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
