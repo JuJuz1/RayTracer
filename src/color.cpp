@@ -49,6 +49,7 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     
     // A faster way of writing to the file
     // 13 should be enough: XXX XXX XXX\n -> 13 including null terminator
+    // Gets converted into characters so stays in range [0-127]
     char buf[13];
     const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
     out.write(buf, len);

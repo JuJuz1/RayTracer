@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "color.h"
+#include "timer.h"
 #include "rtweekend.h"
 #include "material.h"
 
@@ -29,7 +30,7 @@ bool Camera::render(
         return false;
     }
 
-    std::cout << "Rendering output to file: " << filename << "\n";
+    std::cout << "\nRendering output to file: " << filename << "\n";
     print_properties();
 
     out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
@@ -53,18 +54,18 @@ bool Camera::render(
     Color** const color_buffers{ new Color*[num_threads] };
     uint32_t* const buffer_lengths{ new uint32_t[num_threads] };
 
-    for (uint32_t t{ 0 }; t < num_threads; ++t) {
-        const uint32_t j_start{ t * rows_per_thread };
+    for (uint32_t n{ 0 }; n < num_threads; ++n) {
+        const uint32_t j_start{ n * rows_per_thread };
         uint32_t j_end{ j_start + rows_per_thread };
         // Add all leftover to last thread
-        if (t == num_threads - 1)
+        if (n == num_threads - 1)
             j_end += leftover;
 
         const uint32_t len{ (j_end - j_start) * image_width};
 
         // Allocate buffer for a thread to write colors to
-        color_buffers[t] = new Color[(j_end - j_start) * image_width];
-        buffer_lengths[t] = len;
+        color_buffers[n] = new Color[(j_end - j_start) * image_width];
+        buffer_lengths[n] = len;
 
         threads.emplace_back(
             &Camera::render_chunk_threaded, 
@@ -73,46 +74,37 @@ bool Camera::render(
             j_end, 
             static_cast<uint32_t>(image_width),
             std::cref(world),
-            color_buffers[t]
-            //std::ref(out)
+            color_buffers[n]
         );
     }
 
-    // TODO: create a timer or logger class for this
     // Progress indicators
-    using namespace std::chrono;
-    const auto start{ high_resolution_clock::now() };
+    Timer t;
 
     // Execute threads
     for (auto& th : threads) {
         th.join();
     }
 
-    std::cout << "\nWriting to file...\n"; 
+    std::cout << "Writing to file...\n";
 
-    // Write at the end
-    for (uint32_t t{ 0 }; t < num_threads; ++t) {
-        write_color(out, color_buffers[t], buffer_lengths[t]);
-        delete[] color_buffers[t];
+    for (uint32_t n{ 0 }; n < num_threads; ++n) {
+        write_color(out, color_buffers[n], buffer_lengths[n]);
+        delete[] color_buffers[n];
     }
+
+    t.print_elapsed("Total time: ");
 
     delete[] color_buffers;
     delete[] buffer_lengths;
-
-    const auto now{ high_resolution_clock::now() };
-    const double elapsed{ duration<double>(now - start).count() };
-    std::cout << "Elapsed time: " 
-              << std::fixed << std::setprecision(3) << elapsed << "s" << std::flush;
 
     out.close();
     return true;
 }
 
 void Camera::render_single_thread(const Hittable& world, std::ofstream& out) const noexcept {
-    // Progress indicators
-    using namespace std::chrono;
-    const auto start{ high_resolution_clock::now() };
-    auto last_print{ start };
+    Timer t;
+    double last_print{ t.elapsed() };
     constexpr double progress_refresh_rate{ 0.5 };
 
     for (int j{ 0 }; j < image_height; ++j) {
@@ -126,27 +118,10 @@ void Camera::render_single_thread(const Hittable& world, std::ofstream& out) con
             write_color(out, pixel_color * pixel_sample_scale);
         }
         
-        const auto now{ high_resolution_clock::now() };
-        double seconds_since_last{ duration<double>(now - last_print).count() };
-        if (progress_refresh_rate < seconds_since_last) {
-            const int scanlines_done{ j + 1 };
-            const int scanlines_remaining{ image_height - scanlines_done };
-
-            const double elapsed{ duration<double>(now - start).count() };
-            const double elapsed_min{ elapsed / 60.0 };
-            const double eta{ elapsed / scanlines_done * scanlines_remaining };
-            const double eta_min{ eta / 60.0 };
-
-            std::cout << "\rScanlines remaining: " << (image_height - 1 - j)
-                      << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
-                      << " (" << std::setprecision(1) << elapsed_min << "m)"
-                      << std::setprecision(3)
-                      << " | ETA: " << eta << "s" 
-                      << " (" << std::setprecision(1) << eta_min << "m)"
-                      << ' ' // Padding
-                      << std::flush;
-            
-            last_print = now;
+        const double elapsed{ t.elapsed() };
+        if (progress_refresh_rate < elapsed - last_print) {
+            print_progress_single_thread(t, elapsed, j, image_height);
+            last_print = elapsed;
         }
     }
 }
@@ -165,6 +140,7 @@ void Camera::render_chunk_threaded(
                   << " rows: " << j_start << " to " << j_end << "\n";
     }
 
+    Timer t;
     const uint32_t rows{ j_end - j_start };
 
     for (uint32_t j{ 0 }; j < rows; ++j) {
@@ -181,7 +157,8 @@ void Camera::render_chunk_threaded(
 
     {
         std::lock_guard<std::mutex> lock(cout_mutex);
-        std::cout << "Thread " << std::this_thread::get_id() << " finished\n"; 
+        std::cout << "Thread " << std::this_thread::get_id() 
+                  << " finished in " << t.elapsed() << "\n";
     }
 }
 

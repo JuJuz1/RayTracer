@@ -24,6 +24,7 @@ set ( SOURCE_ONE_WEEKEND
   src/interval.cpp
   src/ray.cpp
   src/sphere.cpp
+  src/timer.cpp
   src/vec3.cpp
 )
 
