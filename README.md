@@ -30,3 +30,36 @@ Image properties:
 
 - samples per pixel: 100
 ![An example of a final render](renders/image_samples100.png)
+
+## Running Locally
+
+### Prerequisites
+
+- A C++11 (or later) compatible compiler (GCC, MSVC or Clang)
+- [CMake](https://cmake.org/) (version 3.1.0 or later recommended)
+
+### Build Instructions
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/JuJuz1/RayTracer.git
+cd RayTracer
+```
+
+2. **Build with CMake**
+
+```bash
+cmake -B $(your_build_directory_name)
+cmake --build build
+# for optimized builds
+cmake --build build --config Release 
+```
+
+3. **Run the program**
+
+```bash
+./$(your_build_directory_name)/Release/inOneWeekend [output_filename.ppm] [num_threads]
+```
+
+There are many ways to view the created **P3 PPM** images. I found it easiest to use this website: [PPM Viewer](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html)
