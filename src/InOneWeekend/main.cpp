@@ -71,7 +71,10 @@ int main(int argc, char* argv[]) {
     // Camera
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 400; // original: 400 
+    // For fast debug renders use:
+    // - samples_per_pixel 10
+    // - max_depth 10
+    cam.image_width       = 400; // original: 400
     cam.samples_per_pixel = 100; // original: 100
     cam.max_depth         =  50; // original: 50
     // Final image properties:
@@ -88,7 +91,7 @@ int main(int argc, char* argv[]) {
     cam.focus_dist    = 10.0;
 
     // Arguments
-    
+
     std::string filename{ "image.ppm" };
     uint32_t num_threads = 1;
     if (argc == 2) {
@@ -97,11 +100,11 @@ int main(int argc, char* argv[]) {
         num_threads = std::stoi(argv[1]);
         filename = argv[2];
     }
-    
+
     std::vector<std::thread> threads;
     const uint32_t max_threads{ std::thread::hardware_concurrency() };
     num_threads = std::min(num_threads, max_threads);
-    
+
     if (!cam.render(world, filename, threads, num_threads)) {
         return 0;
     }
