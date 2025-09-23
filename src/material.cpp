@@ -6,7 +6,7 @@
 #include "rtweekend.h"
 
 bool Material::scatter(
-    const Ray& in_r, 
+    const Ray& r, 
     const HitRecord& rec, 
     Color& attenuation, 
     Ray& scattered) const noexcept {
@@ -16,7 +16,7 @@ bool Material::scatter(
 Lambertian::Lambertian(const Color& albedo) : albedo{ albedo } {};
 
 bool Lambertian::scatter(
-    const Ray& in_r, 
+    const Ray& r, 
     const HitRecord& rec, 
     Color& out_attenuation, 
     Ray& out_scattered) const noexcept {

@@ -20,6 +20,7 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
         return false;
     }
 
+    // Progress indicators
     using namespace std::chrono;
     const auto start{ high_resolution_clock::now() };
     auto last_print{ start };
@@ -41,7 +42,6 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
             write_color(out, pixel_color * pixel_sample_scale);
         }
         
-        // Progress indicators
         const auto now{ high_resolution_clock::now() };
         double seconds_since_last{ duration<double>(now - last_print).count() };
         if (progress_refresh_rate < seconds_since_last) {
@@ -49,12 +49,16 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
             const int scanlines_remaining{ image_height - scanlines_done };
 
             const double elapsed{ duration<double>(now - start).count() };
+            const double elapsed_min{ elapsed / 60.0 };
             const double eta{ elapsed / scanlines_done * scanlines_remaining };
             const double eta_min{ eta / 60.0 };
 
             std::cout << "\rScanlines remaining: " << (image_height - 1 - j)
                       << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
-                      << " | ETA: " << eta << "s" << " (" << std::setprecision(1) << eta_min << "m)"
+                      << " (" << std::setprecision(1) << elapsed_min << "m)"
+                      << std::setprecision(3)
+                      << " | ETA: " << eta << "s" 
+                      << " (" << std::setprecision(1) << eta_min << "m)"
                       << ' ' // Padding
                       << std::flush;
             
