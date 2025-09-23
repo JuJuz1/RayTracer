@@ -58,8 +58,8 @@ bool Dielectric::scatter(
     const double ri{ rec.front_face ? (1.0 / refraction_index) : refraction_index };
 
     const Vec3 unit_direction{ unit_vector(in_r.direction()) };
-    double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
-    double sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
+    double cos_theta{ std::fmin(dot(-unit_direction, rec.normal), 1.0) };
+    double sin_theta{ std::sqrt(1.0 - cos_theta * cos_theta) };
 
     bool cannot_refract{ ri * sin_theta > 1};
     Vec3 direction;
@@ -73,7 +73,7 @@ bool Dielectric::scatter(
 }
 
 double Dielectric::reflectance(double cosine, double ri) const noexcept {
-    double r0 = (1 - ri) / (1 + ri);
+    double r0{ (1 - ri) / (1 + ri) };
     r0 = r0 * r0;
     return r0 + (1 - r0) * std::pow((1 - cosine), 5);
 }

@@ -29,48 +29,30 @@ double linear_to_gamma_two(double linear_component) noexcept {
     return 0;
 }
 
+int to_gamma_and_byte_range(double x) noexcept {
+    return static_cast<int>(std::fmin(std::fmax(linear_to_gamma_two(x), 0.000), 0.999) * 256);
+}
+
 void write_color(std::ofstream& out, const Color& pixel_color) {
-    const double r = linear_to_gamma_two(pixel_color.x());
-    const double g = linear_to_gamma_two(pixel_color.y());
-    const double b = linear_to_gamma_two(pixel_color.z());
-    
-    // constexpr double multiplier = 256;
-    // static const Interval intensity{ 0.000, 0.999 };
-    // const int rbyte = static_cast<int>(intensity.clamp(r) * multiplier);
-    // const int gbyte = static_cast<int>(intensity.clamp(g) * multiplier);
-    // const int bbyte = static_cast<int>(intensity.clamp(b) * multiplier);
-    // out << rbyte << ' ' << gbyte << ' ' << bbyte << "\n";
-    
+    write_color_to_stream(out, pixel_color.x(), pixel_color.y(), pixel_color.z());
+}
+
+void write_color(std::ofstream& out, const Color* const buffer, uint32_t len) {
+    for (uint32_t i{ 0 }; i < len; ++i) {
+        write_color_to_stream(out, buffer[i].x(), buffer[i].y(), buffer[i].z());
+    }
+}
+
+void write_color_to_stream(std::ofstream& out, double x, double y, double z) {
     // Translate from range [0, 1] to byte range [0, 255]
-    // Use this for optimization reasons
-    const int rbyte = static_cast<int>(std::fmin(std::fmax(r, 0.000), 0.999) * 256);
-    const int gbyte = static_cast<int>(std::fmin(std::fmax(g, 0.000), 0.999) * 256);
-    const int bbyte = static_cast<int>(std::fmin(std::fmax(b, 0.000), 0.999) * 256);
-    
+    const int rbyte{ to_gamma_and_byte_range(x) };
+    const int gbyte{ to_gamma_and_byte_range(y) };
+    const int bbyte{ to_gamma_and_byte_range(z) };
+
     // A faster way of writing to the file
     // 13 should be enough: XXX XXX XXX\n -> 13 including null terminator
     // Gets converted into characters so stays in range [0-127]
     char buf[13];
     const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
     out.write(buf, len);
-}
-
-void write_color(std::ofstream& out, double x, double y, double z) {
-    const double r = linear_to_gamma_two(x);
-    const double g = linear_to_gamma_two(y);
-    const double b = linear_to_gamma_two(z);
-    
-    const int rbyte = static_cast<int>(std::fmin(std::fmax(r, 0.000), 0.999) * 256);
-    const int gbyte = static_cast<int>(std::fmin(std::fmax(g, 0.000), 0.999) * 256);
-    const int bbyte = static_cast<int>(std::fmin(std::fmax(b, 0.000), 0.999) * 256);
-
-    char buf[13];
-    const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
-    out.write(buf, len);
-}
-
-void write_color(std::ofstream& out, const Color* const buffer, uint32_t len) {
-    for (uint32_t i{ 0 }; i < len; ++i) {
-        write_color(out, buffer[i].x(), buffer[i].y(), buffer[i].z());
-    }
 }

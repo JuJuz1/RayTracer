@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     // Contains every hittable object
     HittableList world;
     
-    const auto mat_ground = make_shared<Lambertian>(Colors::Gray);
+    const auto mat_ground{ make_shared<Lambertian>(Colors::Gray) };
     world.add(make_unique<Sphere>(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground));
     
     const auto mat_glass{ make_shared<Dielectric>(refraction_indeces::Glass) };
@@ -35,11 +35,11 @@ int main(int argc, char* argv[]) {
             const double choose_mat{ rt::random_double() };
             const Point3 sphere_position{
             a + rt::random_double() * 0.9, 0.2, b + rt::random_double() * 0.9};
-
+            
             // Check for overlap with big spheres
             if ((sphere_position - Point3{ 4, sphere_radius, 0 }).length() > 0.9) {
                 std::shared_ptr<Material> mat;
-                
+
                 if (choose_mat < 0.8) {
                     // Diffuse
                     const Color albedo{ random_vector() * random_vector() };
@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    
+
     // Big spheres left to right (furthest to closest)
     const auto mat_diffuse{ make_shared<Lambertian>(Colors::Orange) };
     world.add(make_unique<Sphere>(Point3{ -4, 1, 0 }, 1.0, mat_diffuse));
@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
     // Arguments
 
     std::string filename{ "image.ppm" };
-    uint32_t num_threads = 1;
+    uint32_t num_threads{ 1 };
     if (argc == 2) {
         num_threads = std::stoi(argv[1]);
     } else if (argc == 3) {

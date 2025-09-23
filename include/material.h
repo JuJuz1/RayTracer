@@ -7,9 +7,9 @@
 
 // Common refraction indeces
 namespace refraction_indeces {
-    constexpr double Air   = 1.0;
-    constexpr double Water = 1.33;
-    constexpr double Glass = 1.5;
+    constexpr double Air   { 1.0  };
+    constexpr double Water { 1.33 };
+    constexpr double Glass { 1.5  };
 }
 
 // An abstract material class to:

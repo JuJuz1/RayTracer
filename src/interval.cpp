@@ -23,5 +23,5 @@ double Interval::clamp(double x) const noexcept {
     return x;
 }
 
-const Interval Interval::empty    = Interval(+rt::infinity, -rt::infinity);
-const Interval Interval::universe = Interval(-rt::infinity, +rt::infinity);
+const Interval Interval::empty   { Interval(+rt::infinity, -rt::infinity) };
+const Interval Interval::universe{ Interval(-rt::infinity, +rt::infinity) };

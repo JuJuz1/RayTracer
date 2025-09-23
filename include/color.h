@@ -25,18 +25,21 @@ struct Colors {
     static const Vec3 Black;     // {0.0, 0.0, 0.0};
 };
 
+
 // Returns the gamma 2 transform for a linear component
 double linear_to_gamma_two(double linear_component) noexcept;
 
-// Writes the color to the file
-void write_color(std::ofstream& out, const Color& pixel_color);
+// Returns x transformed to gamma 2 and byte range [0, 255]
+int to_gamma_and_byte_range(double x) noexcept;
 
-// Overload for multithreading to reduce overhead
-void write_color(std::ofstream& out, double x, double y, double z);
+void write_color(std::ofstream& out, const Color& color);
 
 // Multithreading "overload"
-// Calls write_color(std::fstream& out, double x, double y, double z)
+// Calls write_color_to_stream(std::fstream& out, double x, double y, double z)
 // for every x y z of every Color in buffer
 void write_color(std::ofstream& out, const Color* const buffer, uint32_t len);
+
+// Writes the color to the stream
+void write_color_to_stream(std::ofstream& out, double x, double y, double z);
 
 #endif
