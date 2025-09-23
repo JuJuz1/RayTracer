@@ -20,10 +20,13 @@ class Camera {
         Point3 lookfrom     = Point3{ 0, 0,  0 }; // The point the camera is looking from
         Point3 lookat       = Point3{ 0, 0, -1 }; // -||- looking at
         Vec3 vup            = Point3{ 0, 1,  0 }; // Camera-relative "up" direction
-
+        
         double defocus_angle = 0;    // Variation angle of rays through each pixel
         double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
         
+        Color background_color_top    = Colors::LightBlue; // Gradient start color (top)
+        Color background_color_bottom = Colors::White;     // -||- end
+
         // Use Hittable so we can also use HittableList
         bool render(const Hittable& world, const std::string& filename) noexcept;
 

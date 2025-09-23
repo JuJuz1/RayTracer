@@ -5,6 +5,13 @@
 #include "hittable.h"
 #include "color.h"
 
+// Common refraction indeces
+namespace refraction_indeces {
+    constexpr double Air   = 1.0;
+    constexpr double Water = 1.33;
+    constexpr double Glass = 1.5;
+}
+
 // An abstract material class to:
 // 1. Produce a scattered ray
 // 2. If scattered tell how much the ray should be attenuated (colored)

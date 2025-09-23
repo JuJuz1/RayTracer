@@ -18,16 +18,16 @@ constexpr double Vec3::operator[](int i) const noexcept { return e[i]; }
 constexpr double& Vec3::operator[](int i) noexcept { return e[i]; }
 
 Vec3& Vec3::operator+=(const Vec3& other) noexcept {
-    e[0] += other.e[0];
-    e[1] += other.e[1];
-    e[2] += other.e[2];
+    e[0] += other.x();
+    e[1] += other.y();
+    e[2] += other.z();
     return *this;
 }
 
 Vec3& Vec3::operator-=(const Vec3& other) noexcept {
-    e[0] -= other.e[0];
-    e[1] -= other.e[1];
-    e[2] -= other.e[2];
+    e[0] -= other.x();
+    e[1] -= other.y();
+    e[2] -= other.z();
     return *this;
 }
 

@@ -26,9 +26,10 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
     constexpr double progress_refresh_rate{ 0.5 };
 
     // Render
-    std::cout << "Rendering output to file: " << filename;
+    std::cout << "Rendering output to file: " << filename << "\n";
     out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
+    // TODO: thread this, painfully slow to render final image otherwise
     for (int j{ 0 }; j < image_height; ++j) {
         for (int i{ 0 }; i < image_width; ++i) {
             Color pixel_color{};
@@ -41,7 +42,7 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
         }
         
         // Progress indicators
-        auto now{ high_resolution_clock::now() };
+        const auto now{ high_resolution_clock::now() };
         double seconds_since_last{ duration<double>(now - last_print).count() };
         if (progress_refresh_rate < seconds_since_last) {
             const int scanlines_done{ j + 1 };
@@ -49,10 +50,11 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
 
             const double elapsed{ duration<double>(now - start).count() };
             const double eta{ elapsed / scanlines_done * scanlines_remaining };
+            const double eta_min{ eta / 60.0 };
 
             std::cout << "\rScanlines remaining: " << (image_height - 1 - j)
                       << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
-                      << " | ETA: " << eta << "s"
+                      << " | ETA: " << eta << "s" << " (" << std::setprecision(1) << eta_min << "m)"
                       << ' ' // Padding
                       << std::flush;
             
@@ -136,12 +138,11 @@ Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const no
         return Colors::Black;
     }
 
-    // Nothing was hit -> background gradient
-    // TODO: move background Colors to camera class?
+    // Nothing was hit -> render background
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    return Colors::White * (1.0 - a) + Colors::LightBlue * a;
+    return background_color_top * a + background_color_bottom * (1.0 - a);
 }
 
 Ray Camera::get_ray(int i, int j) const noexcept {

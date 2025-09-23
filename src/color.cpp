@@ -46,7 +46,7 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     const int rbyte = static_cast<int>(std::fmin(std::fmax(r, 0.000), 0.999) * 256);
     const int gbyte = static_cast<int>(std::fmin(std::fmax(g, 0.000), 0.999) * 256);
     const int bbyte = static_cast<int>(std::fmin(std::fmax(b, 0.000), 0.999) * 256);
-
+    
     // More optimized way of writing to the file
     // 13 should be enough: XXX XXX XXX\n -> 13 including null terminator
     char buf[13];
