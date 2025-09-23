@@ -72,8 +72,8 @@ int main(int argc, char* argv[]) {
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
     cam.image_width       = 400; // original: 400 
-    cam.samples_per_pixel =  25; // original: 100
-    cam.max_depth         =  25; // original: 50
+    cam.samples_per_pixel = 100; // original: 100
+    cam.max_depth         =  50; // original: 50
     // Final image properties:
     // 1200, 500, 50
     

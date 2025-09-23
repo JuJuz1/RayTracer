@@ -1,10 +1,11 @@
 #include "camera.h"
 
+#include <atomic>
+#include <mutex>
 #include <chrono>
 #include <iostream>
 #include <fstream>
 #include <type_traits>
-#include <mutex>
 #include <cmath>
 
 #include "color.h"
@@ -14,6 +15,10 @@
 
 // Thread-safe console out
 std::mutex cout_mutex;
+
+// Progress indicator for multithreading
+//std::thread::id progress_thread_id;
+std::atomic<int> scanlines_done{ 0 };
 
 bool Camera::render(
     const Hittable& world, 
@@ -77,13 +82,15 @@ bool Camera::render(
             color_buffers[n]
         );
     }
-
+    
     // Progress indicators
     Timer t;
+    //progress_thread_id = threads.front().get_id();
 
     // Execute threads
     for (auto& th : threads) {
         th.join();
+        //if (th.get_id() == threads.front().get_id())
     }
 
     std::cout << "Writing to file...\n";
@@ -114,10 +121,10 @@ void Camera::render_single_thread(const Hittable& world, std::ofstream& out) con
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
-            
+
             write_color(out, pixel_color * pixel_sample_scale);
         }
-        
+
         const double elapsed{ t.elapsed() };
         if (progress_refresh_rate < elapsed - last_print) {
             print_progress_single_thread(t, elapsed, j, image_height);
@@ -141,24 +148,38 @@ void Camera::render_chunk_threaded(
     }
 
     Timer t;
+
     const uint32_t rows{ j_end - j_start };
 
     for (uint32_t j{ 0 }; j < rows; ++j) {
         for (uint32_t i{ 0 }; i < i_end; ++i) {
             Color pixel_color;
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
-                // Absolute row in the viewport
+                // Row as in viewport
                 const Ray r{ get_ray(i, j_start + j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
+            
             buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
+        }
+
+        ++scanlines_done;
+        // Update progress every 10 rows
+        if (scanlines_done % 10 == 0) {
+            const int done{ scanlines_done.load() };
+            const double percent{ (done * 100.0) / image_height };
+            std::lock_guard<std::mutex> lock(cout_mutex);
+            std::cout << "\rProgress: " << std::fixed << std::setprecision(1) 
+                        << percent << "% | Elapsed time: " 
+                        << std::setprecision(3) << t.elapsed() << "s" << std::flush;
         }
     }
 
     {
         std::lock_guard<std::mutex> lock(cout_mutex);
-        std::cout << "Thread " << std::this_thread::get_id() 
-                  << " finished in " << t.elapsed() << "\n";
+        std::cout << "\nThread " << std::this_thread::get_id() 
+                  << " finished in " 
+                  << std::fixed << std::setprecision(3) << t.elapsed() << "s" << "\n";
     }
 }
 
