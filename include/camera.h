@@ -1,8 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <string>
+
 #include "vec3.h"
 #include "hittable.h"
+#include "color.h"
 #include "ray.h"
 
 class Camera {
@@ -22,7 +25,7 @@ class Camera {
         double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
         
         // Use Hittable so we can also use HittableList
-        void render(const Hittable& world) noexcept;
+        bool render(const Hittable& world, const std::string& filename) noexcept;
 
     private:
         int image_height;          // Rendered image height

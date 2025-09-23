@@ -2,38 +2,69 @@
 
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 #include "color.h"
 #include "rtweekend.h"
 #include "material.h"
 
-void Camera::render(const Hittable& world) noexcept {
+bool Camera::render(const Hittable& world, const std::string& filename) noexcept {
     initialize();
-
     print_properties();
 
-    using namespace std::chrono;
-    const auto start = high_resolution_clock::now();
+    std::ofstream out;
+    // Open for output and clear existing content
+    out.open(filename);
+    if (!out) {
+        std::cerr << "Error while opening file!\n";
+        return false;
+    }
 
-    std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+    using namespace std::chrono;
+    const auto start{ high_resolution_clock::now() };
+    auto last_print{ start };
+    constexpr double clog_elapsed_time_rate{ 1.0 };
+
+    // Render
+
+    std::cout << "Rendering output to file: " << filename << "\n";
+    out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     for (int j{ 0 }; j < image_height; ++j) {
-        std::clog << "\rScanlines remaining: " << (image_height - 1 - j) << ' ' << std::flush;
         for (int i{ 0 }; i < image_width; ++i) {
             Color pixel_color{};
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
+            
+            write_color(out, pixel_color * pixel_sample_scale);
+        }
+        
+        // Progress indicators
 
-            write_color(std::cout, pixel_color * pixel_sample_scale);
+        auto now{ high_resolution_clock::now() };
+        double seconds_since_last{ duration<double>(now - last_print).count() };
+        if (clog_elapsed_time_rate < seconds_since_last) {
+            int scanlines_done{ j + 1 };
+            int scanlines_remaining = image_height - scanlines_done;
+
+            const double elapsed{ duration<double>(now - start).count() };
+            const double eta{ elapsed / scanlines_done * scanlines_remaining };
+
+            std::clog << "\rScanlines remaining: " << (image_height - 1 - j)
+                      << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
+                      << " | ETA: " << eta << "s"
+                      << ' ' // Padding
+                      << std::flush;
+            
+            last_print = now;
         }
     }
-
-    const auto end{ high_resolution_clock::now() }; 
-    const auto ms{ duration_cast<milliseconds>(end - start).count() };
-    std::clog << "\nRendering took: " << std::setprecision(3) << ms / 1000.0 << "s\n";
+    
+    out.close();
+    return true;
 }
 
 void Camera::initialize() noexcept {

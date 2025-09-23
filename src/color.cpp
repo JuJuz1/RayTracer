@@ -28,7 +28,7 @@ double linear_to_gamma_two(double linear_component) noexcept {
     return 0;
 }
 
-void write_color(std::ostream& out, const Color& pixel_color) {
+void write_color(std::ofstream& out, const Color& pixel_color) {
     const double r = linear_to_gamma_two(pixel_color.x());
     const double g = linear_to_gamma_two(pixel_color.y());
     const double b = linear_to_gamma_two(pixel_color.z());

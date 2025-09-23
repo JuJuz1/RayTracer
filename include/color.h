@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include <ostream>
+#include <fstream>
 
 #include "vec3.h"
 
@@ -28,7 +28,7 @@ struct Colors {
 // Returns the gamma 2 transform for a linear component
 double linear_to_gamma_two(double linear_component) noexcept;
 
-// Writes the color to 
-void write_color(std::ostream& out, const Color& pixel_color);
+// Writes the color to the file
+void write_color(std::ofstream& out, const Color& pixel_color);
 
 #endif

@@ -10,14 +10,19 @@
 #include "sphere.h"
 #include "camera.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+    
+    std::string filename{ "image.ppm" };
+    
+    if (argc > 1)
+        filename = argv[1];
 
     using std::make_shared;
     using std::make_unique;
-    
+
     // Contains every hittable object
     HittableList world;
-
+    
     const auto mat_ground = make_shared<Lambertian>(Colors::Gray);
     world.add(make_unique<Sphere>(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground));
 
@@ -26,7 +31,7 @@ int main() {
     // Generate lots of small random spheres
     // The amount is: x <= (sphere_position_edge * 2)^2
     // as we discard those which overlap with the big spheres
-    constexpr int sphere_position_edge{ 11 };
+    constexpr int sphere_position_edge{ 5 }; // 11
     constexpr double sphere_radius{ 0.2 };
     for (int a{ -sphere_position_edge }; a < sphere_position_edge; ++a) {
         for (int b{ -sphere_position_edge }; b < sphere_position_edge; ++b) {
@@ -69,9 +74,9 @@ int main() {
     // Camera
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
-    cam.image_width       = 1200; // 400
-    cam.samples_per_pixel =  500; // 100
-    cam.max_depth         =   50;
+    cam.image_width       = 400; // 400
+    cam.samples_per_pixel = 100; // 100
+    cam.max_depth         = 50;  // 50
 
     // Viewport
     cam.vfov     = 20.0;
@@ -83,11 +88,12 @@ int main() {
     cam.defocus_angle =  0.6;
     cam.focus_dist    = 10.0;
 
-    cam.render(world);
+    if (!cam.render(world, filename)) {
+        return 0;
+    }
 
     const int objects{ world.count() };
-    std::clog << "Small spheres created: " << objects - 3 << "\n";
-    std::clog << "Total spheres: " << objects;
+    std::clog << "\nSpheres created: " << objects << " (3 big ones)\n";
 
     return 0;
 }

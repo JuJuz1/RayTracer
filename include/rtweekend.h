@@ -4,6 +4,7 @@
 #include <limits>
 #include <random>
 #include <string>
+#include <iostream>
 #include <iomanip>
 
 #include "vec3.h"
@@ -23,8 +24,9 @@ namespace rt {
 
     // Returns a random double in the range [0.0, 1.0[
     inline double random_double() noexcept {
+        static std::random_device dev;
+        static std::mt19937 generator{ dev() };
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static std::mt19937 generator;
         return distribution(generator);
     }
 
