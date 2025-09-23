@@ -53,3 +53,23 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
     out.write(buf, len);
 }
+
+void write_color(std::ofstream& out, double x, double y, double z) {
+    const double r = linear_to_gamma_two(x);
+    const double g = linear_to_gamma_two(y);
+    const double b = linear_to_gamma_two(z);
+    
+    const int rbyte = static_cast<int>(std::fmin(std::fmax(r, 0.000), 0.999) * 256);
+    const int gbyte = static_cast<int>(std::fmin(std::fmax(g, 0.000), 0.999) * 256);
+    const int bbyte = static_cast<int>(std::fmin(std::fmax(b, 0.000), 0.999) * 256);
+
+    char buf[13];
+    const int len{ std::snprintf(buf, sizeof(buf), "%d %d %d\n", rbyte, gbyte, bbyte) };
+    out.write(buf, len);
+}
+
+void write_color(std::ofstream& out, const Color* const buffer, uint32_t len) {
+    for (uint32_t i{ 0 }; i < len; ++i) {
+        write_color(out, buffer[i].x(), buffer[i].y(), buffer[i].z());
+    }
+}

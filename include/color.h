@@ -31,4 +31,12 @@ double linear_to_gamma_two(double linear_component) noexcept;
 // Writes the color to the file
 void write_color(std::ofstream& out, const Color& pixel_color);
 
+// Overload for multithreading to reduce overhead
+void write_color(std::ofstream& out, double x, double y, double z);
+
+// Multithreading "overload"
+// Calls write_color(std::fstream& out, double x, double y, double z)
+// for every x y z of every Color in buffer
+void write_color(std::ofstream& out, const Color* const buffer, uint32_t len);
+
 #endif

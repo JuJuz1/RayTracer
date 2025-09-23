@@ -3,34 +3,118 @@
 #include <chrono>
 #include <iostream>
 #include <fstream>
+#include <type_traits>
+#include <mutex>
 #include <cmath>
 
 #include "color.h"
 #include "rtweekend.h"
 #include "material.h"
 
-bool Camera::render(const Hittable& world, const std::string& filename) noexcept {
-    initialize();
-    print_properties();
+// Thread-safe console out
+std::mutex cout_mutex;
 
-    std::ofstream out{ "image.ppm" };
+bool Camera::render(
+    const Hittable& world, 
+    const std::string& filename, 
+    std::vector<std::thread>& threads, 
+    uint32_t num_threads
+) noexcept {
+    initialize();
+
     // Open for output and clear existing content
+    std::ofstream out{ filename };
     if (!out.is_open()) {
         std::cerr << "Error while opening file!\n";
         return false;
     }
 
+    std::cout << "Rendering output to file: " << filename << "\n";
+    print_properties();
+
+    out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+
+    // Single-threaded
+    if (num_threads == 1) {
+        std::cout << "Single thread\n"; 
+        render_single_thread(world, out);
+        out.close();
+        return true;
+    }
+
+    // Multithreaded
+    std::cout << "Multithread\n";
+    std::cout << "Thread count: " << num_threads << "\n";
+
+    const uint32_t rows_per_thread{ image_height / num_threads };
+    const uint32_t leftover{ image_height % rows_per_thread };
+
+    // Buffers for threads
+    Color** const color_buffers{ new Color*[num_threads] };
+    uint32_t* const buffer_lengths{ new uint32_t[num_threads] };
+
+    for (uint32_t t{ 0 }; t < num_threads; ++t) {
+        const uint32_t j_start{ t * rows_per_thread };
+        uint32_t j_end{ j_start + rows_per_thread };
+        // Add all leftover to last thread
+        if (t == num_threads - 1)
+            j_end += leftover;
+
+        const uint32_t len{ (j_end - j_start) * image_width};
+
+        // Allocate buffer for a thread to write colors to
+        color_buffers[t] = new Color[(j_end - j_start) * image_width];
+        buffer_lengths[t] = len;
+
+        threads.emplace_back(
+            &Camera::render_chunk_threaded, 
+            this, 
+            j_start, 
+            j_end, 
+            static_cast<uint32_t>(image_width),
+            std::cref(world),
+            color_buffers[t]
+            //std::ref(out)
+        );
+    }
+
+    // TODO: create a timer or logger class for this
+    // Progress indicators
+    using namespace std::chrono;
+    const auto start{ high_resolution_clock::now() };
+
+    // Execute threads
+    for (auto& th : threads) {
+        th.join();
+    }
+
+    std::cout << "\nWriting to file...\n"; 
+
+    // Write at the end
+    for (uint32_t t{ 0 }; t < num_threads; ++t) {
+        write_color(out, color_buffers[t], buffer_lengths[t]);
+        delete[] color_buffers[t];
+    }
+
+    delete[] color_buffers;
+    delete[] buffer_lengths;
+
+    const auto now{ high_resolution_clock::now() };
+    const double elapsed{ duration<double>(now - start).count() };
+    std::cout << "Elapsed time: " 
+              << std::fixed << std::setprecision(3) << elapsed << "s" << std::flush;
+
+    out.close();
+    return true;
+}
+
+void Camera::render_single_thread(const Hittable& world, std::ofstream& out) const noexcept {
     // Progress indicators
     using namespace std::chrono;
     const auto start{ high_resolution_clock::now() };
     auto last_print{ start };
     constexpr double progress_refresh_rate{ 0.5 };
 
-    // Render
-    std::cout << "Rendering output to file: " << filename << "\n";
-    out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
-
-    // TODO: thread this, painfully slow to render final image otherwise
     for (int j{ 0 }; j < image_height; ++j) {
         for (int i{ 0 }; i < image_width; ++i) {
             Color pixel_color{};
@@ -65,9 +149,40 @@ bool Camera::render(const Hittable& world, const std::string& filename) noexcept
             last_print = now;
         }
     }
-    
-    out.close();
-    return true;
+}
+
+void Camera::render_chunk_threaded(
+    uint32_t j_start, 
+    uint32_t j_end, 
+    uint32_t i_end, 
+    const Hittable& world, 
+    Color* buffer
+) const noexcept {
+    // Released after scope
+    {
+        std::lock_guard<std::mutex> lock(cout_mutex);
+        std::cout << "Thread " << std::this_thread::get_id() 
+                  << " rows: " << j_start << " to " << j_end << "\n";
+    }
+
+    const uint32_t rows{ j_end - j_start };
+
+    for (uint32_t j{ 0 }; j < rows; ++j) {
+        for (uint32_t i{ 0 }; i < i_end; ++i) {
+            Color pixel_color;
+            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+                // Absolute row in the viewport
+                const Ray r{ get_ray(i, j_start + j) };
+                pixel_color += trace_ray(r, max_depth, world);
+            }
+            buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
+        }
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(cout_mutex);
+        std::cout << "Thread " << std::this_thread::get_id() << " finished\n"; 
+    }
 }
 
 void Camera::initialize() noexcept {

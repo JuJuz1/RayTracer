@@ -2,6 +2,8 @@
 #define CAMERA_H
 
 #include <string>
+#include <vector>
+#include <thread>
 
 #include "vec3.h"
 #include "hittable.h"
@@ -28,7 +30,11 @@ class Camera {
         Color background_color_bottom = Colors::White;     // -||- end
 
         // Use Hittable so we can also use HittableList
-        bool render(const Hittable& world, const std::string& filename) noexcept;
+        bool Camera::render(
+            const Hittable& world, 
+            const std::string& filename, 
+            std::vector<std::thread>& threads, 
+            uint32_t num_threads) noexcept;
 
     private:
         int image_height;          // Rendered image height
@@ -40,9 +46,20 @@ class Camera {
         Vec3 u, v, w;              // Camera frame basis vectors
         Vec3 defocus_disk_u;       // Defocus disk horizontal radius
         Vec3 defocus_disk_v;       // -||- vertical
-
-        // Called at the start of render() to initialize private variables
+        
+        // Called at the start of render
         void initialize() noexcept;
+
+        // Single-threaded
+        void render_single_thread(const Hittable& world, std::ofstream& out) const noexcept;
+        
+        // Multithreaded
+        void Camera::render_chunk_threaded(
+            uint32_t j_start, 
+            uint32_t j_end, 
+            uint32_t i_end, 
+            const Hittable& world, 
+            Color* buffer) const noexcept;
 
         void print_properties() const noexcept;
 
