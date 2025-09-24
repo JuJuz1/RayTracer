@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <vector>
 
 #include "interval.h"
 
@@ -37,9 +38,9 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     write_color_to_stream(out, pixel_color.x(), pixel_color.y(), pixel_color.z());
 }
 
-void write_color(std::ofstream& out, const Color* const buffer, uint32_t len) {
-    for (uint32_t i{ 0 }; i < len; ++i) {
-        write_color_to_stream(out, buffer[i].x(), buffer[i].y(), buffer[i].z());
+void write_color(std::ofstream& out, const std::vector<Color>& color_buffer) {
+    for (const auto& color : color_buffer) {
+        write_color_to_stream(out, color.x(), color.y(), color.z());
     }
 }
 

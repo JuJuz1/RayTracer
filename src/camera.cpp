@@ -66,8 +66,8 @@ bool Camera::render(
     const uint32_t leftover{ image_height % num_threads };
 
     // Buffers for threads
-    Color** const color_buffers{ new Color*[num_threads] };
-    uint32_t* const buffer_lengths{ new uint32_t[num_threads] };
+    std::vector<Color> color_buffer;
+    color_buffer.reserve(image_width * image_height);
 
     for (uint32_t n{ 0 }; n < num_threads; ++n) {
         const uint32_t j_start{ n * rows_per_thread };
@@ -76,12 +76,6 @@ bool Camera::render(
         if (n == num_threads - 1)
             j_end += leftover;
 
-        const uint32_t len{ (j_end - j_start) * image_width};
-
-        // Allocate buffer for a thread to write colors to
-        color_buffers[n] = new Color[(j_end - j_start) * image_width];
-        buffer_lengths[n] = len;
-
         threads.emplace_back(
             &Camera::render_chunk_threaded,
             this,
@@ -89,7 +83,7 @@ bool Camera::render(
             j_end,
             static_cast<uint32_t>(image_width),
             std::cref(world), // Const ref
-            color_buffers[n]);
+            std::ref(color_buffer));
     }
 
     // Progress indicators
@@ -105,14 +99,10 @@ bool Camera::render(
     std::cout << "Writing to file...\n";
 
     for (uint32_t n{ 0 }; n < num_threads; ++n) {
-        write_color(out, color_buffers[n], buffer_lengths[n]);
-        delete[] color_buffers[n];
+        write_color(out, color_buffer);
     }
 
     t.print_elapsed("Total time: ");
-
-    delete[] color_buffers;
-    delete[] buffer_lengths;
 
     out.close();
     return true;
@@ -147,7 +137,7 @@ void Camera::render_chunk_threaded(
     uint32_t j_end,
     uint32_t i_end,
     const Hittable& world,
-    Color* buffer
+    std::vector<Color>& color_buffer
 ) const noexcept {
     // Released after scope
     {
@@ -158,18 +148,16 @@ void Camera::render_chunk_threaded(
 
     Timer t;
 
-    const uint32_t rows{ j_end - j_start };
-
-    for (uint32_t j{ 0 }; j < rows; ++j) {
+    for (uint32_t j{ j_start }; j < j_end; ++j) {
         for (uint32_t i{ 0 }; i < i_end; ++i) {
             Color pixel_color;
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 // Row as in viewport
-                const Ray r{ get_ray(i, j_start + j) };
+                const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
 
-            buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
+            color_buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
         }
 
         ++scanlines_done;
