@@ -1,5 +1,6 @@
 #include "timer.h"
 
+#include <string>
 #include <iostream>
 #include <iomanip>
 
@@ -12,7 +13,7 @@ Timer::Timer() noexcept : start_time{ clock::now() } {}
 void Timer::pause() noexcept {
     if (!paused)
         accumulated_time += elapsed();
-    
+
     paused = true;
 }
 
@@ -28,16 +29,16 @@ void Timer::reset() noexcept {
 double Timer::elapsed() const noexcept {
     if (0 < accumulated_time)
         return accumulated_time;
-    
+
     const auto now{ clock::now() };
     return std::chrono::duration<double>(now - start_time).count();
 }
 
 void Timer::print_elapsed(const std::string& prefix, bool show_minutes) const noexcept {
         const double seconds{ elapsed() };
-        std::cout << prefix 
+        std::cout << prefix
                   << std::fixed << std::setprecision(3) << seconds << "s";
-        
+
         if (show_minutes)
             std::cout << " (" << std::setprecision(1) << seconds / 60.0 << "m)";
 
@@ -55,11 +56,11 @@ void print_progress_single_thread(const Timer& t, double elapsed, int j, int ima
     const double eta_min{ eta / 60.0 };
 
     std::cout << "\rScanlines remaining: " << (image_height - 1 - j)
-                << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s" 
+                << " | Elapsed time: " << std::fixed << std::setprecision(3) << elapsed << "s"
                 << " (" << std::setprecision(1) << elapsed_min << "m)"
                 << std::setprecision(3)
-                << " | ETA: " << eta << "s" 
+                << " | ETA: " << eta << "s"
                 << " (" << std::setprecision(1) << eta_min << "m)"
-                << ' ' // Padding
+                << ' '  // Padding
                 << std::flush;
 }

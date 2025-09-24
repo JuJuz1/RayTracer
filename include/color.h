@@ -1,5 +1,5 @@
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef INCLUDE_COLOR_H_
+#define INCLUDE_COLOR_H_
 
 #include <fstream>
 
@@ -42,4 +42,4 @@ void write_color(std::ofstream& out, const Color* const buffer, uint32_t len);
 // Writes the color to the stream
 void write_color_to_stream(std::ofstream& out, double x, double y, double z);
 
-#endif
+#endif // INCLUDE_COLOR_H_

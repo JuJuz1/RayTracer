@@ -1,8 +1,9 @@
 #include "sphere.h"
 
+#include <memory>
 #include <cmath>
 
-Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept 
+Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept
     : center{ center }, radius{ std::fmax(radius, 0.0) }, mat{ mat } {}
 
 bool Sphere::hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {

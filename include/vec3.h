@@ -1,5 +1,5 @@
-#ifndef VEC3_H
-#define VEC3_H
+#ifndef INCLUDE_VEC3_H_
+#define INCLUDE_VEC3_H_
 
 #include <ostream>
 
@@ -7,34 +7,33 @@
 // for now we are going to use double as we are not working in limited memory conditions
 
 class Vec3 {
-    public:
-        Vec3() noexcept;
+ public:
+    Vec3() noexcept;
+    Vec3(double e0, double e1, double e2) noexcept;
 
-        Vec3(double e0, double e1, double e2) noexcept;
+    constexpr double x() const noexcept;
+    constexpr double y() const noexcept;
+    constexpr double z() const noexcept;
 
-        constexpr double x() const noexcept;
-        constexpr double y() const noexcept;
-        constexpr double z() const noexcept;
+    // Operators
+    Vec3 operator-() const noexcept;
 
-        // Operators
-        Vec3 operator-() const noexcept;
+    constexpr double operator[](int i) const noexcept;
+    constexpr double& operator[](int i) noexcept;
 
-        constexpr double operator[](int i) const noexcept;
-        constexpr double& operator[](int i) noexcept;
+    Vec3& operator+=(const Vec3& other) noexcept;
+    Vec3& operator-=(const Vec3& other) noexcept;
+    Vec3& operator*=(double t) noexcept;
+    Vec3& operator/=(double t) noexcept;
 
-        Vec3& operator+=(const Vec3& other) noexcept;
-        Vec3& operator-=(const Vec3& other) noexcept;
-        Vec3& operator*=(double t) noexcept;
-        Vec3& operator/=(double t) noexcept;
+    double length() const noexcept;
+    constexpr double length_squared() const noexcept;
 
-        double length() const noexcept;
-        constexpr double length_squared() const noexcept;
+    // Checks if a vector is close to zero in all dimensions
+    bool is_near_zero() const noexcept;
 
-        // Checks if a vector is close to zero in all dimensions
-        bool is_near_zero() const noexcept;
-    
-    private:
-        double e[3];
+ private:
+    double e[3];
 };
 
 // An alias for geometric clarity (e.g. ray.h)
@@ -76,4 +75,4 @@ Vec3 reflect(const Vec3& v, const Vec3& n) noexcept;
 // -> refractive index of the material / the material v is entering
 Vec3 refract(const Vec3& v, const Vec3& n, double etai_over_etat) noexcept;
 
-#endif
+#endif // INCLUDE_VEC3_H_

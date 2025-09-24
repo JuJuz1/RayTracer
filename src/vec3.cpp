@@ -106,8 +106,8 @@ Vec3 random_vector() noexcept {
 }
 
 Vec3 random_vector(double min, double max) noexcept {
-    return Vec3{rt::random_double(min, max), 
-                rt::random_double(min, max), 
+    return Vec3{rt::random_double(min, max),
+                rt::random_double(min, max),
                 rt::random_double(min, max)};
 }
 
@@ -137,7 +137,7 @@ Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     // Same hemisphere as normal
     if (dot(on_unit_sphere, normal) > 0)
         return on_unit_sphere;
-    
+
     return -on_unit_sphere;
 }
 

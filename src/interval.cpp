@@ -11,9 +11,9 @@ double Interval::size() const noexcept {
 }
 
 bool Interval::contains(double x, bool inclusive) const noexcept {
-    if (inclusive) 
+    if (inclusive)
         return min <= x && x <= max;
-    
+
     return min < x && x < max;
 }
 

@@ -1,5 +1,7 @@
 #include "hittable_list.h"
 
+#include <utility>
+
 HittableList::HittableList() noexcept {};
 
 HittableList::HittableList(std::unique_ptr<Hittable> object) { add(std::move(object)); }

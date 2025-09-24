@@ -6,3 +6,9 @@ build/
 
 # Generated images
 /*.ppm
+
+# Google's cpplint
+cpplint.py
+
+# Local python version
+.python-version

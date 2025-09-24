@@ -1,14 +1,22 @@
 #include "camera.h"
 
-#include <atomic>
 #include <mutex>
+#include <atomic>
+
+#include <string>
+#include <vector>
+#include <thread>
+
 #include <chrono>
 #include <iostream>
 #include <fstream>
-#include <type_traits>
+
+#include <functional>
+#include <algorithm>
 #include <cmath>
 
 #include "color.h"
+#include "hittable.h"
 #include "timer.h"
 #include "rtweekend.h"
 #include "material.h"
@@ -21,9 +29,9 @@ std::mutex cout_mutex;
 std::atomic<int> scanlines_done{ 0 };
 
 bool Camera::render(
-    const Hittable& world, 
-    const std::string& filename, 
-    std::vector<std::thread>& threads, 
+    const Hittable& world,
+    const std::string& filename,
+    std::vector<std::thread>& threads,
     uint32_t num_threads
 ) noexcept {
     initialize();
@@ -42,7 +50,7 @@ bool Camera::render(
 
     // Single-threaded
     if (num_threads == 1) {
-        std::cout << "Single thread\n"; 
+        std::cout << "Single thread\n";
         render_single_thread(world, out);
         out.close();
         return true;
@@ -73,16 +81,15 @@ bool Camera::render(
         buffer_lengths[n] = len;
 
         threads.emplace_back(
-            &Camera::render_chunk_threaded, 
-            this, 
-            j_start, 
-            j_end, 
+            &Camera::render_chunk_threaded,
+            this,
+            j_start,
+            j_end,
             static_cast<uint32_t>(image_width),
             std::cref(world),
-            color_buffers[n]
-        );
+            color_buffers[n]);
     }
-    
+
     // Progress indicators
     Timer t;
     //progress_thread_id = threads.front().get_id();
@@ -134,16 +141,16 @@ void Camera::render_single_thread(const Hittable& world, std::ofstream& out) con
 }
 
 void Camera::render_chunk_threaded(
-    uint32_t j_start, 
-    uint32_t j_end, 
-    uint32_t i_end, 
-    const Hittable& world, 
+    uint32_t j_start,
+    uint32_t j_end,
+    uint32_t i_end,
+    const Hittable& world,
     Color* buffer
 ) const noexcept {
     // Released after scope
     {
         std::lock_guard<std::mutex> lock(cout_mutex);
-        std::cout << "Thread " << std::this_thread::get_id() 
+        std::cout << "Thread " << std::this_thread::get_id()
                   << " rows: " << j_start << " to " << j_end << "\n";
     }
 
@@ -159,7 +166,7 @@ void Camera::render_chunk_threaded(
                 const Ray r{ get_ray(i, j_start + j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
-            
+
             buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
         }
 
@@ -169,16 +176,16 @@ void Camera::render_chunk_threaded(
             const int done{ scanlines_done.load() };
             const double percent{ (done * 100.0) / image_height };
             std::lock_guard<std::mutex> lock(cout_mutex);
-            std::cout << "\rProgress: " << std::fixed << std::setprecision(1) 
-                        << percent << "% | Elapsed time: " 
+            std::cout << "\rProgress: " << std::fixed << std::setprecision(1)
+                        << percent << "% | Elapsed time: "
                         << std::setprecision(3) << t.elapsed() << "s" << std::flush;
         }
     }
 
     {
         std::lock_guard<std::mutex> lock(cout_mutex);
-        std::cout << "\nThread " << std::this_thread::get_id() 
-                  << " finished in " 
+        std::cout << "\nThread " << std::this_thread::get_id()
+                  << " finished in "
                   << std::fixed << std::setprecision(3) << t.elapsed() << "s" << "\n";
     }
 }
@@ -205,11 +212,11 @@ void Camera::initialize() noexcept {
     // Calculate the vectors for horizontal and vertical traversing of the viewport
     const Vec3 viewport_u{ u * viewport_width };
     const Vec3 viewport_v{ -v * viewport_height };
-    
+
     // Horizontal and vertical delta vectors from pixel to pixel
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
-    
+
     const Point3 viewport_upper_left{
         center - (w * focus_dist) - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
@@ -231,7 +238,7 @@ void Camera::print_properties() const noexcept {
     rt::print_camera_property_formatted("Vertical fov", vfov);
     rt::print_camera_property_formatted("Look from", lookfrom);
     rt::print_camera_property_formatted("Look at", lookat);
-    
+
     std::cout << "\nLens properties:\n";
     rt::print_camera_property_formatted("Defocus angle", defocus_angle);
     rt::print_camera_property_formatted("Focus distance", focus_dist);
@@ -242,7 +249,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const no
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
         return Colors::Black;
-    
+
     HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
@@ -251,7 +258,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const no
         Color attenuation;
         if (rec.mat->scatter(r, rec, attenuation, scattered))
             return attenuation * trace_ray(scattered, depth - 1, world);
-        
+
         return Colors::Black;
     }
 
@@ -267,7 +274,7 @@ Ray Camera::get_ray(int i, int j) const noexcept {
     const Point3 pixel_sample{pixel00_loc
                            + (pixel_delta_u * (i + offset.x()))
                            + (pixel_delta_v * (j + offset.y()))};
-    
+
     const Point3 ray_origin{ (defocus_angle <= 0) ? center : defocus_disk_sample() };
     const Vec3 ray_direction{ pixel_sample - ray_origin };
     return Ray{ ray_origin, ray_direction };
