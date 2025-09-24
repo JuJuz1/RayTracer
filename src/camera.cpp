@@ -152,7 +152,6 @@ void Camera::render_chunk_threaded(
         for (uint32_t i{ 0 }; i < i_end; ++i) {
             Color pixel_color;
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
-                // Row as in viewport
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
