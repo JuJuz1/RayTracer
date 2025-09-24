@@ -60,8 +60,10 @@ bool Camera::render(
     std::cout << "Multithread\n";
     std::cout << "Thread count: " << num_threads << "\n";
 
+    threads.reserve(num_threads);
+
     const uint32_t rows_per_thread{ image_height / num_threads };
-    const uint32_t leftover{ image_height % rows_per_thread };
+    const uint32_t leftover{ image_height % num_threads };
 
     // Buffers for threads
     Color** const color_buffers{ new Color*[num_threads] };
@@ -86,7 +88,7 @@ bool Camera::render(
             j_start,
             j_end,
             static_cast<uint32_t>(image_width),
-            std::cref(world),
+            std::cref(world), // Const ref
             color_buffers[n]);
     }
 
@@ -171,6 +173,7 @@ void Camera::render_chunk_threaded(
         }
 
         ++scanlines_done;
+        // TODO: maybe have a designated thread handle logging, no need for mutex
         // Update progress every 10 rows
         if (scanlines_done % 10 == 0) {
             const int done{ scanlines_done.load() };
