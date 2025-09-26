@@ -29,7 +29,7 @@ std::mutex cout_mutex;
 std::atomic<int> scanlines_done{ 0 };
 
 bool Camera::render(
-    const Hittable& world,
+    const HittableList& world,
     const std::string& filename,
     std::vector<std::thread>& threads,
     uint32_t num_threads
@@ -108,14 +108,14 @@ bool Camera::render(
     return true;
 }
 
-void Camera::render_single_thread(const Hittable& world, std::ofstream& out) const noexcept {
+void Camera::render_single_thread(const HittableList& world, std::ofstream& out) const noexcept {
     Timer t;
     double last_print{ t.elapsed() };
     constexpr double progress_refresh_rate{ 0.5 };
 
     for (int j{ 0 }; j < image_height; ++j) {
         for (int i{ 0 }; i < image_width; ++i) {
-            Color pixel_color{};
+            Color pixel_color;
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
@@ -136,7 +136,7 @@ void Camera::render_chunk_threaded(
     uint32_t j_start,
     uint32_t j_end,
     uint32_t i_end,
-    const Hittable& world,
+    const HittableList& world,
     std::vector<Color>& color_buffer
 ) const noexcept {
     // Released after scope
@@ -235,7 +235,7 @@ void Camera::print_properties() const noexcept {
     std::cout << "\n";
 }
 
-Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const noexcept {
+Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
         return Colors::Black;
@@ -243,7 +243,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const Hittable& world) const no
     HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
-    if (world.hit(r, Interval{ 0.001, rt::infinity }, rec)) {
+    if (world.process_ray(r, Interval{ 0.001, rt::infinity }, rec)) {
         Ray scattered;
         Color attenuation;
         if (rec.mat->scatter(r, rec, attenuation, scattered))

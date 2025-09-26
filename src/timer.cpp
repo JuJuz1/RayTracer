@@ -1,5 +1,6 @@
 #include "timer.h"
 
+#include <chrono>
 #include <string>
 #include <iostream>
 #include <iomanip>
