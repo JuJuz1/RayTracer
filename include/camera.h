@@ -59,7 +59,7 @@ class Camera {
         uint32_t j_end,
         uint32_t i_end,
         const HittableList& world,
-        Color* buffer) const noexcept;
+        std::vector<Color>& color_buffer) const noexcept;
 
     void print_properties() const noexcept;
 

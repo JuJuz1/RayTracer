@@ -2,6 +2,7 @@
 #define INCLUDE_COLOR_H_
 
 #include <fstream>
+#include <vector>
 
 #include "vec3.h"
 
@@ -37,7 +38,7 @@ void write_color(std::ofstream& out, const Color& color);
 // Multithreading "overload"
 // Calls write_color_to_stream(std::fstream& out, double x, double y, double z)
 // for every x y z of every Color in buffer
-void write_color(std::ofstream& out, const Color* const buffer, uint32_t len);
+void write_color(std::ofstream& out, const std::vector<Color>& color_buffer);
 
 // Writes the color to the stream
 void write_color_to_stream(std::ofstream& out, double x, double y, double z);

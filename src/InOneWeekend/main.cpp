@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     // - samples_per_pixel 10
     // - max_depth 10
     cam.image_width       = 400; // original: 400
-    cam.samples_per_pixel = 10; // original: 100
+    cam.samples_per_pixel = 100; // original: 100
     cam.max_depth         =  50; // original: 50
     // Final image properties:
     // 1200, 500, 50
