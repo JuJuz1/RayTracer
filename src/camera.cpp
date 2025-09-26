@@ -32,7 +32,7 @@ bool Camera::render(
     const HittableList& world,
     const std::string& filename,
     std::vector<std::thread>& threads,
-    uint32_t num_threads
+    int num_threads
 ) noexcept {
     initialize();
 
@@ -62,18 +62,18 @@ bool Camera::render(
 
     threads.reserve(num_threads);
 
-    const uint32_t rows_per_thread{ image_height / num_threads };
-    const uint32_t leftover{ image_height % num_threads };
+    const int rows_per_thread{ image_height / num_threads };
+    const int leftover{ image_height % num_threads };
 
     // Color buffer for threads
     std::vector<Color> color_buffer;
     color_buffer.resize(image_width * image_height);
 
     // Setup threads
-    // Assign each thread a range of rows that it handles
-    for (uint32_t n{ 0 }; n < num_threads; ++n) {
-        const uint32_t j_start{ n * rows_per_thread };
-        uint32_t j_end{ j_start + rows_per_thread };
+    // Assign each thread a range of rows that it writes to
+    for (int n{ 0 }; n < num_threads; ++n) {
+        const int j_start{ n * rows_per_thread };
+        int j_end{ j_start + rows_per_thread };
         // Add all leftover to last thread
         if (n == num_threads - 1)
             j_end += leftover;
@@ -83,7 +83,7 @@ bool Camera::render(
             this,
             j_start,
             j_end,
-            static_cast<uint32_t>(image_width),
+            image_width,
             std::cref(world), // Const ref
             std::ref(color_buffer));
     }
@@ -100,7 +100,7 @@ bool Camera::render(
 
     std::cout << "Writing to file...\n";
 
-    for (uint32_t n{ 0 }; n < num_threads; ++n) {
+    for (int n{ 0 }; n < num_threads; ++n) {
         write_color(out, color_buffer);
     }
 
@@ -135,9 +135,9 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
 }
 
 void Camera::render_chunk_threaded(
-    uint32_t j_start,
-    uint32_t j_end,
-    uint32_t i_end,
+    int j_start,
+    int j_end,
+    int i_end,
     const HittableList& world,
     std::vector<Color>& color_buffer
 ) const noexcept {
@@ -150,8 +150,8 @@ void Camera::render_chunk_threaded(
 
     Timer t;
 
-    for (uint32_t j{ j_start }; j < j_end; ++j) {
-        for (uint32_t i{ 0 }; i < i_end; ++i) {
+    for (int j{ j_start }; j < j_end; ++j) {
+        for (int i{ 0 }; i < i_end; ++i) {
             Color pixel_color;
             for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
                 const Ray r{ get_ray(i, j) };

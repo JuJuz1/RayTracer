@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     // Arguments
 
     std::string filename{ "image.ppm" };
-    uint32_t num_threads{ 1 };
+    int num_threads{ 1 };
     if (argc == 2) {
         num_threads = std::stoi(argv[1]);
     } else if (argc == 3) {
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::vector<std::thread> threads;
-    const uint32_t max_threads{ std::thread::hardware_concurrency() };
+    const int max_threads = static_cast<int>(std::thread::hardware_concurrency());
     num_threads = std::min(num_threads, max_threads);
 
     if (!cam.render(world, filename, threads, num_threads))

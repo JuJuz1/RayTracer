@@ -34,7 +34,7 @@ class Camera {
         const HittableList& world,
         const std::string& filename,
         std::vector<std::thread>& threads,
-        uint32_t num_threads) noexcept;
+        int num_threads) noexcept;
 
  private:
     int image_height;          // Rendered image height
@@ -55,9 +55,9 @@ class Camera {
 
     // Multithreaded
     void Camera::render_chunk_threaded(
-        uint32_t j_start,
-        uint32_t j_end,
-        uint32_t i_end,
+        int j_start,
+        int j_end,
+        int i_end,
         const HittableList& world,
         std::vector<Color>& color_buffer) const noexcept;
 
