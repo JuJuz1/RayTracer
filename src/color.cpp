@@ -3,8 +3,6 @@
 #include <cmath>
 #include <cstdio>
 
-#include "interval.h"
-
 // https://rgbcolorpicker.com/0-1
 
 const Vec3 Colors::Red       {1.0, 0.0, 0.0};

@@ -4,12 +4,12 @@
 #include <vector>
 #include <memory>
 
-#include "hittable.h"
 #include "ray.h"
 #include "interval.h"
+#include "hittable.h"
 
 // A class for all hittable objects
-class HittableList : public Hittable {
+class HittableList {
  public:
     HittableList() noexcept;
     explicit HittableList(std::unique_ptr<Hittable>);
@@ -17,7 +17,8 @@ class HittableList : public Hittable {
     void clear();
     void add(std::unique_ptr<Hittable> object);
 
-    bool hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept override;
+    // Processess through all the objects and calls hit on every Hittable that was hit
+    bool process_ray(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept;
 
     // Get the count of hittable objects
     int count() const noexcept;

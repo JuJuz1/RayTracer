@@ -5,9 +5,9 @@
 
 #include "hittable.h"
 #include "vec3.h"
-#include "material.h"
 #include "ray.h"
 #include "interval.h"
+#include "material.h"
 
 class Sphere final : public Hittable {
  public:

@@ -3,6 +3,11 @@
 #include <memory>
 #include <cmath>
 
+#include "vec3.h"
+#include "ray.h"
+#include "interval.h"
+#include "hittable.h"
+
 Sphere::Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept
     : center{ center }, radius{ std::fmax(radius, 0.0) }, mat{ mat } {}
 

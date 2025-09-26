@@ -25,7 +25,7 @@ Image properties:
 - width: 1200
 - height: 675
 - samples per pixel: 500
-- max_depth: 50
+- max depth: 50
 ![An example of a final render](renders/image_final.png)
 
 - samples per pixel: 100

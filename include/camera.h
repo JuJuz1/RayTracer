@@ -6,7 +6,7 @@
 #include <thread>
 
 #include "vec3.h"
-#include "hittable.h"
+#include "hittable_list.h"
 #include "color.h"
 #include "ray.h"
 
@@ -29,9 +29,9 @@ class Camera {
     Color background_color_top    = Colors::LightBlue; // Gradient start color (top)
     Color background_color_bottom = Colors::White;     // -||- end
 
-    // Use Hittable so we can also use HittableList
+    // The main character, handles single and multithreaded rendering
     bool Camera::render(
-        const Hittable& world,
+        const HittableList& world,
         const std::string& filename,
         std::vector<std::thread>& threads,
         uint32_t num_threads) noexcept;
@@ -51,21 +51,21 @@ class Camera {
     void initialize() noexcept;
 
     // Single-threaded
-    void render_single_thread(const Hittable& world, std::ofstream& out) const noexcept;
+    void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
 
     // Multithreaded
     void Camera::render_chunk_threaded(
         uint32_t j_start,
         uint32_t j_end,
         uint32_t i_end,
-        const Hittable& world,
+        const HittableList& world,
         Color* buffer) const noexcept;
 
     void print_properties() const noexcept;
 
     // Calculates the color of a pixel with a given ray from the camera
     // Takes into account the passed Hittable object(s)
-    Color trace_ray(const Ray& r, int depth, const Hittable& world) const noexcept;
+    Color trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept;
 
     // Construct a camera ray originating from the origin and directed at randomly sampled
     // point around the pixel location i, j

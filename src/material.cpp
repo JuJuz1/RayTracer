@@ -2,30 +2,33 @@
 
 #include <cmath>
 
+#include "ray.h"
+#include "hittable.h"
+#include "color.h"
 #include "vec3.h"
 #include "rtweekend.h"
 
 bool Material::scatter(
-    const Ray& r, 
-    const HitRecord& rec, 
-    Color& attenuation, 
+    const Ray& r,
+    const HitRecord& rec,
+    Color& attenuation,
     Ray& scattered
 ) const noexcept {
-        return false;
+    return false;
 }
 
 Lambertian::Lambertian(const Color& albedo) : albedo{ albedo } {};
 
 bool Lambertian::scatter(
-    const Ray& r, 
-    const HitRecord& rec, 
-    Color& out_attenuation, 
+    const Ray& r,
+    const HitRecord& rec,
+    Color& out_attenuation,
     Ray& out_scattered
 ) const noexcept {
     Vec3 scatter_direction{ rec.normal + random_unit_vector() };
     if (scatter_direction.is_near_zero())
         scatter_direction = rec.normal;
-    
+
     out_scattered = Ray{ rec.p, scatter_direction };
     out_attenuation = albedo;
     return true;
@@ -34,9 +37,9 @@ bool Lambertian::scatter(
 Metal::Metal(const Color& albedo, double fuzz) : albedo{ albedo }, fuzz{ std::fmax(fuzz, 0.0) } {};
 
 bool Metal::scatter(
-    const Ray& in_r, 
-    const HitRecord& rec, 
-    Color& out_attenuation, 
+    const Ray& in_r,
+    const HitRecord& rec,
+    Color& out_attenuation,
     Ray& out_scattered
 ) const noexcept {
     Vec3 reflected{ reflect(in_r.direction(), rec.normal) };
@@ -49,9 +52,9 @@ bool Metal::scatter(
 Dielectric::Dielectric(double refraction_index) : refraction_index{ refraction_index} {};
 
 bool Dielectric::scatter(
-    const Ray& in_r, 
-    const HitRecord& rec, 
-    Color& out_attenuation, 
+    const Ray& in_r,
+    const HitRecord& rec,
+    Color& out_attenuation,
     Ray& out_scattered
 ) const noexcept {
     out_attenuation = Colors::White;
