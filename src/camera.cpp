@@ -43,21 +43,21 @@ bool Camera::render(
         return false;
     }
 
-    std::cout << "\nRendering output to file: " << filename << "\n";
     print_properties();
 
+    std::cout << "Rendering output to file: " << filename << "\n";
     out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     // Single-threaded
     if (num_threads == 1) {
-        std::cout << "Single thread\n";
+        std::cout << "\nSingle thread\n";
         render_single_thread(world, out);
         out.close();
         return true;
     }
 
     // Multithreaded
-    std::cout << "Multithread\n";
+    std::cout << "\nMultithread\n";
     std::cout << "Thread count: " << num_threads << "\n";
 
     threads.reserve(num_threads);
@@ -65,10 +65,12 @@ bool Camera::render(
     const uint32_t rows_per_thread{ image_height / num_threads };
     const uint32_t leftover{ image_height % num_threads };
 
-    // Buffers for threads
+    // Color buffer for threads
     std::vector<Color> color_buffer;
-    color_buffer.reserve(image_width * image_height);
+    color_buffer.resize(image_width * image_height);
 
+    // Setup threads
+    // Assign each thread a range of rows that it handles
     for (uint32_t n{ 0 }; n < num_threads; ++n) {
         const uint32_t j_start{ n * rows_per_thread };
         uint32_t j_end{ j_start + rows_per_thread };
