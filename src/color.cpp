@@ -36,7 +36,7 @@ void write_color(std::ofstream& out, const Color& pixel_color) {
     write_color_to_stream(out, pixel_color.x(), pixel_color.y(), pixel_color.z());
 }
 
-void write_color(std::ofstream& out, const std::vector<Color>& color_buffer) {
+void write_color_from_buffer(std::ofstream& out, const std::vector<Color>& color_buffer) {
     for (const auto& color : color_buffer) {
         write_color_to_stream(out, color.x(), color.y(), color.z());
     }

@@ -35,10 +35,10 @@ int to_gamma_and_byte_range(double x) noexcept;
 
 void write_color(std::ofstream& out, const Color& color);
 
-// Multithreading "overload"
+// Multithreading
 // Calls write_color_to_stream(std::fstream& out, double x, double y, double z)
 // for every x y z of every Color in buffer
-void write_color(std::ofstream& out, const std::vector<Color>& color_buffer);
+void write_color_from_buffer(std::ofstream& out, const std::vector<Color>& color_buffer);
 
 // Writes the color to the stream
 void write_color_to_stream(std::ofstream& out, double x, double y, double z);

@@ -100,9 +100,7 @@ bool Camera::render(
 
     std::cout << "Writing to file...\n";
 
-    for (int n{ 0 }; n < num_threads; ++n) {
-        write_color(out, color_buffer);
-    }
+    write_color_from_buffer(out, color_buffer);
 
     t.print_elapsed("Total time: ");
 
