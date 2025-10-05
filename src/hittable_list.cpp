@@ -10,8 +10,6 @@ HittableList::HittableList() noexcept {};
 
 HittableList::HittableList(std::unique_ptr<Hittable> object) { add(std::move(object)); }
 
-void HittableList::clear() { objects.clear(); }
-
 void HittableList::add(std::unique_ptr<Hittable> object) { objects.push_back(std::move(object)); }
 
 bool HittableList::process_ray(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {
@@ -29,6 +27,8 @@ bool HittableList::process_ray(const Ray& r, const Interval& ray_t, HitRecord& o
 
     return hit;
 }
+
+void HittableList::clear() { objects.clear(); }
 
 int HittableList::count() const noexcept {
     return static_cast<int>(objects.size());

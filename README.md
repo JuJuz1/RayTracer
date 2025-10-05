@@ -6,13 +6,20 @@ The goal for the first book is to create a C++ ray tracer which can create good-
 
 ---
 
+## Table of Contents
+
+1. [Current features](#current-features)
+2. [Example renders](#example-renders)
+
+3. [Running Locally](#running-locally)
+
 ## Current features
 
 - A brute-force raytracer in C++11 (might upgrade to newer now that I've finished the first book)
 - Outputs images in **P3 PPM** format
-- Some command line arguments (will add more)
+- Some command line arguments (will probably add more)
 - Progress indicators while rendering
-- Supports spheres as shapes
+- Only supports spheres as shapes at the moment
 - Many randomized properties to provide unique renders each time
 - Multithreading support for significantly faster renders
 
@@ -50,16 +57,18 @@ cd RayTracer
 2. **Build with CMake**
 
 ```bash
-cmake -B $(your_build_directory_name)
-cmake --build build
+cmake -B $(your_build_directory_name) (e.g. "build")
+cmake --build $(your_build_directory_name)
 # for optimized builds
-cmake --build build --config Release 
+cmake --build $(your_build_directory_name) --config Release
 ```
 
 3. **Run the program**
 
+You can specify the number of threads to use, default is 1. The default output file is image.ppm
+
 ```bash
-./$(your_build_directory_name)/Release/inOneWeekend [output_filename.ppm] [num_threads]
+./$(your_build_directory_name)/Release/inOneWeekend [num_threads] [output_filename.ppm]
 ```
 
 There are many ways to view the created **P3 PPM** images. I found it easiest to use this website: [PPM Viewer](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html)

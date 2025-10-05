@@ -79,7 +79,7 @@ bool Camera::render(
             j_end += leftover;
 
         threads.emplace_back(
-            &Camera::render_chunk_threaded,
+            &Camera::render_chunk_multithreaded,
             this,
             j_start,
             j_end,
@@ -134,7 +134,7 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     }
 }
 
-void Camera::render_chunk_threaded(
+void Camera::render_chunk_multithreaded(
     int j_start,
     int j_end,
     int i_end,

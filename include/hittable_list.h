@@ -14,11 +14,13 @@ class HittableList {
     HittableList() noexcept;
     explicit HittableList(std::unique_ptr<Hittable>);
 
-    void clear();
     void add(std::unique_ptr<Hittable> object);
 
     // Processess through all the objects and calls hit on every Hittable that was hit
     bool process_ray(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept;
+
+    // Clear the list
+    void clear();
 
     // Get the count of hittable objects
     int count() const noexcept;

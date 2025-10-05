@@ -72,6 +72,7 @@ int main(int argc, char* argv[]) {
     world.add(make_unique<Sphere>(Point3{ 4, 1, 0 }, 1.0, mat_metal));
 
     // Camera
+
     Camera cam;
     cam.aspect_ratio      = 16.0 / 9.0;
     // For fast debug renders use:
@@ -95,8 +96,9 @@ int main(int argc, char* argv[]) {
 
     // Arguments
 
-    std::string filename{ "image.ppm" };
     int num_threads{ 1 };
+    std::string filename{ "image.ppm" };
+
     if (argc == 2) {
         num_threads = std::stoi(argv[1]);
     } else if (argc == 3) {

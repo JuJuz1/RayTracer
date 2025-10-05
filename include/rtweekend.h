@@ -42,7 +42,7 @@ template <typename T>
 inline void print_camera_property_formatted(const std::string& property, const T& value) {
     constexpr int format_width_left{ 18 }; // Length of "Samples per pixel" + 1
     constexpr int format_width_right{ 4 };
-    std::cout << std::left << std::setw(format_width_left) << property 
+    std::cout << std::left << std::setw(format_width_left) << property
                 << std::right << std::setw(format_width_right) << value << "\n";
 }
 

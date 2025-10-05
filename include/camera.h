@@ -54,7 +54,7 @@ class Camera {
     void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
 
     // Multithreaded
-    void Camera::render_chunk_threaded(
+    void Camera::render_chunk_multithreaded(
         int j_start,
         int j_end,
         int i_end,
