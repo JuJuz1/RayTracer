@@ -99,18 +99,17 @@ int main(int argc, char* argv[]) {
     int num_threads{ 1 };
     std::string filename{ "image.ppm" };
 
-    if (argc == 2) {
+    if (1 < argc) {
         num_threads = std::stoi(argv[1]);
-    } else if (argc == 3) {
-        num_threads = std::stoi(argv[1]);
+    }
+    if (argc == 3) {
         filename = argv[2];
     }
 
-    std::vector<std::thread> threads;
     const int max_threads = static_cast<int>(std::thread::hardware_concurrency());
     num_threads = std::min(num_threads, max_threads);
 
-    if (!cam.render(world, filename, threads, num_threads))
+    if (!cam.render(world, filename, num_threads))
         return 0;
 
     const int objects{ world.count() };

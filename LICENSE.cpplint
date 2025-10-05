@@ -1,0 +1,6 @@
+# Cpplint
+
+This directory contains a copy of Google's cpplint.py
+
+[Github](https://github.com/cpplint/cpplint), licensed under the BSD 3-Clause License.
+Copyright (C) 2009 Google Inc.

@@ -10,8 +10,8 @@ The goal for the first book is to create a C++ ray tracer which can create good-
 
 1. [Current features](#current-features)
 2. [Example renders](#example-renders)
-
 3. [Running Locally](#running-locally)
+4. [Tools](#tools)
 
 ## Current features
 
@@ -57,7 +57,7 @@ cd RayTracer
 2. **Build with CMake**
 
 ```bash
-cmake -B $(your_build_directory_name) (e.g. "build")
+cmake -B $(your_build_directory_name) # e.g. cmake -B build
 cmake --build $(your_build_directory_name)
 # for optimized builds
 cmake --build $(your_build_directory_name) --config Release
@@ -72,3 +72,13 @@ You can specify the number of threads to use, default is 1. The default output f
 ```
 
 There are many ways to view the created **P3 PPM** images. I found it easiest to use this website: [PPM Viewer](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html)
+
+## Tools
+
+This project includes a copy of cpplint.py. See [License](LICENSE.cpplint)
+
+To verify that the source files comply with most of the cpplint checks run:
+
+```bash
+./run_cpplint.sh
+```

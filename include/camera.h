@@ -33,7 +33,6 @@ class Camera {
     bool Camera::render(
         const HittableList& world,
         const std::string& filename,
-        std::vector<std::thread>& threads,
         int num_threads) noexcept;
 
  private:

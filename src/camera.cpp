@@ -31,7 +31,6 @@ std::atomic<int> scanlines_done{ 0 };
 bool Camera::render(
     const HittableList& world,
     const std::string& filename,
-    std::vector<std::thread>& threads,
     int num_threads
 ) noexcept {
     initialize();
@@ -60,12 +59,13 @@ bool Camera::render(
     std::cout << "\nMultithread\n";
     std::cout << "Thread count: " << num_threads << "\n";
 
+    std::vector<std::thread> threads;
     threads.reserve(num_threads);
 
     const int rows_per_thread{ image_height / num_threads };
     const int leftover{ image_height % num_threads };
 
-    // Color buffer for threads
+    // Color buffer for threads store colors to
     std::vector<Color> color_buffer;
     color_buffer.resize(image_width * image_height);
 
