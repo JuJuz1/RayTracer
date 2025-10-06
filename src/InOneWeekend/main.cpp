@@ -1,4 +1,3 @@
-#include <memory>
 #include <cmath>
 #include <iostream>
 
@@ -23,37 +22,42 @@ int main(int argc, char* argv[]) {
     // Contains every hittable object
     HittableList world;
 
-    const auto mat_ground{ make_shared<Lambertian>(Colors::Gray) };
-    world.add_sphere(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground);
-
-    const auto mat_glass{ make_shared<Dielectric>(refraction_indeces::Glass) };
-
     // Generate lots of small random spheres
     // The amount is: x <= (sphere_position_edge * 2)^2
     // as we discard those which overlap with the big spheres
     constexpr int sphere_position_edge{ 11 }; // 11
     constexpr double sphere_radius{ 0.2 };
+
+    std::vector<Material> materials;
+    // Reserve the same amount as max spheres with this setup
+    materials.reserve(487);
+
+    Material mat_ground{ Material{ MaterialType::Lambertian, new LambertianData{ Colors::Gray }} };
+    materials.push_back(mat_ground);
+    world.add_sphere(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground);
+
+    Material mat_glass{ Material{ MaterialType::Dielectric, new DielectricData{ refraction_indeces::Glass }} };
+    materials.push_back(mat_glass);
+
+
     for (int a{ -sphere_position_edge }; a < sphere_position_edge; ++a) {
         for (int b{ -sphere_position_edge }; b < sphere_position_edge; ++b) {
             const double choose_mat{ rt::random_double() };
-            const Point3 sphere_position{
-                a + rt::random_double() * 0.9, 0.2, b + rt::random_double() * 0.9};
+            const Point3 sphere_position{ a + rt::random_double() * 0.9, 0.2, b + rt::random_double() * 0.9};
 
             // Check for overlap with big spheres
             if ((sphere_position - Point3{ 4, sphere_radius, 0 }).length() > 0.9) {
-                std::shared_ptr<Material> mat;
-
                 if (choose_mat < 0.8) {
                     // Diffuse
                     const Color albedo{ random_vector() * random_vector() };
-                    mat = make_shared<Lambertian>(albedo);
-                    world.add_sphere(sphere_position, sphere_radius, mat);
+                    materials.push_back(Material{ MaterialType::Lambertian, new LambertianData{ albedo } });
+                    world.add_sphere(sphere_position, sphere_radius, materials.back());
                 } else if (choose_mat < 0.95) {
                     // Metal
                     const Color albedo{ random_vector(0.5, 1.0) };
                     const double fuzz{ rt::random_double(0, 0.5) };
-                    mat = make_shared<Metal>(albedo, fuzz);
-                    world.add_sphere(sphere_position, sphere_radius, mat);
+                    materials.push_back(Material{ MaterialType::Metal, new MetalData{ albedo, fuzz } });
+                    world.add_sphere(sphere_position, sphere_radius, materials.back());
                 } else {
                     // Glass
                     world.add_sphere(sphere_position, sphere_radius, mat_glass);
@@ -63,12 +67,14 @@ int main(int argc, char* argv[]) {
     }
 
     // Big spheres left to right (furthest to closest)
-    const auto mat_diffuse{ make_shared<Lambertian>(Colors::Orange) };
+    Material mat_diffuse{ Material{ MaterialType::Lambertian, new LambertianData{ Colors::Orange }} };
+    materials.push_back(mat_diffuse);
     world.add_sphere(Point3{ -4, 1, 0 }, 1.0, mat_diffuse);
 
     world.add_sphere(Point3{ 0, 1, 0 }, 1.0, mat_glass);
 
-    const auto mat_metal{ make_shared<Metal>(Colors::Brown, 0.0) };
+    Material mat_metal{ Material{ MaterialType::Metal, new MetalData{ Colors::Brown, 0.0 }} };
+    materials.push_back(mat_metal);
     world.add_sphere(Point3{ 4, 1, 0 }, 1.0, mat_metal);
 
     // Camera
@@ -113,7 +119,26 @@ int main(int argc, char* argv[]) {
         return 0;
 
     const int objects{ world.count() };
-    std::cout << "\nSpheres created: " << objects << " (3 big ones)\n";
+    std::cout << "\nMaterials created: " << materials.size() << "\n";
+    std::cout << "Spheres created: " << objects << " (3 big ones)\n";
+
+    // Cleanup materials
+    for (auto& mat : materials) {
+        switch (mat.type) {
+            case MaterialType::Lambertian:
+                delete static_cast<LambertianData*>(mat.data);
+                break;
+            case MaterialType::Metal:
+                delete static_cast<MetalData*>(mat.data);
+                break;
+            case MaterialType::Dielectric:
+                delete static_cast<DielectricData*>(mat.data);
+                break;
+            default: break;
+        }
+    }
+
+    materials.clear();
 
     return 0;
 }

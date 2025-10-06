@@ -246,7 +246,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     if (world.process_ray(r, Interval{ 0.001, rt::infinity }, rec)) {
         Ray scattered;
         Color attenuation;
-        if (rec.mat->scatter(r, rec, attenuation, scattered))
+        if (scatter(r, rec, attenuation, scattered))
             return attenuation * trace_ray(scattered, depth - 1, world);
 
         return Colors::Black;

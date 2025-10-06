@@ -5,6 +5,9 @@
 #include "hittable.h"
 #include "color.h"
 
+// Needed for scatter
+struct HitRecord;
+
 // Common refraction indeces
 namespace refraction_indeces {
 
@@ -14,71 +17,40 @@ constexpr double Glass { 1.5  };
 
 } // namespace refraction_indeces
 
-// An abstract material class to:
-// 1. Produce a scattered ray
-// 2. If scattered tell how much the ray should be attenuated (colored)
-class Material {
- public:
-    virtual ~Material() = default;
+enum class MaterialType {
+    Lambertian,
+    Metal,
+    Dielectric,
 
-    // TODO: check this works correctly
-    // Every hittable object needs a material so we will
-    // use this base class as the material and just return false
-    virtual bool scatter(
-        const Ray& in_r,
-        const HitRecord& rec,
-        Color& attenuation,
-        Ray& scattered) const noexcept;
+    MaxCount
 };
 
-// A material to always scatter a ray
-class Lambertian : public Material {
- public:
-    explicit Lambertian(const Color& albedo);
+struct Material {
+    MaterialType type;
+    void* data;
+};
 
-    bool scatter(
-        const Ray& in_r,
-        const HitRecord& rec,
-        Color& out_attenuation,
-        Ray& out_scattered) const noexcept override;
-
- private:
+struct LambertianData {
     Color albedo;
 };
 
-// Reflects a ray
-class Metal : public Material {
- public:
-    Metal(const Color& albedo, double fuzz);
-
-    // Fuzzy reflection
-    bool scatter(
-        const Ray& in_r,
-        const HitRecord& rec,
-        Color& out_attenuation,
-        Ray& out_scattered) const noexcept override;
-
- private:
+struct MetalData {
     Color albedo;
     double fuzz;
 };
 
-class Dielectric : public Material {
- public:
-    explicit Dielectric(double refraction_index);
-
-    // Refraction
-    bool scatter(
-        const Ray& in_r,
-        const HitRecord& rec,
-        Color& out_attenuation,
-        Ray& out_scattered) const noexcept override;
-
- private:
+struct DielectricData {
     double refraction_index;
-
-    // Shlick's appromixation for reflectance
-    double reflectance(double cosine, double ri) const noexcept;
 };
+
+// Scatter function for every material
+bool scatter(
+    const Ray& in_r,
+    const HitRecord& rec,
+    Color& out_attenuation,
+    Ray& out_scattered) noexcept;
+
+// Shlick's appromixation for reflectance
+double reflectance(double cosine, double ri) noexcept;
 
 #endif // INCLUDE_MATERIAL_H_
