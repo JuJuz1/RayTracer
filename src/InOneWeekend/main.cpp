@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     HittableList world;
 
     const auto mat_ground{ make_shared<Lambertian>(Colors::Gray) };
-    world.add(make_unique<Sphere>(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground));
+    world.add_sphere(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground);
 
     const auto mat_glass{ make_shared<Dielectric>(refraction_indeces::Glass) };
 
@@ -47,16 +47,16 @@ int main(int argc, char* argv[]) {
                     // Diffuse
                     const Color albedo{ random_vector() * random_vector() };
                     mat = make_shared<Lambertian>(albedo);
-                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
+                    world.add_sphere(sphere_position, sphere_radius, mat);
                 } else if (choose_mat < 0.95) {
                     // Metal
                     const Color albedo{ random_vector(0.5, 1.0) };
                     const double fuzz{ rt::random_double(0, 0.5) };
                     mat = make_shared<Metal>(albedo, fuzz);
-                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
+                    world.add_sphere(sphere_position, sphere_radius, mat);
                 } else {
                     // Glass
-                    world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat_glass));
+                    world.add_sphere(sphere_position, sphere_radius, mat_glass);
                 }
             }
         }
@@ -64,12 +64,12 @@ int main(int argc, char* argv[]) {
 
     // Big spheres left to right (furthest to closest)
     const auto mat_diffuse{ make_shared<Lambertian>(Colors::Orange) };
-    world.add(make_unique<Sphere>(Point3{ -4, 1, 0 }, 1.0, mat_diffuse));
+    world.add_sphere(Point3{ -4, 1, 0 }, 1.0, mat_diffuse);
 
-    world.add(make_unique<Sphere>(Point3{ 0, 1, 0 }, 1.0, mat_glass));
+    world.add_sphere(Point3{ 0, 1, 0 }, 1.0, mat_glass);
 
     const auto mat_metal{ make_shared<Metal>(Colors::Brown, 0.0) };
-    world.add(make_unique<Sphere>(Point3{ 4, 1, 0 }, 1.0, mat_metal));
+    world.add_sphere(Point3{ 4, 1, 0 }, 1.0, mat_metal);
 
     // Camera
 

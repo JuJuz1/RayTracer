@@ -12,9 +12,8 @@
 class HittableList {
  public:
     HittableList() noexcept;
-    explicit HittableList(std::unique_ptr<Hittable>);
 
-    void add(std::unique_ptr<Hittable> object);
+    void HittableList::add_sphere(const Vec3& center, double radius, std::shared_ptr<Material> mat) noexcept;
 
     // Processess through all the objects and calls hit on every Hittable that was hit
     bool process_ray(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept;
@@ -26,7 +25,10 @@ class HittableList {
     int count() const noexcept;
 
  private:
-    std::vector<std::unique_ptr<Hittable>> objects;
+    std::vector<Hittable> objects;
+
 };
+
+bool hit_sphere(const SphereData& s, const Ray& r, const Interval& ray_t, HitRecord& out_rec) noexcept;
 
 #endif // INCLUDE_HITTABLE_LIST_H_

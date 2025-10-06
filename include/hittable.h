@@ -27,12 +27,22 @@ struct HitRecord {
     void set_face_normal(const Ray& r, const Vec3& outward_normal) noexcept;
 };
 
-// An abstract class for a hittable object
-class Hittable {
- public:
-    virtual ~Hittable() = default;
+enum class HittableType {
+    Sphere,
 
-    virtual bool hit(const Ray& r, const Interval& ray_t, HitRecord& rec) const noexcept = 0;
+    MaxCount
+};
+
+struct Hittable {
+    HittableType type;
+    void* data;
+};
+
+// Sphere-specific data
+struct SphereData {
+    Vec3 center;
+    double radius;
+    std::shared_ptr<Material> mat;
 };
 
 #endif // INCLUDE_HITTABLE_H_
