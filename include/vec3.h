@@ -8,18 +8,19 @@
 
 class Vec3 {
  public:
-    Vec3() noexcept;
-    Vec3(double e0, double e1, double e2) noexcept;
+    // Need to define here for color.h
+    constexpr Vec3() noexcept : e{ 0, 0, 0 } {}
+    constexpr Vec3(double e0, double e1, double e2) noexcept : e{ e0, e1, e2 } {}
 
-    constexpr double x() const noexcept;
-    constexpr double y() const noexcept;
-    constexpr double z() const noexcept;
+    double x() const noexcept;
+    double y() const noexcept;
+    double z() const noexcept;
 
     // Operators
     Vec3 operator-() const noexcept;
 
-    constexpr double operator[](int i) const noexcept;
-    constexpr double& operator[](int i) noexcept;
+    double operator[](int i) const noexcept;
+    double& operator[](int i) noexcept;
 
     Vec3& operator+=(const Vec3& other) noexcept;
     Vec3& operator-=(const Vec3& other) noexcept;
@@ -27,7 +28,7 @@ class Vec3 {
     Vec3& operator/=(double t) noexcept;
 
     double length() const noexcept;
-    constexpr double length_squared() const noexcept;
+    double length_squared() const noexcept;
 
     // Checks if a vector is close to zero in all dimensions
     bool is_near_zero() const noexcept;
@@ -50,7 +51,7 @@ Vec3 operator*(const Vec3& v1, const Vec3& v2) noexcept;
 Vec3 operator*(const Vec3& v, double t) noexcept;
 Vec3 operator/(const Vec3& v, double t) noexcept;
 
-constexpr double dot(const Vec3& v1, const Vec3& v2) noexcept;
+double dot(const Vec3& v1, const Vec3& v2) noexcept;
 Vec3 cross(const Vec3& v1, const Vec3& v2) noexcept;
 
 Vec3 unit_vector(const Vec3& v) noexcept;

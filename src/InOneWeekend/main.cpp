@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     // Contains every hittable object
     HittableList world;
 
-    const auto mat_ground{ make_shared<Lambertian>(Colors::Gray) };
+    const auto mat_ground{ make_shared<Lambertian>(colors::Gray) };
     world.add(make_unique<Sphere>(Point3{  0.0, -1000.0, -1.0 }, 1000.0, mat_ground));
 
     const auto mat_glass{ make_shared<Dielectric>(refraction_indeces::Glass) };
@@ -63,12 +63,12 @@ int main(int argc, char* argv[]) {
     }
 
     // Big spheres left to right (furthest to closest)
-    const auto mat_diffuse{ make_shared<Lambertian>(Colors::Orange) };
+    const auto mat_diffuse{ make_shared<Lambertian>(colors::Orange) };
     world.add(make_unique<Sphere>(Point3{ -4, 1, 0 }, 1.0, mat_diffuse));
 
     world.add(make_unique<Sphere>(Point3{ 0, 1, 0 }, 1.0, mat_glass));
 
-    const auto mat_metal{ make_shared<Metal>(Colors::Brown, 0.0) };
+    const auto mat_metal{ make_shared<Metal>(colors::Brown, 0.0) };
     world.add(make_unique<Sphere>(Point3{ 4, 1, 0 }, 1.0, mat_metal));
 
     // Camera

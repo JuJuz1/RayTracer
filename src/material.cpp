@@ -57,7 +57,7 @@ bool Dielectric::scatter(
     Color& out_attenuation,
     Ray& out_scattered
 ) const noexcept {
-    out_attenuation = Colors::White;
+    out_attenuation = colors::White;
     const double ri{ rec.front_face ? (1.0 / refraction_index) : refraction_index };
 
     const Vec3 unit_direction{ unit_vector(in_r.direction()) };

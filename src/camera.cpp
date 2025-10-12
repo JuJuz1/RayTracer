@@ -238,7 +238,7 @@ void Camera::print_properties() const noexcept {
 Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept {
     // Hit ray bounce limit (max_depth)
     if (depth <= 0)
-        return Colors::Black;
+        return colors::Black;
 
     HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
@@ -249,7 +249,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
         if (rec.mat->scatter(r, rec, attenuation, scattered))
             return attenuation * trace_ray(scattered, depth - 1, world);
 
-        return Colors::Black;
+        return colors::Black;
     }
 
     // Nothing was hit -> render background

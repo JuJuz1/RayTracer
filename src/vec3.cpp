@@ -5,18 +5,14 @@
 
 #include "rtweekend.h"
 
-Vec3::Vec3() noexcept : e{ 0, 0, 0 } {}
-
-Vec3::Vec3(double e0, double e1, double e2) noexcept : e{ e0, e1, e2 } {}
-
-constexpr double Vec3::x() const noexcept { return e[0]; }
-constexpr double Vec3::y() const noexcept { return e[1]; }
-constexpr double Vec3::z() const noexcept { return e[2]; }
+double Vec3::x() const noexcept { return e[0]; }
+double Vec3::y() const noexcept { return e[1]; }
+double Vec3::z() const noexcept { return e[2]; }
 
 Vec3 Vec3::operator-() const noexcept { return Vec3{ -e[0], -e[1], -e[2] }; }
 
-constexpr double Vec3::operator[](int i) const noexcept { return e[i]; }
-constexpr double& Vec3::operator[](int i) noexcept { return e[i]; }
+double Vec3::operator[](int i) const noexcept { return e[i]; }
+double& Vec3::operator[](int i) noexcept { return e[i]; }
 
 Vec3& Vec3::operator+=(const Vec3& other) noexcept {
     e[0] += other.x();
@@ -47,7 +43,7 @@ double Vec3::length() const noexcept {
     return std::sqrt(length_squared());
 }
 
-constexpr double Vec3::length_squared() const noexcept {
+double Vec3::length_squared() const noexcept {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
@@ -86,7 +82,7 @@ Vec3 operator/(const Vec3& v, double t) noexcept {
     return v * (1/t);
 }
 
-constexpr double dot(const Vec3& v1, const Vec3& v2) noexcept {
+double dot(const Vec3& v1, const Vec3& v2) noexcept {
     return v1.x() * v2.x()
          + v1.y() * v2.y()
          + v1.z() * v2.z();

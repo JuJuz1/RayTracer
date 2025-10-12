@@ -26,8 +26,8 @@ class Camera {
     double defocus_angle =    0; // Variation angle of rays through each pixel
     double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
 
-    Color background_color_top    = Colors::LightBlue; // Gradient start color (top)
-    Color background_color_bottom = Colors::White;     // -||- end
+    Color background_color_top    = colors::LightBlue; // Gradient start color (top)
+    Color background_color_bottom = colors::White;     // -||- end
 
     // The main character, handles single and multithreaded rendering
     bool render(
