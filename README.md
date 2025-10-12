@@ -15,7 +15,7 @@ The goal for the first book is to create a C++ ray tracer which can create good-
 
 ## Current features
 
-- A brute-force raytracer in C++11 (might upgrade to newer now that I've finished the first book)
+- A brute-force raytracer in C++23
 - Outputs images in **P3 PPM** format
 - Some command line arguments (will probably add more)
 - Progress indicators while rendering

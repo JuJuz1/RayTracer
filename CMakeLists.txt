@@ -8,8 +8,8 @@ cmake_minimum_required ( VERSION 3.1.0...4.0.0 )
 
 project(RayTracingOneWeekend)
 
-# Set to C++11
-set ( CMAKE_CXX_STANDARD          11 )
+# Set to C++23
+set ( CMAKE_CXX_STANDARD          23 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
