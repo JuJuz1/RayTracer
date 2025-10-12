@@ -30,7 +30,7 @@ class Camera {
     Color background_color_bottom = Colors::White;     // -||- end
 
     // The main character, handles single and multithreaded rendering
-    bool Camera::render(
+    bool render(
         const HittableList& world,
         const std::string& filename,
         int num_threads) noexcept;
@@ -53,7 +53,7 @@ class Camera {
     void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
 
     // Multithreaded
-    void Camera::render_chunk_multithreaded(
+    void render_chunk_multithreaded(
         int j_start,
         int j_end,
         int i_end,
