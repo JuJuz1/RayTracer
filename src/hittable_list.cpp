@@ -1,6 +1,7 @@
 #include "hittable_list.h"
 
 #include <utility>
+#include <optional>
 
 #include "ray.h"
 #include "interval.h"
@@ -12,20 +13,19 @@ HittableList::HittableList(std::unique_ptr<Hittable> object) { add(std::move(obj
 
 void HittableList::add(std::unique_ptr<Hittable> object) { objects.push_back(std::move(object)); }
 
-bool HittableList::process_ray(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept {
-    HitRecord temp_rec;
-    bool hit{ false };
+std::optional<HitRecord> HittableList::process_ray(const Ray& r, const Interval& ray_t) const noexcept {
+    std::optional<HitRecord> closest_hit;
     double closest_so_far{ ray_t.max };
 
     for (const auto& obj : objects) {
-        if (obj->hit(r, Interval{ ray_t.min, closest_so_far }, temp_rec)) {
-            hit = true;
-            closest_so_far = temp_rec.t;
-            out_rec = temp_rec;
+        if (auto hit_rec = obj->hit(r, Interval{ ray_t.min, closest_so_far })) {
+            closest_hit = *hit_rec;
+            closest_so_far = hit_rec->t;
         }
     }
 
-    return hit;
+    // closest_hit is {} if no object was hit
+    return closest_hit;
 }
 
 void HittableList::clear() { objects.clear(); }

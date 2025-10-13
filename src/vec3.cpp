@@ -146,7 +146,7 @@ Vec3 reflect(const Vec3& v, const Vec3& n) noexcept {
 
 Vec3 refract(const Vec3& v, const Vec3& n, double etai_over_etat) noexcept {
     const double cos_theta{ std::fmin(dot(-v, n), 1.0) };
-    Vec3 r_out_perp{ (n * cos_theta + v) * etai_over_etat };
-    Vec3 r_out_parallel{ n * -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) };
+    const Vec3 r_out_perp{ (n * cos_theta + v) * etai_over_etat };
+    const Vec3 r_out_parallel{ n * -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) };
     return Vec3{ r_out_perp + r_out_parallel };
 }

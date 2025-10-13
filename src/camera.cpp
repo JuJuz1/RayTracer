@@ -115,7 +115,7 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     for (int j : std::views::iota(0, image_height)) {
         for (int i : std::views::iota(0, image_width)) {
             Color pixel_color;
-            for ([[maybe_unused]] int _ : std::views::iota(0, samples_per_pixel)) {
+            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
@@ -150,7 +150,7 @@ void Camera::render_chunk_multithreaded(
     for (int j : std::views::iota(j_start, j_end)) {
         for (int i : std::views::iota(0, i_end)) {
             Color pixel_color;
-            for ([[maybe_unused]] int _ : std::views::iota(0, samples_per_pixel)) {
+            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
@@ -239,14 +239,11 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     if (depth <= 0) [[unlikely]]
         return colors::Black;
 
-    HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
-    if (world.process_ray(r, Interval{ 0.001, rt::infinity }, rec)) {
-        Ray scattered;
-        Color attenuation;
-        if (rec.mat->scatter(r, rec, attenuation, scattered))
-            return attenuation * trace_ray(scattered, depth - 1, world);
+    if (auto hit_rec = world.process_ray(r, Interval{ 0.001, rt::infinity })) {
+        if (auto scatter_rec = hit_rec->mat->scatter(r, *hit_rec))
+            return scatter_rec->attenuation * trace_ray(scatter_rec->scattered, depth - 1, world);
 
         return colors::Black;
     }
