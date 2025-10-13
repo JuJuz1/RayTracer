@@ -68,14 +68,16 @@ cmake --build $(your_build_directory_name) --config Release
 You can specify the number of threads to use, default is 1. The default output file is image.ppm
 
 ```bash
-./$(your_build_directory_name)/Release/inOneWeekend.exe [num_threads] [output_filename.ppm]
+./$(your_build_directory_name)/Release/inOneWeekend [num_threads] [output_filename.ppm]
 ```
 
 There are many ways to view the created **P3 PPM** images. I found it easiest to use this website: [PPM Viewer](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html)
 
 ## Tools
 
-### Cpplint
+### Third-party
+
+#### Cpplint
 
 This project includes a copy of cpplint.py. See [License](LICENSE.cpplint)
 
@@ -85,10 +87,10 @@ To verify that the source files comply with most of the cpplint checks run:
 ./run_cpplint.sh
 ```
 
-### Testing
+#### Catch2
 
-This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. See [License](LICENSE.Catch2). The tests cases are built after building the raytracer library. To run the tests it is very similar to running the application.
+This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. See [License](LICENSE.Catch2). The test cases are built alongside the raytracer library. To run the tests it is very similar to running the application.
 
 ```bash
-./$(your_build_directory_name)/Release/tests.exe
+./$(your_build_directory_name)/Release/tests
 ```
