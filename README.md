@@ -87,7 +87,7 @@ To verify that the source files comply with most of the cpplint checks run:
 
 ### Testing
 
-This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. The tests are built at the same time when building the project. To run the tests it is very similar to running the application.
+This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. See [License](LICENSE.Catch2). The tests cases are built after building the raytracer library. To run the tests it is very similar to running the application.
 
 ```bash
 ./$(your_build_directory_name)/Release/tests.exe
