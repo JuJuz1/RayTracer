@@ -52,6 +52,9 @@ class Camera {
     // Prints camera properties
     void print_properties() const noexcept;
 
+    // TODO: consider uniting single and multithreaded code
+    // atm has a lot of similarities i.e. the loops
+
     // Single-threaded
     void render_single_thread(const HittableList& world, std::ofstream& out) const;
 
