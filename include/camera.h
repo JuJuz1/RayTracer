@@ -10,32 +10,58 @@
 #include "color.h"
 #include "ray.h"
 
-class Camera {
- public:
-    double aspect_ratio    = 1.0; // Ratio of image width over height
-    int image_width        = 100; // Rendered image width
-    int samples_per_pixel  =  10; // Count of random samples per pixel
-    int max_depth          =  10; // Maximum ray bounces (recursion calls)
-    double ray_attenuation = 0.1; // Fraction of light the ray preserves per bounce
+struct ViewportProperties {
+    double vfov     = 20.0;               // Vertical field of view
+    Point3 lookfrom = Point3{ 13, 2, 3 }; // The point the camera is looking from
+    Point3 lookat   = Point3{  0, 0, 0 }; // The point the camera is looking at
+    Vec3 vup        = Vec3  {  0, 1, 0 }; // Camera-relative "up" direction
+};
 
-    double vfov         = 90.0;               // Vertical field of view
-    Point3 lookfrom     = Point3{ 0, 0,  0 }; // The point the camera is looking from
-    Point3 lookat       = Point3{ 0, 0, -1 }; // The point the camera is looking at
-    Vec3 vup            = Point3{ 0, 1,  0 }; // Camera-relative "up" direction
-
-    double defocus_angle =    0; // Variation angle of rays through each pixel
+struct LensProperties {
+    double defocus_angle =  0.6; // Variation angle of rays through each pixel
     double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
+};
 
+struct BackGroundColors {
     Color background_color_top    = colors::LightBlue; // Gradient start color (top)
     Color background_color_bottom = colors::White;     // Gradient end color (bottom)
+};
 
-    // The main character, handles single and multithreaded rendering
-    [[nodiscard]] bool render(
+// All camera properties in a single struct
+struct CameraProperties {
+    double aspect_ratio   = 16.0 / 9.0; // Ratio of image width over height
+    int image_width       = 400;        // Rendered image width
+    int samples_per_pixel = 100;        // Maximum ray bounces (recursion calls)
+    int max_depth         =  50;        // Fraction of light the ray preserves per bounce
+
+    ViewportProperties viewport_prop;
+    LensProperties lens_prop;
+    BackGroundColors bg_colors;
+};
+
+class Camera {
+ public:
+    explicit Camera(const CameraProperties& cam_prop);
+
+    int get_image_width() const noexcept;
+    int get_image_height() const noexcept;
+
+    // Prints camera properties
+    void print_properties() const noexcept;
+
+    // Single-threaded
+    void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
+
+    // Multithreaded
+    void render_chunk(
+        int j_start,
+        int j_end,
         const HittableList& world,
-        const std::string& filename,
-        int num_threads) noexcept;
+        std::vector<Color>& color_buffer) const noexcept;
 
  private:
+    CameraProperties cam_prop;
+
     int image_height;          // Rendered image height
     double pixel_sample_scale; // Color scale factor for a sum of pixel samples
     Point3 center;             // Camera center
@@ -46,21 +72,9 @@ class Camera {
     Vec3 defocus_disk_u;       // Defocus disk horizontal radius
     Vec3 defocus_disk_v;       // Defocus disk vertical radius
 
-    // Called at the start of render
+    // Called in constructor
+    // Initialize private variables
     void initialize() noexcept;
-
-    // Single-threaded
-    void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
-
-    // Multithreaded
-    void render_chunk_multithreaded(
-        int j_start,
-        int j_end,
-        int i_end,
-        const HittableList& world,
-        std::vector<Color>& color_buffer) const noexcept;
-
-    void print_properties() const noexcept;
 
     // Calculates the color of a pixel with a given ray from the camera
     // Takes into account the passed Hittable object(s)
@@ -68,7 +82,7 @@ class Camera {
 
     // Constructs a camera ray originating from the origin
     // and directed at a randomly sampled point around the pixel location i, j
-    [[nodiscard]] Ray get_ray(int i, int j) const noexcept;
+    [[nodiscard]] Ray construct_ray(int i, int j) const noexcept;
 
     // Returns a random point in the defocus disk
     [[nodiscard]] Point3 defocus_disk_sample() const noexcept;

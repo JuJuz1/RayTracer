@@ -23,6 +23,7 @@ set ( SOURCE_ONE_WEEKEND
   src/material.cpp
   src/interval.cpp
   src/ray.cpp
+  src/renderer.cpp
   src/sphere.cpp
   src/timer.cpp
   src/vec3.cpp

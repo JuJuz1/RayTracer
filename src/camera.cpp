@@ -25,87 +25,36 @@
 std::mutex cout_mutex;
 
 // Progress indicator for multithreading
-//std::thread::id progress_thread_id;
 std::atomic<int> scanlines_done{ 0 };
 
-bool Camera::render(
-    const HittableList& world,
-    const std::string& filename,
-    int num_threads
-) noexcept {
+Camera::Camera(const CameraProperties& cam_prop) : cam_prop{ cam_prop } {
     initialize();
+}
 
-    // Open for output and clear existing content
-    std::ofstream out{ filename };
-    if (!out.is_open()) [[unlikely]] {
-        std::cerr << "Error while opening file!\n";
-        return false;
-    }
+int Camera::get_image_width() const noexcept {
+    return cam_prop.image_width;
+}
 
-    print_properties();
+int Camera::get_image_height() const noexcept {
+    return image_height;
+}
 
-    std::cout << "Rendering output to file: " << filename << "\n";
-    out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
+void Camera::print_properties() const noexcept {
+    std::cout << "\nRendering an image with properties:\n";
+    rt::print_camera_property_formatted("Width", cam_prop.image_width);
+    rt::print_camera_property_formatted("Height", image_height);
+    rt::print_camera_property_formatted("Samples per pixel", cam_prop.samples_per_pixel);
+    rt::print_camera_property_formatted("Max depth", cam_prop.max_depth);
 
-    // Single-threaded
-    if (num_threads == 1) {
-        std::cout << "\nSingle thread\n";
-        render_single_thread(world, out);
-        out.close();
-        return true;
-    }
+    std::cout << "\nViewport properties:\n";
+    rt::print_camera_property_formatted("Vertical fov", cam_prop.viewport_prop.vfov);
+    rt::print_camera_property_formatted("Look from", cam_prop.viewport_prop.lookfrom);
+    rt::print_camera_property_formatted("Look at", cam_prop.viewport_prop.lookat);
 
-    // Multithreaded
-    std::cout << "\nMultithread\n";
-    std::cout << "Thread count: " << num_threads << "\n";
-
-    std::vector<std::thread> threads;
-    threads.reserve(num_threads);
-
-    const int rows_per_thread{ image_height / num_threads };
-    const int leftover{ image_height % num_threads };
-
-    // Color buffer for threads store colors to
-    std::vector<Color> color_buffer;
-    color_buffer.resize(image_width * image_height);
-
-    // Setup threads
-    // Assign each thread a range of rows that it writes to
-    for (int n : std::views::iota(0, num_threads)) {
-        const int j_start{ n * rows_per_thread };
-        int j_end{ j_start + rows_per_thread };
-        // Add all leftover to last thread
-        if (n == num_threads - 1) [[unlikely]]
-            j_end += leftover;
-
-        threads.emplace_back(
-            &Camera::render_chunk_multithreaded,
-            this,
-            j_start,
-            j_end,
-            image_width,
-            std::cref(world), // Const ref
-            std::ref(color_buffer));
-    }
-
-    // Progress indicators
-    Timer t;
-    //progress_thread_id = threads.front().get_id();
-
-    // Execute threads
-    for (auto& th : threads) {
-        th.join();
-        //if (th.get_id() == threads.front().get_id())
-    }
-
-    std::cout << "Writing to file...\n";
-
-    write_color_from_buffer(out, color_buffer);
-
-    t.print_elapsed("Total time: ");
-
-    out.close();
-    return true;
+    std::cout << "\nLens properties:\n";
+    rt::print_camera_property_formatted("Defocus angle", cam_prop.lens_prop.defocus_angle);
+    rt::print_camera_property_formatted("Focus distance", cam_prop.lens_prop.focus_dist);
+    std::cout << "\n";
 }
 
 void Camera::render_single_thread(const HittableList& world, std::ofstream& out) const noexcept {
@@ -114,11 +63,11 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     constexpr double progress_refresh_rate{ 0.5 };
 
     for (int j : std::views::iota(0, image_height)) {
-        for (int i : std::views::iota(0, image_width)) {
+        for (int i : std::views::iota(0, cam_prop.image_width)) {
             Color pixel_color;
-            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
-                const Ray r{ get_ray(i, j) };
-                pixel_color += trace_ray(r, max_depth, world);
+            for ([[maybe_unused]] auto _ : std::views::iota(0, cam_prop.samples_per_pixel)) {
+                const Ray r{ construct_ray(i, j) };
+                pixel_color += trace_ray(r, cam_prop.max_depth, world);
             }
 
             write_color(out, pixel_color * pixel_sample_scale);
@@ -132,10 +81,9 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     }
 }
 
-void Camera::render_chunk_multithreaded(
+void Camera::render_chunk(
     int j_start,
     int j_end,
-    int i_end,
     const HittableList& world,
     std::vector<Color>& color_buffer
 ) const noexcept {
@@ -149,14 +97,14 @@ void Camera::render_chunk_multithreaded(
     Timer t;
 
     for (int j : std::views::iota(j_start, j_end)) {
-        for (int i : std::views::iota(0, i_end)) {
+        for (int i : std::views::iota(0, cam_prop.image_width)) {
             Color pixel_color;
-            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
-                const Ray r{ get_ray(i, j) };
-                pixel_color += trace_ray(r, max_depth, world);
+            for ([[maybe_unused]] auto _ : std::views::iota(0, cam_prop.samples_per_pixel)) {
+                const Ray r{ construct_ray(i, j) };
+                pixel_color += trace_ray(r, cam_prop.max_depth, world);
             }
 
-            color_buffer[j * i_end + i] = pixel_color * pixel_sample_scale;
+            color_buffer[j * cam_prop.image_width + i] = pixel_color * pixel_sample_scale;
         }
 
         ++scanlines_done;
@@ -180,23 +128,25 @@ void Camera::render_chunk_multithreaded(
     }
 }
 
+// === Private ===
+
 void Camera::initialize() noexcept {
-    image_height = std::max(static_cast<int>(image_width / aspect_ratio), 1);
+    image_height = std::max(static_cast<int>(cam_prop.image_width / cam_prop.aspect_ratio), 1);
 
-    pixel_sample_scale = 1.0 / samples_per_pixel;
+    pixel_sample_scale = 1.0 / cam_prop.samples_per_pixel;
 
-    center = lookfrom;
+    center = cam_prop.viewport_prop.lookfrom;
 
     // Viewport dimensions
-    const double theta{ rt::degrees_to_radians(vfov) };
+    const double theta{ rt::degrees_to_radians(cam_prop.viewport_prop.vfov) };
     const double h{ std::tan(theta / 2) };
-    const double viewport_height{ 2 * h * focus_dist };
+    const double viewport_height{ 2 * h * cam_prop.lens_prop.focus_dist };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
-    const double viewport_width = viewport_height * (static_cast<double>(image_width) / image_height);
+    const double viewport_width = viewport_height * (static_cast<double>(cam_prop.image_width) / image_height);
 
     // Camera unit basis vectors
-    w = unit_vector(lookfrom - lookat);
-    u = unit_vector(cross(vup, w));
+    w = unit_vector(cam_prop.viewport_prop.lookfrom - cam_prop.viewport_prop.lookat);
+    u = unit_vector(cross(cam_prop.viewport_prop.vup, w));
     v = cross(w, u);
 
     // Calculate the vectors for horizontal and vertical traversing of the viewport
@@ -204,35 +154,18 @@ void Camera::initialize() noexcept {
     const Vec3 viewport_v{ -v * viewport_height };
 
     // Horizontal and vertical delta vectors from pixel to pixel
-    pixel_delta_u = viewport_u / image_width;
+    pixel_delta_u = viewport_u / cam_prop.image_width;
     pixel_delta_v = viewport_v / image_height;
 
     const Point3 viewport_upper_left{
-        center - (w * focus_dist) - viewport_u / 2 - viewport_v / 2 };
+        center - (w * cam_prop.lens_prop.focus_dist) - viewport_u / 2 - viewport_v / 2 };
     pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
 
     // Defocus disk basis vectors
-    const double defocus_radius{ focus_dist * std::tan(rt::degrees_to_radians(defocus_angle / 2)) };
+    const double defocus_radius{cam_prop.lens_prop.focus_dist
+        * std::tan(rt::degrees_to_radians(cam_prop.lens_prop.defocus_angle / 2))};
     defocus_disk_u = u * defocus_radius;
     defocus_disk_v = v * defocus_radius;
-}
-
-void Camera::print_properties() const noexcept {
-    std::cout << "\nRendering an image with properties:\n";
-    rt::print_camera_property_formatted("Width", image_width);
-    rt::print_camera_property_formatted("Height", image_height);
-    rt::print_camera_property_formatted("Samples per pixel", samples_per_pixel);
-    rt::print_camera_property_formatted("Max depth", max_depth);
-
-    std::cout << "\nViewport properties:\n";
-    rt::print_camera_property_formatted("Vertical fov", vfov);
-    rt::print_camera_property_formatted("Look from", lookfrom);
-    rt::print_camera_property_formatted("Look at", lookat);
-
-    std::cout << "\nLens properties:\n";
-    rt::print_camera_property_formatted("Defocus angle", defocus_angle);
-    rt::print_camera_property_formatted("Focus distance", focus_dist);
-    std::cout << "\n";
 }
 
 Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept {
@@ -253,16 +186,17 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    return background_color_bottom * (1.0 - a) + background_color_top * a;
+    return cam_prop.bg_colors.background_color_bottom * (1.0 - a)
+         + cam_prop.bg_colors.background_color_top * a;
 }
 
-Ray Camera::get_ray(int i, int j) const noexcept {
+Ray Camera::construct_ray(int i, int j) const noexcept {
     const Vec3 offset{ sample_square() };
     const Point3 pixel_sample{pixel00_loc
                            + (pixel_delta_u * (i + offset.x()))
                            + (pixel_delta_v * (j + offset.y()))};
 
-    const Point3 ray_origin{ (defocus_angle <= 0) ? center : defocus_disk_sample() };
+    const Point3 ray_origin{ (cam_prop.lens_prop.defocus_angle <= 0) ? center : defocus_disk_sample() };
     const Vec3 ray_direction{ pixel_sample - ray_origin };
     return Ray{ ray_origin, ray_direction };
 }
