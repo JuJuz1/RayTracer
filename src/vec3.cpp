@@ -5,18 +5,14 @@
 
 #include "rtweekend.h"
 
-Vec3::Vec3() noexcept : e{ 0, 0, 0 } {}
+double Vec3::x() const noexcept { return e[0]; }
+double Vec3::y() const noexcept { return e[1]; }
+double Vec3::z() const noexcept { return e[2]; }
 
-Vec3::Vec3(double e0, double e1, double e2) noexcept : e{ e0, e1, e2 } {}
-
-constexpr double Vec3::x() const noexcept { return e[0]; }
-constexpr double Vec3::y() const noexcept { return e[1]; }
-constexpr double Vec3::z() const noexcept { return e[2]; }
+double Vec3::operator[](int i) const noexcept { return e[i]; }
+double& Vec3::operator[](int i) noexcept { return e[i]; }
 
 Vec3 Vec3::operator-() const noexcept { return Vec3{ -e[0], -e[1], -e[2] }; }
-
-constexpr double Vec3::operator[](int i) const noexcept { return e[i]; }
-constexpr double& Vec3::operator[](int i) noexcept { return e[i]; }
 
 Vec3& Vec3::operator+=(const Vec3& other) noexcept {
     e[0] += other.x();
@@ -47,7 +43,7 @@ double Vec3::length() const noexcept {
     return std::sqrt(length_squared());
 }
 
-constexpr double Vec3::length_squared() const noexcept {
+double Vec3::length_squared() const noexcept {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
 }
 
@@ -86,7 +82,7 @@ Vec3 operator/(const Vec3& v, double t) noexcept {
     return v * (1/t);
 }
 
-constexpr double dot(const Vec3& v1, const Vec3& v2) noexcept {
+double dot(const Vec3& v1, const Vec3& v2) noexcept {
     return v1.x() * v2.x()
          + v1.y() * v2.y()
          + v1.z() * v2.z();
@@ -103,7 +99,9 @@ Vec3 unit_vector(const Vec3& v) noexcept {
 }
 
 Vec3 random_vector() noexcept {
-    return Vec3{ rt::random_double(), rt::random_double(), rt::random_double() };
+    return Vec3{rt::random_double(),
+                rt::random_double(),
+                rt::random_double()};
 }
 
 Vec3 random_vector(double min, double max) noexcept {
@@ -136,7 +134,7 @@ Vec3 random_in_unit_disk() noexcept {
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     const Vec3 on_unit_sphere{ random_unit_vector() };
     // Same hemisphere as normal
-    if (dot(on_unit_sphere, normal) > 0)
+    if (0 < dot(on_unit_sphere, normal))
         return on_unit_sphere;
 
     return -on_unit_sphere;
@@ -148,7 +146,7 @@ Vec3 reflect(const Vec3& v, const Vec3& n) noexcept {
 
 Vec3 refract(const Vec3& v, const Vec3& n, double etai_over_etat) noexcept {
     const double cos_theta{ std::fmin(dot(-v, n), 1.0) };
-    Vec3 r_out_perp{ (n * cos_theta + v) * etai_over_etat };
-    Vec3 r_out_parallel{ n * -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) };
+    const Vec3 r_out_perp{ (n * cos_theta + v) * etai_over_etat };
+    const Vec3 r_out_parallel{ n * -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) };
     return Vec3{ r_out_perp + r_out_parallel };
 }

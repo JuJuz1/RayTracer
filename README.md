@@ -15,7 +15,7 @@ The goal for the first book is to create a C++ ray tracer which can create good-
 
 ## Current features
 
-- A brute-force raytracer in C++11 (might upgrade to newer now that I've finished the first book)
+- A brute-force raytracer in C++23
 - Outputs images in **P3 PPM** format
 - Some command line arguments (will probably add more)
 - Progress indicators while rendering
@@ -42,7 +42,7 @@ Image properties:
 
 ### Prerequisites
 
-- A C++11 (or later) compatible compiler (GCC, MSVC or Clang)
+- A C++23 (or later) compatible compiler (GCC, MSVC or Clang)
 - [CMake](https://cmake.org/) (version 3.1.0 or later recommended)
 
 ### Build Instructions

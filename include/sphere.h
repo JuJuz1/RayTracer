@@ -2,6 +2,7 @@
 #define INCLUDE_SPHERE_H_
 
 #include <memory>
+#include <optional>
 
 #include "hittable.h"
 #include "vec3.h"
@@ -13,7 +14,7 @@ class Sphere final : public Hittable {
  public:
     Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept;
 
-    bool hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept override;
+    [[nodiscard]] std::optional<HitRecord> hit(const Ray& r, const Interval& ray_t) const noexcept override;
 
  private:
     Point3 center;

@@ -4,14 +4,14 @@
 #include <atomic>
 
 #include <string>
+#include <fstream>
+#include <iostream>
+
 #include <vector>
 #include <thread>
-
-#include <chrono>
-#include <iostream>
-#include <fstream>
-
 #include <functional>
+
+#include <ranges>
 #include <algorithm>
 #include <cmath>
 
@@ -37,7 +37,7 @@ bool Camera::render(
 
     // Open for output and clear existing content
     std::ofstream out{ filename };
-    if (!out.is_open()) {
+    if (!out.is_open()) [[unlikely]] {
         std::cerr << "Error while opening file!\n";
         return false;
     }
@@ -71,11 +71,11 @@ bool Camera::render(
 
     // Setup threads
     // Assign each thread a range of rows that it writes to
-    for (int n{ 0 }; n < num_threads; ++n) {
+    for (int n : std::views::iota(0, num_threads)) {
         const int j_start{ n * rows_per_thread };
         int j_end{ j_start + rows_per_thread };
         // Add all leftover to last thread
-        if (n == num_threads - 1)
+        if (n == num_threads - 1) [[unlikely]]
             j_end += leftover;
 
         threads.emplace_back(
@@ -113,10 +113,10 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     double last_print{ t.elapsed() };
     constexpr double progress_refresh_rate{ 0.5 };
 
-    for (int j{ 0 }; j < image_height; ++j) {
-        for (int i{ 0 }; i < image_width; ++i) {
+    for (int j : std::views::iota(0, image_height)) {
+        for (int i : std::views::iota(0, image_width)) {
             Color pixel_color;
-            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
@@ -148,10 +148,10 @@ void Camera::render_chunk_multithreaded(
 
     Timer t;
 
-    for (int j{ j_start }; j < j_end; ++j) {
-        for (int i{ 0 }; i < i_end; ++i) {
+    for (int j : std::views::iota(j_start, j_end)) {
+        for (int i : std::views::iota(0, i_end)) {
             Color pixel_color;
-            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+            for ([[maybe_unused]] auto _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
@@ -237,26 +237,23 @@ void Camera::print_properties() const noexcept {
 
 Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept {
     // Hit ray bounce limit (max_depth)
-    if (depth <= 0)
-        return Colors::Black;
+    if (depth <= 0) [[unlikely]]
+        return colors::Black;
 
-    HitRecord rec;
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
-    if (world.process_ray(r, Interval{ 0.001, rt::infinity }, rec)) {
-        Ray scattered;
-        Color attenuation;
-        if (rec.mat->scatter(r, rec, attenuation, scattered))
-            return attenuation * trace_ray(scattered, depth - 1, world);
+    if (auto hit_rec = world.process_ray(r, Interval{ 0.001, rt::infinity })) {
+        if (auto scatter_rec = hit_rec->mat->scatter(r, *hit_rec))
+            return scatter_rec->attenuation * trace_ray(scatter_rec->scattered, depth - 1, world);
 
-        return Colors::Black;
+        return colors::Black;
     }
 
     // Nothing was hit -> render background
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    return background_color_top * a + background_color_bottom * (1.0 - a);
+    return background_color_bottom * (1.0 - a) + background_color_top * a;
 }
 
 Ray Camera::get_ray(int i, int j) const noexcept {
@@ -270,11 +267,11 @@ Ray Camera::get_ray(int i, int j) const noexcept {
     return Ray{ ray_origin, ray_direction };
 }
 
-Vec3 Camera::sample_square() const noexcept {
-    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
-}
-
 Point3 Camera::defocus_disk_sample() const noexcept {
     const Vec3 p{ random_in_unit_disk() };
     return center + (defocus_disk_u * p.x()) + (defocus_disk_v * p.y());
+}
+
+Vec3 sample_square() noexcept {
+    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
 }
