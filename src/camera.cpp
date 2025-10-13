@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <thread>
+#include <functional>
 
 #include <ranges>
 #include <algorithm>
@@ -252,7 +253,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
     const double a = 0.5 * (unit_direction.y() + 1.0);
-    return background_color_top * a + background_color_bottom * (1.0 - a);
+    return background_color_bottom * (1.0 - a) + background_color_top * a;
 }
 
 Ray Camera::get_ray(int i, int j) const noexcept {
@@ -266,11 +267,11 @@ Ray Camera::get_ray(int i, int j) const noexcept {
     return Ray{ ray_origin, ray_direction };
 }
 
-Vec3 Camera::sample_square() const noexcept {
-    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
-}
-
 Point3 Camera::defocus_disk_sample() const noexcept {
     const Vec3 p{ random_in_unit_disk() };
     return center + (defocus_disk_u * p.x()) + (defocus_disk_v * p.y());
+}
+
+Vec3 sample_square() noexcept {
+    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
 }
