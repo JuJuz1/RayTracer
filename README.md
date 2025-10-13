@@ -68,12 +68,14 @@ cmake --build $(your_build_directory_name) --config Release
 You can specify the number of threads to use, default is 1. The default output file is image.ppm
 
 ```bash
-./$(your_build_directory_name)/Release/inOneWeekend [num_threads] [output_filename.ppm]
+./$(your_build_directory_name)/Release/inOneWeekend.exe [num_threads] [output_filename.ppm]
 ```
 
 There are many ways to view the created **P3 PPM** images. I found it easiest to use this website: [PPM Viewer](https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html)
 
 ## Tools
+
+### Cpplint
 
 This project includes a copy of cpplint.py. See [License](LICENSE.cpplint)
 
@@ -81,4 +83,12 @@ To verify that the source files comply with most of the cpplint checks run:
 
 ```bash
 ./run_cpplint.sh
+```
+
+### Testing
+
+This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. The tests are built at the same time when building the project. To run the tests it is very similar to running the application.
+
+```bash
+./$(your_build_directory_name)/Release/tests.exe
 ```

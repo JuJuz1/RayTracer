@@ -14,8 +14,9 @@ set ( CMAKE_CXX_STANDARD          11 )
 set ( CMAKE_CXX_STANDARD_REQUIRED ON )
 set ( CMAKE_CXX_EXTENSIONS        OFF )
 
-# Build
+# === Build ===
 
+# Make raytracer a library that will be linked to tests
 add_library(raytracer_lib
   src/camera.cpp
   src/color.cpp
@@ -73,7 +74,8 @@ message (STATUS "Debug flags: " ${CMAKE_CXX_FLAGS_DEBUG})
 
 
 
-# Tests
+# === Tests ===
+
 # https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md
 
 Include(FetchContent)
