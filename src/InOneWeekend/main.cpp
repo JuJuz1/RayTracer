@@ -1,12 +1,9 @@
 #include <memory>
-#include <cmath>
-#include <iostream>
-
-#include <vector>
-#include <thread>
-
+#include <ranges>
 #include <string>
+#include <thread>
 #include <algorithm>
+#include <iostream>
 
 #include "hittable_list.h"
 #include "material.h"
@@ -35,8 +32,8 @@ int main(int argc, char* argv[]) {
     constexpr double sphere_radius{ 0.2 };
     constexpr double multiplier{ 0.9 };
 
-    for (int a{ -sphere_position_edge }; a < sphere_position_edge; ++a) {
-        for (int b{ -sphere_position_edge }; b < sphere_position_edge; ++b) {
+    for (int a : std::views::iota(-sphere_position_edge, sphere_position_edge)) {
+        for (int b : std::views::iota(-sphere_position_edge, sphere_position_edge)) {
             const double choose_mat{ rt::random_double() };
             const Point3 sphere_position{
                 a + rt::random_double() * multiplier,

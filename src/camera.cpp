@@ -4,14 +4,13 @@
 #include <atomic>
 
 #include <string>
+#include <fstream>
+#include <iostream>
+
 #include <vector>
 #include <thread>
 
-#include <chrono>
-#include <iostream>
-#include <fstream>
-
-#include <functional>
+#include <ranges>
 #include <algorithm>
 #include <cmath>
 
@@ -71,7 +70,7 @@ bool Camera::render(
 
     // Setup threads
     // Assign each thread a range of rows that it writes to
-    for (int n{ 0 }; n < num_threads; ++n) {
+    for (int n : std::views::iota(0, num_threads)) {
         const int j_start{ n * rows_per_thread };
         int j_end{ j_start + rows_per_thread };
         // Add all leftover to last thread
@@ -113,10 +112,10 @@ void Camera::render_single_thread(const HittableList& world, std::ofstream& out)
     double last_print{ t.elapsed() };
     constexpr double progress_refresh_rate{ 0.5 };
 
-    for (int j{ 0 }; j < image_height; ++j) {
-        for (int i{ 0 }; i < image_width; ++i) {
+    for (int j : std::views::iota(0, image_height)) {
+        for (int i : std::views::iota(0, image_width)) {
             Color pixel_color;
-            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+            for ([[maybe_unused]] int _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
@@ -148,10 +147,10 @@ void Camera::render_chunk_multithreaded(
 
     Timer t;
 
-    for (int j{ j_start }; j < j_end; ++j) {
-        for (int i{ 0 }; i < i_end; ++i) {
+    for (int j : std::views::iota(j_start, j_end)) {
+        for (int i : std::views::iota(0, i_end)) {
             Color pixel_color;
-            for (int sample{ 0 }; sample < samples_per_pixel; ++sample) {
+            for ([[maybe_unused]] int _ : std::views::iota(0, samples_per_pixel)) {
                 const Ray r{ get_ray(i, j) };
                 pixel_color += trace_ray(r, max_depth, world);
             }
