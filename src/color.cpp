@@ -5,7 +5,7 @@
 #include <vector>
 
 double linear_to_gamma_two(double linear_component) noexcept {
-    if (linear_component > 0)
+    if (0 < linear_component) [[likely]]
         return std::sqrt(linear_component);
 
     return 0;

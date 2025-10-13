@@ -35,7 +35,7 @@ set ( SOURCE_ONE_WEEKEND
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   # This way we could set compiler flags
   #set(CMAKE_CXX_FLAGS_RELEASE "/Ob0 /Od")
-  add_compile_options("/W4")      # Enable level-4 warnings
+  add_compile_options("/W4")      # Enable level-4 warnings (/Wall for all)
   add_compile_options("/WX")      # Treat warning as error
   add_compile_options("/we 4265") # Class has virtual functions, but its non-trivial destructor is not virtual
   add_compile_options("/we 5204") # Class has virtual functions, but its trivial destructor is not virtual

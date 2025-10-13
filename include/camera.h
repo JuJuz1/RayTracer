@@ -30,7 +30,7 @@ class Camera {
     Color background_color_bottom = colors::White;     // -||- end
 
     // The main character, handles single and multithreaded rendering
-    bool render(
+    [[nodiscard]] bool render(
         const HittableList& world,
         const std::string& filename,
         int num_threads) noexcept;
@@ -64,17 +64,17 @@ class Camera {
 
     // Calculates the color of a pixel with a given ray from the camera
     // Takes into account the passed Hittable object(s)
-    Color trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept;
+    [[nodiscard]] Color trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept;
 
-    // Construct a camera ray originating from the origin and directed at randomly sampled
-    // point around the pixel location i, j
-    Ray get_ray(int i, int j) const noexcept;
+    // Constructs a camera ray originating from the origin
+    // and directed at a randomly sampled point around the pixel location i, j
+    [[nodiscard]] Ray get_ray(int i, int j) const noexcept;
 
     // Returns a vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square
-    Vec3 sample_square() const noexcept;
+    [[nodiscard]] Vec3 sample_square() const noexcept;
 
     // Returns a random point in the defocus disk
-    Point3 defocus_disk_sample() const noexcept;
+    [[nodiscard]] Point3 defocus_disk_sample() const noexcept;
 };
 
 #endif // INCLUDE_CAMERA_H_

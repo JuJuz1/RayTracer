@@ -30,10 +30,10 @@ constexpr Vec3 Black     {0.0, 0.0, 0.0};
 } // namespace colors
 
 // Returns the gamma 2 transform for a linear component
-double linear_to_gamma_two(double linear_component) noexcept;
+[[nodiscard]] double linear_to_gamma_two(double linear_component) noexcept;
 
 // Returns x transformed to gamma 2 and byte range [0, 255]
-int to_gamma_and_byte_range(double x) noexcept;
+[[nodiscard]] int to_gamma_and_byte_range(double x) noexcept;
 
 // Single-threaded
 // Calls write_color_to_stream for color

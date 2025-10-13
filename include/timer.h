@@ -26,7 +26,7 @@ class Timer {
 
     // Returns the elapsed time as seconds
     // If the timer was paused at any moment, returns the accumulated time instead
-    double elapsed() const noexcept;
+    [[nodiscard]] double elapsed() const noexcept;
 
     void print_elapsed(const std::string& prefix = "", bool show_minutes = true) const noexcept;
 

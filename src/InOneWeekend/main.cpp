@@ -33,28 +33,32 @@ int main(int argc, char* argv[]) {
     // as we discard those which overlap with the big spheres
     constexpr int sphere_position_edge{ 11 }; // 11
     constexpr double sphere_radius{ 0.2 };
+    constexpr double multiplier{ 0.9 };
+
     for (int a{ -sphere_position_edge }; a < sphere_position_edge; ++a) {
         for (int b{ -sphere_position_edge }; b < sphere_position_edge; ++b) {
             const double choose_mat{ rt::random_double() };
             const Point3 sphere_position{
-                a + rt::random_double() * 0.9, 0.2, b + rt::random_double() * 0.9};
+                a + rt::random_double() * multiplier,
+                sphere_radius,
+                b + rt::random_double() * multiplier};
 
             // Check for overlap with big spheres
-            if ((sphere_position - Point3{ 4, sphere_radius, 0 }).length() > 0.9) {
+            if (multiplier < (sphere_position - Point3{ 4, sphere_radius, 0 }).length()) [[likely]] {
                 std::shared_ptr<Material> mat;
 
-                if (choose_mat < 0.8) {
+                if (choose_mat < 0.8) [[likely]] {
                     // Diffuse
                     const Color albedo{ random_vector() * random_vector() };
                     mat = make_shared<Lambertian>(albedo);
                     world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
-                } else if (choose_mat < 0.95) {
+                } else if (choose_mat < 0.95) [[unlikely]] {
                     // Metal
                     const Color albedo{ random_vector(0.5, 1.0) };
                     const double fuzz{ rt::random_double(0, 0.5) };
                     mat = make_shared<Metal>(albedo, fuzz);
                     world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
-                } else {
+                } else [[unlikely]] {
                     // Glass
                     world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat_glass));
                 }
@@ -109,7 +113,7 @@ int main(int argc, char* argv[]) {
     const int max_threads = static_cast<int>(std::thread::hardware_concurrency());
     num_threads = std::min(num_threads, max_threads);
 
-    if (!cam.render(world, filename, num_threads))
+    if (!cam.render(world, filename, num_threads)) [[unlikely]]
         return 0;
 
     const int objects{ world.count() };

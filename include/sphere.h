@@ -13,7 +13,7 @@ class Sphere final : public Hittable {
  public:
     Sphere(const Point3& center, double radius, std::shared_ptr<Material> mat) noexcept;
 
-    bool hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept override;
+    [[nodiscard]] bool hit(const Ray& r, const Interval& ray_t, HitRecord& out_rec) const noexcept override;
 
  private:
     Point3 center;

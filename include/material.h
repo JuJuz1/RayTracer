@@ -14,18 +14,17 @@ constexpr double Glass { 1.5  };
 
 } // namespace refraction_indeces
 
-// An abstract material class to:
+// A material class to:
 // 1. Produce a scattered ray
 // 2. If scattered tell how much the ray should be attenuated (colored)
 class Material {
  public:
     virtual ~Material() = default;
 
-    // TODO: check this works correctly
     // Every hittable object needs a material so we will
     // use this base class as the material and just return false
-    virtual bool scatter(
-        const Ray& in_r,
+    [[nodiscard]] virtual bool scatter(
+        const Ray& r,
         const HitRecord& rec,
         Color& attenuation,
         Ray& scattered) const noexcept;
@@ -36,8 +35,8 @@ class Lambertian : public Material {
  public:
     explicit Lambertian(const Color& albedo);
 
-    bool scatter(
-        const Ray& in_r,
+    [[nodiscard]] bool scatter(
+        const Ray& r,
         const HitRecord& rec,
         Color& out_attenuation,
         Ray& out_scattered) const noexcept override;
@@ -52,8 +51,8 @@ class Metal : public Material {
     Metal(const Color& albedo, double fuzz);
 
     // Fuzzy reflection
-    bool scatter(
-        const Ray& in_r,
+    [[nodiscard]] bool scatter(
+        const Ray& r,
         const HitRecord& rec,
         Color& out_attenuation,
         Ray& out_scattered) const noexcept override;
@@ -68,8 +67,8 @@ class Dielectric : public Material {
     explicit Dielectric(double refraction_index);
 
     // Refraction
-    bool scatter(
-        const Ray& in_r,
+    [[nodiscard]] bool scatter(
+        const Ray& r,
         const HitRecord& rec,
         Color& out_attenuation,
         Ray& out_scattered) const noexcept override;
@@ -78,7 +77,7 @@ class Dielectric : public Material {
     double refraction_index;
 
     // Shlick's appromixation for reflectance
-    double reflectance(double cosine, double ri) const noexcept;
+    [[nodiscard]] double reflectance(double cosine, double ri) const noexcept;
 };
 
 #endif // INCLUDE_MATERIAL_H_

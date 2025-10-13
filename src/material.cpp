@@ -26,7 +26,7 @@ bool Lambertian::scatter(
     Ray& out_scattered
 ) const noexcept {
     Vec3 scatter_direction{ rec.normal + random_unit_vector() };
-    if (scatter_direction.is_near_zero())
+    if (scatter_direction.is_near_zero()) [[unlikely]]
         scatter_direction = rec.normal;
 
     out_scattered = Ray{ rec.p, scatter_direction };
@@ -37,22 +37,22 @@ bool Lambertian::scatter(
 Metal::Metal(const Color& albedo, double fuzz) : albedo{ albedo }, fuzz{ std::fmax(fuzz, 0.0) } {};
 
 bool Metal::scatter(
-    const Ray& in_r,
+    const Ray& r,
     const HitRecord& rec,
     Color& out_attenuation,
     Ray& out_scattered
 ) const noexcept {
-    Vec3 reflected{ reflect(in_r.direction(), rec.normal) };
+    Vec3 reflected{ reflect(r.direction(), rec.normal) };
     reflected = unit_vector(reflected) + (random_unit_vector() * fuzz);
     out_scattered = Ray{ rec.p, reflected };
     out_attenuation = albedo;
-    return (dot(out_scattered.direction(), rec.normal) > 0);
+    return 0 < dot(out_scattered.direction(), rec.normal);
 }
 
 Dielectric::Dielectric(double refraction_index) : refraction_index{ refraction_index} {};
 
 bool Dielectric::scatter(
-    const Ray& in_r,
+    const Ray& r,
     const HitRecord& rec,
     Color& out_attenuation,
     Ray& out_scattered
@@ -60,13 +60,13 @@ bool Dielectric::scatter(
     out_attenuation = colors::White;
     const double ri{ rec.front_face ? (1.0 / refraction_index) : refraction_index };
 
-    const Vec3 unit_direction{ unit_vector(in_r.direction()) };
+    const Vec3 unit_direction{ unit_vector(r.direction()) };
     double cos_theta{ std::fmin(dot(-unit_direction, rec.normal), 1.0) };
     double sin_theta{ std::sqrt(1.0 - cos_theta * cos_theta) };
 
-    bool cannot_refract{ ri * sin_theta > 1};
+    bool cannot_refract{ 1 < ri * sin_theta };
     Vec3 direction;
-    if (cannot_refract || reflectance(cos_theta, ri) > rt::random_double())
+    if (cannot_refract || rt::random_double() < reflectance(cos_theta, ri))
         direction = reflect(unit_direction, rec.normal);
     else
         direction = refract(unit_direction, rec.normal, ri);

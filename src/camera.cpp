@@ -37,7 +37,7 @@ bool Camera::render(
 
     // Open for output and clear existing content
     std::ofstream out{ filename };
-    if (!out.is_open()) {
+    if (!out.is_open()) [[unlikely]] {
         std::cerr << "Error while opening file!\n";
         return false;
     }
@@ -75,7 +75,7 @@ bool Camera::render(
         const int j_start{ n * rows_per_thread };
         int j_end{ j_start + rows_per_thread };
         // Add all leftover to last thread
-        if (n == num_threads - 1)
+        if (n == num_threads - 1) [[unlikely]]
             j_end += leftover;
 
         threads.emplace_back(
@@ -237,7 +237,7 @@ void Camera::print_properties() const noexcept {
 
 Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept {
     // Hit ray bounce limit (max_depth)
-    if (depth <= 0)
+    if (depth <= 0) [[unlikely]]
         return colors::Black;
 
     HitRecord rec;

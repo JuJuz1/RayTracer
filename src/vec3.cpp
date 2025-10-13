@@ -9,10 +9,10 @@ double Vec3::x() const noexcept { return e[0]; }
 double Vec3::y() const noexcept { return e[1]; }
 double Vec3::z() const noexcept { return e[2]; }
 
-Vec3 Vec3::operator-() const noexcept { return Vec3{ -e[0], -e[1], -e[2] }; }
-
 double Vec3::operator[](int i) const noexcept { return e[i]; }
 double& Vec3::operator[](int i) noexcept { return e[i]; }
+
+Vec3 Vec3::operator-() const noexcept { return Vec3{ -e[0], -e[1], -e[2] }; }
 
 Vec3& Vec3::operator+=(const Vec3& other) noexcept {
     e[0] += other.x();
@@ -99,7 +99,9 @@ Vec3 unit_vector(const Vec3& v) noexcept {
 }
 
 Vec3 random_vector() noexcept {
-    return Vec3{ rt::random_double(), rt::random_double(), rt::random_double() };
+    return Vec3{rt::random_double(),
+                rt::random_double(),
+                rt::random_double()};
 }
 
 Vec3 random_vector(double min, double max) noexcept {
@@ -132,7 +134,7 @@ Vec3 random_in_unit_disk() noexcept {
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     const Vec3 on_unit_sphere{ random_unit_vector() };
     // Same hemisphere as normal
-    if (dot(on_unit_sphere, normal) > 0)
+    if (0 < dot(on_unit_sphere, normal))
         return on_unit_sphere;
 
     return -on_unit_sphere;

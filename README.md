@@ -42,7 +42,7 @@ Image properties:
 
 ### Prerequisites
 
-- A C++11 (or later) compatible compiler (GCC, MSVC or Clang)
+- A C++23 (or later) compatible compiler (GCC, MSVC or Clang)
 - [CMake](https://cmake.org/) (version 3.1.0 or later recommended)
 
 ### Build Instructions
