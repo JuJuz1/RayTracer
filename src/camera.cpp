@@ -3,17 +3,15 @@
 #include <mutex>
 #include <atomic>
 
-#include <string>
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 
 #include <vector>
 #include <thread>
-#include <functional>
 
 #include <ranges>
 #include <algorithm>
-#include <cmath>
 
 #include "color.h"
 #include "hittable.h"
@@ -41,23 +39,23 @@ int Camera::get_image_height() const noexcept {
 
 void Camera::print_properties() const noexcept {
     std::cout << "\nRendering an image with properties:\n";
-    rt::print_camera_property_formatted("Width", cam_prop.image_width);
-    rt::print_camera_property_formatted("Height", image_height);
-    rt::print_camera_property_formatted("Samples per pixel", cam_prop.samples_per_pixel);
-    rt::print_camera_property_formatted("Max depth", cam_prop.max_depth);
+    print_camera_property_formatted("Width", cam_prop.image_width);
+    print_camera_property_formatted("Height", image_height);
+    print_camera_property_formatted("Samples per pixel", cam_prop.samples_per_pixel);
+    print_camera_property_formatted("Max depth", cam_prop.max_depth);
 
     std::cout << "\nViewport properties:\n";
-    rt::print_camera_property_formatted("Vertical fov", cam_prop.viewport_prop.vfov);
-    rt::print_camera_property_formatted("Look from", cam_prop.viewport_prop.lookfrom);
-    rt::print_camera_property_formatted("Look at", cam_prop.viewport_prop.lookat);
+    print_camera_property_formatted("Vertical fov", cam_prop.viewport_prop.vfov);
+    print_camera_property_formatted("Look from", cam_prop.viewport_prop.lookfrom);
+    print_camera_property_formatted("Look at", cam_prop.viewport_prop.lookat);
 
     std::cout << "\nLens properties:\n";
-    rt::print_camera_property_formatted("Defocus angle", cam_prop.lens_prop.defocus_angle);
-    rt::print_camera_property_formatted("Focus distance", cam_prop.lens_prop.focus_dist);
+    print_camera_property_formatted("Defocus angle", cam_prop.lens_prop.defocus_angle);
+    print_camera_property_formatted("Focus distance", cam_prop.lens_prop.focus_dist);
     std::cout << "\n";
 }
 
-void Camera::render_single_thread(const HittableList& world, std::ofstream& out) const noexcept {
+void Camera::render_single_thread(const HittableList& world, std::ofstream& out) const {
     Timer t;
     double last_print{ t.elapsed() };
     constexpr double progress_refresh_rate{ 0.5 };
@@ -86,7 +84,7 @@ void Camera::render_chunk(
     int j_end,
     const HittableList& world,
     std::vector<Color>& color_buffer
-) const noexcept {
+) const {
     // Released after scope
     {
         std::lock_guard<std::mutex> lock(cout_mutex);

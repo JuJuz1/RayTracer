@@ -27,7 +27,7 @@ class Renderer {
     int num_threads;
 
     // Populates the world with spheres
-    void populate_world() noexcept;
+    void populate_world();
 
     // Setups threads and emplaces them in threads
     void setup_threads(

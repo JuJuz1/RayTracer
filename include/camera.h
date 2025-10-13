@@ -5,6 +5,9 @@
 #include <vector>
 #include <thread>
 
+#include <iostream>
+#include <iomanip>
+
 #include "vec3.h"
 #include "hittable_list.h"
 #include "color.h"
@@ -50,14 +53,14 @@ class Camera {
     void print_properties() const noexcept;
 
     // Single-threaded
-    void render_single_thread(const HittableList& world, std::ofstream& out) const noexcept;
+    void render_single_thread(const HittableList& world, std::ofstream& out) const;
 
     // Multithreaded
     void render_chunk(
         int j_start,
         int j_end,
         const HittableList& world,
-        std::vector<Color>& color_buffer) const noexcept;
+        std::vector<Color>& color_buffer) const;
 
  private:
     CameraProperties cam_prop;
@@ -90,5 +93,24 @@ class Camera {
 
 // Returns a vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square
 [[nodiscard]] Vec3 sample_square() noexcept;
+
+// A utility function to print camera properties
+template <typename T>
+inline void print_camera_property_formatted(const std::string& property, const T& value) {
+    constexpr int format_width_left{ 18 }; // Length of "Samples per pixel" + 1
+    constexpr int format_width_right{ 4 };
+    std::cout << std::left << std::setw(format_width_left) << property
+                << std::right << std::setw(format_width_right) << value << "\n";
+}
+
+// Overload for Vec3
+inline void print_camera_property_formatted(const std::string& property, const Vec3& v) {
+    constexpr int format_width_left{ 15 };
+    constexpr int format_width_component{ 2 };
+    std::cout << std::left << std::setw(format_width_left) << property
+                << std::right << std::setw(format_width_component) << v.x() << ", "
+                << std::right << std::setw(format_width_component) << v.y() << ", "
+                << std::right << std::setw(format_width_component) << v.z() << "\n";
+}
 
 #endif // INCLUDE_CAMERA_H_

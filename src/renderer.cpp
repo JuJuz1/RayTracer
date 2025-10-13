@@ -93,7 +93,6 @@ void Renderer::setup_threads(
     const int rows_per_thread{ image_height / num_threads };
     const int leftover{ image_height % num_threads };
 
-    // Setup threads
     // Assign each thread a range of rows that it writes to
     for (int n : std::views::iota(0, num_threads)) {
         const int j_start{ n * rows_per_thread };
@@ -112,7 +111,7 @@ void Renderer::setup_threads(
     }
 }
 
-void Renderer::populate_world() noexcept {
+void Renderer::populate_world() {
     using std::make_shared;
     using std::make_unique;
 
