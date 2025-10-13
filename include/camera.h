@@ -20,17 +20,17 @@ class Camera {
 
     double vfov         = 90.0;               // Vertical field of view
     Point3 lookfrom     = Point3{ 0, 0,  0 }; // The point the camera is looking from
-    Point3 lookat       = Point3{ 0, 0, -1 }; // -||- looking at
+    Point3 lookat       = Point3{ 0, 0, -1 }; // The point the camera is looking at
     Vec3 vup            = Point3{ 0, 1,  0 }; // Camera-relative "up" direction
 
     double defocus_angle =    0; // Variation angle of rays through each pixel
     double focus_dist    = 10.0; // Distance from lookfrom point to plane of perfect focus
 
-    Color background_color_top    = Colors::LightBlue; // Gradient start color (top)
-    Color background_color_bottom = Colors::White;     // -||- end
+    Color background_color_top    = colors::LightBlue; // Gradient start color (top)
+    Color background_color_bottom = colors::White;     // Gradient end color (bottom)
 
     // The main character, handles single and multithreaded rendering
-    bool render(
+    [[nodiscard]] bool render(
         const HittableList& world,
         const std::string& filename,
         int num_threads) noexcept;
@@ -41,10 +41,10 @@ class Camera {
     Point3 center;             // Camera center
     Point3 pixel00_loc;        // Location of pixel (0, 0)
     Vec3 pixel_delta_u;        // Horizontal offset of a pixel
-    Vec3 pixel_delta_v;        // Vertical -||-
+    Vec3 pixel_delta_v;        // Vertical offset of a pixel
     Vec3 u, v, w;              // Camera frame basis vectors
     Vec3 defocus_disk_u;       // Defocus disk horizontal radius
-    Vec3 defocus_disk_v;       // -||- vertical
+    Vec3 defocus_disk_v;       // Defocus disk vertical radius
 
     // Called at the start of render
     void initialize() noexcept;
@@ -64,17 +64,17 @@ class Camera {
 
     // Calculates the color of a pixel with a given ray from the camera
     // Takes into account the passed Hittable object(s)
-    Color trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept;
+    [[nodiscard]] Color trace_ray(const Ray& r, int depth, const HittableList& world) const noexcept;
 
-    // Construct a camera ray originating from the origin and directed at randomly sampled
-    // point around the pixel location i, j
-    Ray get_ray(int i, int j) const noexcept;
-
-    // Returns a vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square
-    Vec3 sample_square() const noexcept;
+    // Constructs a camera ray originating from the origin
+    // and directed at a randomly sampled point around the pixel location i, j
+    [[nodiscard]] Ray get_ray(int i, int j) const noexcept;
 
     // Returns a random point in the defocus disk
-    Point3 defocus_disk_sample() const noexcept;
+    [[nodiscard]] Point3 defocus_disk_sample() const noexcept;
 };
+
+// Returns a vector to a random point in the [-0.5,-0.5]-[+0.5,+0.5] unit square
+[[nodiscard]] Vec3 sample_square() noexcept;
 
 #endif // INCLUDE_CAMERA_H_

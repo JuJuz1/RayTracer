@@ -2,6 +2,7 @@
 #define INCLUDE_HITTABLE_H_
 
 #include <memory>
+#include <optional>
 
 #include "vec3.h"
 #include "ray.h"
@@ -19,7 +20,7 @@ struct HitRecord {
     // Aby object which inherits hittable
     // needs to have a material reference, hence the shared ptr
     std::shared_ptr<Material> mat;
-    double t;
+    double t; // Distance along the ray where the hit occurred
     bool front_face;
 
     // Updates normal to always point outwards from the surface
@@ -32,7 +33,7 @@ class Hittable {
  public:
     virtual ~Hittable() = default;
 
-    virtual bool hit(const Ray& r, const Interval& ray_t, HitRecord& rec) const noexcept = 0;
+    virtual std::optional<HitRecord> hit(const Ray& r, const Interval& ray_t) const noexcept = 0;
 };
 
 #endif // INCLUDE_HITTABLE_H_
