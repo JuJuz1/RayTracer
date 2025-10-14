@@ -1,6 +1,8 @@
 
 #include "ray.h"
 
+#include "helper_functions.h"
+
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/generators/catch_generators.hpp"
 #include "catch2/matchers/catch_matchers_floating_point.hpp"
@@ -19,7 +21,5 @@ TEST_CASE("At returns correct point along the direction", "[ray]") {
     }))};
 
     const Point3 res{ ray.at(param) };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }

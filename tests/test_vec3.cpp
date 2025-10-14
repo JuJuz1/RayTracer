@@ -1,5 +1,7 @@
 #include "vec3.h"
 
+#include "helper_functions.h"
+
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/generators/catch_generators.hpp"
 #include "catch2/matchers/catch_matchers_floating_point.hpp"
@@ -46,9 +48,7 @@ TEST_CASE("Vec3 addition works correctly", "[vec3]") {
     }))};
 
     const Vec3 res{ a + b };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }
 
 TEST_CASE("Vec3 subtraction works correctly", "[vec3]") {
@@ -59,9 +59,7 @@ TEST_CASE("Vec3 subtraction works correctly", "[vec3]") {
     }))};
 
     const Vec3 res{ a - b };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }
 
 TEST_CASE("Vec3 component-wise multiplication works correctly", "[vec3]") {
@@ -72,9 +70,7 @@ TEST_CASE("Vec3 component-wise multiplication works correctly", "[vec3]") {
     }));
 
     const Vec3 res{ a * b };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }
 
 TEST_CASE("Vec3 scalar multiplication works correctly", "[vec3]") {
@@ -85,9 +81,7 @@ TEST_CASE("Vec3 scalar multiplication works correctly", "[vec3]") {
     }));
 
     const Vec3 res{ vec * t };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }
 
 TEST_CASE("Vec3 scalar division works correctly", "[vec3]") {
@@ -98,7 +92,27 @@ TEST_CASE("Vec3 scalar division works correctly", "[vec3]") {
     }));
 
     const Vec3 res{ vec / t };
-    REQUIRE_THAT(res.x(), WithinAbs(exp.x(), eps));
-    REQUIRE_THAT(res.y(), WithinAbs(exp.y(), eps));
-    REQUIRE_THAT(res.z(), WithinAbs(exp.z(), eps));
+    REQUIRE_VEC3_APPROX(res, exp, eps);
+}
+
+TEST_CASE("Dot returns correct result", "[vec3]") {
+    const auto [a, b, exp] = GENERATE(table<Vec3, Vec3, double>({
+        { { 1.0, 2.31, 3.0 }, { 0.12, 1.0, 1.2987 }, 6.3261 },
+        { { 3.14, -1.25, 0.5 }, { 1.5, -2.0, 4.2 }, 9.31 },
+        { { -0.33, 2.71, -1.1 }, { 0.25, -0.5, 3.14 }, -4.8915 }
+    }));
+
+    const double res{ dot(a, b) };
+    REQUIRE_THAT(res, WithinAbs(exp, eps));
+}
+
+TEST_CASE("Cross returns correct result", "[vec3]") {
+    const auto [a, b, exp] = GENERATE(table<Vec3, Vec3, Vec3>({
+        { { 1.0, 2.0, 3.0 }, { 4.0, 5.0, 6.0 }, { -3.0, 6.0, -3.0 } },
+        { { -1.5, 0.0, 4.25 }, { 0.75, -2.0, -2.0 }, { 8.5, 0.1875, 3.0 } },
+        { { 0.1, -2.2, 5.0 }, { 0.5, 1.0, -0.2 }, { -4.56, 2.52, 1.2 } }
+    }));
+
+    const Vec3 res{ cross(a, b) };
+    REQUIRE_VEC3_APPROX(res, exp, eps);
 }
