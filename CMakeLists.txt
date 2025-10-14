@@ -91,6 +91,7 @@ FetchContent_MakeAvailable(Catch2)
 
 add_executable(tests
   tests/test_color.cpp
+  tests/test_interval.cpp
   tests/test_renderer.cpp
   tests/test_vec3.cpp
 )

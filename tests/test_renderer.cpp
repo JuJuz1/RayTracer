@@ -93,7 +93,7 @@ TEST_CASE_METHOD(RendererFixture, "File is correct PPM P3 format after writing t
     // P3 format
     REQUIRE(line == "P3");
 
-    int image_height = static_cast<int>(image_width / cam_prop.aspect_ratio );
+    const int image_height = static_cast<int>(image_width / cam_prop.aspect_ratio );
     std::getline(f, line);
     // image_width image_height
     REQUIRE(line == std::format("{} {}", image_width, image_height));
