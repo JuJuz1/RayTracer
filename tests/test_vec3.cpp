@@ -116,3 +116,10 @@ TEST_CASE("Cross returns correct result", "[vec3]") {
     const Vec3 res{ cross(a, b) };
     REQUIRE_VEC3_APPROX(res, exp, eps);
 }
+
+/*
+TODO:
+- unit_vector
+- reflect
+- refract
+*/
