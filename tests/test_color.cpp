@@ -27,7 +27,8 @@ struct ColorData {
 
 TEST_CASE("Color value to gamma and byte range produces correct result", "[color]") {
     const auto [a, exp]{ GENERATE(table<double, int>({
-        {50, 255}, {0.7, 214}, {0.97, 252}, {1.001, 255}, {300, 255}, {-12.32, 0}
+        { 50, 255 }, { 0.7, 214 }, { 0.97, 252 },
+        { 1.001, 255 }, { 300, 255 }, { -12.32, 0 }
     }))};
 
     const int res{ to_gamma_and_byte_range(a) };
@@ -36,9 +37,9 @@ TEST_CASE("Color value to gamma and byte range produces correct result", "[color
 
 TEST_CASE_METHOD(ColorFixture, "Write color to stream writes correct color", "[color]") {
     const auto [data, exp_r, exp_g, exp_b]{ GENERATE(values<ColorData>({
-        {{50.2, 0.12, 116.1}, 255, 88, 255},
-        {{0.251, 0.81, 116.1}, 128, 230, 255},
-        {{-2.1, 12.125, 0.515}, 0, 255, 183}
+        { { 50.2, 0.12, 116.1 }, 255, 88, 255 },
+        { { 0.251, 0.81, 116.1 }, 128, 230, 255 },
+        { { -2.1, 12.125, 0.515 }, 0, 255, 183 }
     }))};
 
     std::ofstream out{ filename };

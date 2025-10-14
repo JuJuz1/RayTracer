@@ -90,7 +90,7 @@ Vec3 operator*(const Vec3& v, double t) noexcept {
 
 // Calls operator*(const Vec3& v, double t)
 Vec3 operator/(const Vec3& v, double t) noexcept {
-    return v * (1/t);
+    return v * (1 / t);
 }
 
 double dot(const Vec3& v1, const Vec3& v2) noexcept {
