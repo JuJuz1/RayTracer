@@ -84,7 +84,7 @@ Include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        v3.8.1 # or a later release
+  GIT_TAG        v3.8.1 # TODO: or a later release
 )
 
 FetchContent_MakeAvailable(Catch2)
@@ -92,6 +92,7 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(tests
   tests/test_color.cpp
   tests/test_interval.cpp
+  tests/test_ray.cpp
   tests/test_renderer.cpp
   tests/test_vec3.cpp
 )
