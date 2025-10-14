@@ -90,7 +90,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 add_executable(tests
-    tests/test.cpp
+  tests/test_color.cpp
+  tests/test_renderer.cpp
+  tests/test_vec3.cpp
 )
 
 # Link raytracer_lib and Catch2 to tests
