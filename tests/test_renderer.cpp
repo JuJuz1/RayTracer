@@ -9,8 +9,10 @@
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/generators/catch_generators.hpp"
 
-// Helper functions to mute console out when tests are run
-// A bit of a dirty trick but gets the job done without modifying source code at least
+/*
+Helper functions to mute console out when tests are run
+A bit of a dirty trick but gets the job done without modifying source code at least
+*/
 
 // Mutes cout
 std::streambuf* mute_cout() {

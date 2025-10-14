@@ -44,11 +44,12 @@ using Point3 = Vec3;
 std::ostream& operator<<(std::ostream& out, const Vec3& v);
 
 [[nodiscard]] bool operator==(const Vec3& v1, const Vec3& v2) noexcept;
+[[nodiscard]] bool operator!=(const Vec3& v1, const Vec3& v2) noexcept;
 
 [[nodiscard]] Vec3 operator+(const Vec3& v1, const Vec3& v2) noexcept;
 [[nodiscard]] Vec3 operator-(const Vec3& v1, const Vec3& v2) noexcept;
-[[nodiscard]] Vec3 operator*(const Vec3& v1, const Vec3& v2) noexcept;
 
+[[nodiscard]] Vec3 operator*(const Vec3& v1, const Vec3& v2) noexcept;
 [[nodiscard]] Vec3 operator*(const Vec3& v, double t) noexcept;
 [[nodiscard]] Vec3 operator/(const Vec3& v, double t) noexcept;
 
