@@ -41,8 +41,8 @@ void Renderer::render() const {
 
     std::cout << "Rendering output to file: " << output_filename << "\n";
 
-    const int image_width = cam.get_image_width();
-    const int image_height = cam.get_image_height();
+    const int image_width{ cam.get_image_width() };
+    const int image_height{ cam.get_image_height() };
     out << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
     // Single-threaded

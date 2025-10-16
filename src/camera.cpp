@@ -138,9 +138,11 @@ void Camera::initialize() noexcept {
     // Viewport dimensions
     const double theta{ rt::degrees_to_radians(cam_prop.viewport_prop.vfov) };
     const double h{ std::tan(theta / 2) };
+
     const double viewport_height{ 2 * h * cam_prop.lens_prop.focus_dist };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
-    const double viewport_width = viewport_height * (static_cast<double>(cam_prop.image_width) / image_height);
+    const double viewport_width{
+        viewport_height * (static_cast<double>(cam_prop.image_width) / image_height)};
 
     // Camera unit basis vectors
     w = unit_vector(cam_prop.viewport_prop.lookfrom - cam_prop.viewport_prop.lookat);
@@ -173,8 +175,8 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
 
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
-    if (auto hit_rec = world.process_ray(r, Interval{ 0.001, rt::infinity })) {
-        if (auto scatter_rec = hit_rec->mat->scatter(r, *hit_rec))
+    if (auto hit_rec{ world.process_ray(r, Interval{ 0.001, rt::infinity }) }) {
+        if (auto scatter_rec{ hit_rec->mat->scatter(r, *hit_rec) })
             return scatter_rec->attenuation * trace_ray(scatter_rec->scattered, depth - 1, world);
 
         return colors::Black;
@@ -183,7 +185,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     // Nothing was hit -> render background
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
-    const double a = 0.5 * (unit_direction.y() + 1.0);
+    const double a{ 0.5 * (unit_direction.y() + 1.0) };
     return cam_prop.bg_colors.background_color_bottom * (1.0 - a)
          + cam_prop.bg_colors.background_color_top * a;
 }

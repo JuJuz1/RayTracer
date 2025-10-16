@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
         filename = argv[2];
     }
 
-    const int max_threads = static_cast<int>(std::thread::hardware_concurrency());
+    const int max_threads{ static_cast<int>(std::thread::hardware_concurrency()) };
     num_threads = std::min(num_threads, max_threads);
 
     // Renderer

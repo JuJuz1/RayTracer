@@ -16,10 +16,10 @@ A bit of a dirty trick but gets the job done without modifying source code at le
 
 // Mutes cout
 std::streambuf* mute_cout() {
-    std::streambuf* old_buf = std::cout.rdbuf();
+    std::streambuf* old_buf{ std::cout.rdbuf() };
     // Static null_stream that std::cout points to
     static std::ostringstream null_stream;
-    // redirect cout to nowhere
+    // Redirect cout to nowhere
     std::cout.rdbuf(null_stream.rdbuf());
 
     return old_buf;
@@ -95,7 +95,7 @@ TEST_CASE_METHOD(RendererFixture, "File is correct PPM P3 format after writing t
     // P3 format
     REQUIRE(line == "P3");
 
-    const int image_height = static_cast<int>(image_width / cam_prop.aspect_ratio );
+    const int image_height{ cam.get_image_height() };
     std::getline(f, line);
     // image_width image_height
     REQUIRE(line == std::format("{} {}", image_width, image_height));
