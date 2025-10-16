@@ -11,7 +11,7 @@ constexpr double eps{ 1e-6 };
 using Catch::Matchers::WithinAbs;
 
 TEST_CASE("At returns correct point along the direction", "[ray]") {
-    const auto [ray, param, exp]{ GENERATE(table<Ray, double, Point3>({
+    const auto [ray, t, exp]{ GENERATE(table<Ray, double, Point3>({
         { Ray{ { 1, 6.1, 2.1 }, { -1, 2, 5} },
             2.5, { -1.5, 11.1, 14.6 } },
         { Ray{ { -2.1, 9.8, 0 }, { 6.61, 0, 5.9} },
@@ -20,6 +20,6 @@ TEST_CASE("At returns correct point along the direction", "[ray]") {
             0.515, { -3.71315, -11.4575, 0.3635 } }
     }))};
 
-    const Point3 res{ ray.at(param) };
+    const Point3 res{ ray.at(t) };
     REQUIRE_VEC3_APPROX(res, exp, eps);
 }
