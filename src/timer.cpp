@@ -1,7 +1,7 @@
 #include "timer.h"
 
 #include <chrono>
-#include <string>
+#include <string_view>
 #include <iostream>
 #include <iomanip>
 
@@ -35,7 +35,7 @@ double Timer::elapsed() const noexcept {
     return std::chrono::duration<double>(now - start_time).count();
 }
 
-void Timer::print_elapsed(const std::string& prefix, bool show_minutes) const noexcept {
+void Timer::print_elapsed(std::string_view prefix, bool show_minutes) const noexcept {
         const double seconds{ elapsed() };
         std::cout << prefix
                   << std::fixed << std::setprecision(3) << seconds << "s";

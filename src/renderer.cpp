@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-#include <string>
+#include <string_view>
 #include <utility>
 
 #include <fstream>
@@ -20,9 +20,9 @@
 #include "timer.h"
 
 Renderer::Renderer(
-    Camera& cam,
+    const Camera& cam,
     HittableList& world,
-    const std::string& output_filename,
+    std::string_view output_filename,
     int num_threads
 ) noexcept : cam{ cam },
     world{ std::move(world) }, output_filename{ output_filename }, num_threads{ num_threads } {
@@ -33,7 +33,7 @@ void Renderer::render() const {
     cam.print_properties();
 
     // Open for output and clear existing content
-    std::ofstream out{ output_filename };
+    std::ofstream out{ output_filename.data() };
     if (!out.is_open()) {
         std::cerr << "Error while opening file!\n";
         return;

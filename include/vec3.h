@@ -78,6 +78,7 @@ std::ostream& operator<<(std::ostream& out, const Vec3& v);
 // Returns a refracted vector of v passing through a surface with normal n
 // etai_over_etat is the ratio of indices of refraction
 // -> refractive index of the material / the material v is entering
+// Implemented with Snell's law
 [[nodiscard]] Vec3 refract(const Vec3& v, const Vec3& n, double etai_over_etat) noexcept;
 
 #endif // INCLUDE_VEC3_H_
