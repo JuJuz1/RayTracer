@@ -6,8 +6,6 @@
 
 class Timer {
  public:
-    using clock = std::chrono::high_resolution_clock;
-
     Timer() noexcept;
 
     // ~Timer() noexcept;
@@ -31,6 +29,8 @@ class Timer {
     void print_elapsed(std::string_view prefix = "", bool show_minutes = true) const noexcept;
 
  private:
+    using clock = std::chrono::high_resolution_clock;
+
     std::chrono::time_point<clock> start_time;
     double accumulated_time{ 0.0 };
     bool paused{ false };

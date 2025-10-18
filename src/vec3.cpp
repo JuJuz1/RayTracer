@@ -61,6 +61,17 @@ std::ostream& operator<<(std::ostream& out, const Vec3& v) {
     return out;
 }
 
+bool operator==(const Vec3& v1, const Vec3& v2) noexcept {
+    constexpr double eps = 1e-8;
+    return std::fabs(v1.x() - v2.x()) < eps
+        && std::fabs(v1.y() - v2.y()) < eps
+        && std::fabs(v1.z() - v2.z()) < eps;
+}
+
+bool operator!=(const Vec3& v1, const Vec3& v2) noexcept {
+    return !(v1 == v2);
+}
+
 Vec3 operator+(const Vec3& v1, const Vec3& v2) noexcept {
     return Vec3{ v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z() };
 }
@@ -79,7 +90,7 @@ Vec3 operator*(const Vec3& v, double t) noexcept {
 
 // Calls operator*(const Vec3& v, double t)
 Vec3 operator/(const Vec3& v, double t) noexcept {
-    return v * (1/t);
+    return v * (1 / t);
 }
 
 double dot(const Vec3& v1, const Vec3& v2) noexcept {

@@ -75,10 +75,22 @@ There are many ways to view the created **P3 PPM** images. I found it easiest to
 
 ## Tools
 
+### Third-party
+
+#### Cpplint
+
 This project includes a copy of cpplint.py. See [License](LICENSE.cpplint)
 
 To verify that the source files comply with most of the cpplint checks run:
 
 ```bash
 ./run_cpplint.sh
+```
+
+#### Catch2
+
+This project uses the [Catch2](https://github.com/catchorg/Catch2) framework for testing the application. See [License](LICENSE.Catch2). The test cases are built alongside the raytracer library. To run the tests it is very similar to running the application.
+
+```bash
+./$(your_build_directory_name)/Release/tests
 ```

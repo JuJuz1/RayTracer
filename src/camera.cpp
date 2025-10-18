@@ -138,9 +138,11 @@ void Camera::initialize() noexcept {
     // Viewport dimensions
     const double theta{ rt::degrees_to_radians(cam_prop.viewport_prop.vfov) };
     const double h{ std::tan(theta / 2) };
+
     const double viewport_height{ 2 * h * cam_prop.lens_prop.focus_dist };
     // Determine viewport_width from the actual image size, can't be perfect in terms of aspect_ratio
-    const double viewport_width = viewport_height * (static_cast<double>(cam_prop.image_width) / image_height);
+    const double viewport_width{
+        viewport_height * (static_cast<double>(cam_prop.image_width) / image_height)};
 
     // Camera unit basis vectors
     w = unit_vector(cam_prop.viewport_prop.lookfrom - cam_prop.viewport_prop.lookat);
