@@ -173,8 +173,8 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
 
     // If they ray's origin is just below the surface it might hit the surface immediately
     // An interval with min of 0.001 ignores hits that are very close
-    if (auto hit_rec = world.process_ray(r, Interval{ 0.001, rt::infinity })) {
-        if (auto scatter_rec = hit_rec->mat->scatter(r, *hit_rec))
+    if (auto hit_rec{ world.process_ray(r, Interval{ 0.001, rt::infinity }) }) {
+        if (auto scatter_rec{ hit_rec->mat->scatter(r, *hit_rec) })
             return scatter_rec->attenuation * trace_ray(scatter_rec->scattered, depth - 1, world);
 
         return colors::Black;
@@ -183,7 +183,7 @@ Color Camera::trace_ray(const Ray& r, int depth, const HittableList& world) cons
     // Nothing was hit -> render background
     const Vec3 unit_direction{ unit_vector(r.direction()) };
     // Linear interpolation by scaling the y-coordinate to the range [0, 1]
-    const double a = 0.5 * (unit_direction.y() + 1.0);
+    const double a{ 0.5 * (unit_direction.y() + 1.0) };
     return cam_prop.bg_colors.background_color_bottom * (1.0 - a)
          + cam_prop.bg_colors.background_color_top * a;
 }
@@ -194,7 +194,7 @@ Ray Camera::construct_ray(int i, int j) const noexcept {
                            + (pixel_delta_u * (i + offset.x()))
                            + (pixel_delta_v * (j + offset.y()))};
 
-    const Point3 ray_origin{ (cam_prop.lens_prop.defocus_angle <= 0) ? center : defocus_disk_sample() };
+    const Point3 ray_origin{ (cam_prop.lens_prop.defocus_angle <= 0.0) ? center : defocus_disk_sample() };
     const Vec3 ray_direction{ pixel_sample - ray_origin };
     return Ray{ ray_origin, ray_direction };
 }
@@ -205,5 +205,5 @@ Point3 Camera::defocus_disk_sample() const noexcept {
 }
 
 Vec3 sample_square() noexcept {
-    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0 };
+    return Vec3{ rt::random_double() - 0.5, rt::random_double() - 0.5, 0.0 };
 }

@@ -48,7 +48,7 @@ double Vec3::length_squared() const noexcept {
 }
 
 bool Vec3::is_near_zero() const noexcept {
-    constexpr double eps = 1e-8;
+    constexpr double eps{ 1e-8 };
     return std::fabs(e[0]) < eps
         && std::fabs(e[1]) < eps
         && std::fabs(e[2]) < eps;
@@ -125,7 +125,7 @@ Vec3 random_unit_vector() noexcept {
 Vec3 random_in_unit_disk() noexcept {
     Vec3 p;
     while (true) {
-        p = Vec3{ rt::random_double(-1, 1), rt::random_double(-1.0, 1.0), 0 };
+        p = Vec3{ rt::random_double(-1, 1), rt::random_double(-1.0, 1.0), 0.0 };
         if (p.length_squared() < 1)
             return p;
     }
@@ -134,7 +134,7 @@ Vec3 random_in_unit_disk() noexcept {
 Vec3 random_on_hemisphere(const Vec3& normal) noexcept {
     const Vec3 on_unit_sphere{ random_unit_vector() };
     // Same hemisphere as normal
-    if (0 < dot(on_unit_sphere, normal))
+    if (0.0 < dot(on_unit_sphere, normal))
         return on_unit_sphere;
 
     return -on_unit_sphere;

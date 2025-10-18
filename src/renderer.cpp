@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-#include <string>
+#include <string_view>
 #include <utility>
 
 #include <fstream>
@@ -20,9 +20,9 @@
 #include "timer.h"
 
 Renderer::Renderer(
-    Camera& cam,
+    const Camera& cam,
     HittableList& world,
-    const std::string& output_filename,
+    std::string_view output_filename,
     int num_threads
 ) noexcept : cam{ cam },
     world{ std::move(world) }, output_filename{ output_filename }, num_threads{ num_threads } {
@@ -33,7 +33,7 @@ void Renderer::render() const {
     cam.print_properties();
 
     // Open for output and clear existing content
-    std::ofstream out{ output_filename };
+    std::ofstream out{ output_filename.data() };
     if (!out.is_open()) {
         std::cerr << "Error while opening file!\n";
         return;
@@ -147,7 +147,7 @@ void Renderer::populate_world() {
                 } else if (choose_mat < 0.95) [[unlikely]] {
                     // Metal
                     const Color albedo{ random_vector(0.5, 1.0) };
-                    const double fuzz{ rt::random_double(0, 0.5) };
+                    const double fuzz{ rt::random_double(0.0, 0.5) };
                     mat = make_shared<Metal>(albedo, fuzz);
                     world.add(make_unique<Sphere>(sphere_position, sphere_radius, mat));
                 } else [[unlikely]] {
@@ -160,12 +160,12 @@ void Renderer::populate_world() {
 
     // Big spheres left to right (furthest to closest)
     const auto mat_diffuse{ make_shared<Lambertian>(colors::Orange) };
-    world.add(make_unique<Sphere>(Point3{ -4, 1, 0 }, 1.0, mat_diffuse));
+    world.add(make_unique<Sphere>(Point3{ -4.0, 1.0, 0.0 }, 1.0, mat_diffuse));
 
-    world.add(make_unique<Sphere>(Point3{ 0, 1, 0 }, 1.0, mat_glass));
+    world.add(make_unique<Sphere>(Point3{ 0.0, 1.0, 0.0 }, 1.0, mat_glass));
 
     const auto mat_metal{ make_shared<Metal>(colors::Brown, 0.0) };
-    world.add(make_unique<Sphere>(Point3{ 4, 1, 0 }, 1.0, mat_metal));
+    world.add(make_unique<Sphere>(Point3{ 4.0, 1.0, 0.0 }, 1.0, mat_metal));
 
     const int objects{ world.count() };
     std::cout << "\nSpheres created: " << objects << " (3 big ones)\n";

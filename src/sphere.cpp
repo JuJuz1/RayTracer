@@ -20,7 +20,7 @@ std::optional<HitRecord> Sphere::hit(const Ray& r, const Interval& ray_t) const 
     const double discriminant{ h * h - a * c };
 
     // No roots
-    if (discriminant < 0)
+    if (discriminant < 0.0)
         return {};
 
     const double sqrt_d{ std::sqrt(discriminant) };

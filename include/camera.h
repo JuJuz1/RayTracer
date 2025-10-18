@@ -1,7 +1,7 @@
 #ifndef INCLUDE_CAMERA_H_
 #define INCLUDE_CAMERA_H_
 
-#include <string>
+#include <string_view>
 #include <vector>
 #include <thread>
 
@@ -14,10 +14,10 @@
 #include "ray.h"
 
 struct ViewportProperties {
-    double vfov     = 20.0;               // Vertical field of view
-    Point3 lookfrom = Point3{ 13, 2, 3 }; // The point the camera is looking from
-    Point3 lookat   = Point3{  0, 0, 0 }; // The point the camera is looking at
-    Vec3 vup        = Vec3  {  0, 1, 0 }; // Camera-relative "up" direction
+    double vfov     = 20.0;                     // Vertical field of view
+    Point3 lookfrom = Point3{ 13.0, 2.0, 3.0 }; // The point the camera is looking from
+    Point3 lookat   = Point3{  0.0, 0.0, 0.0 }; // The point the camera is looking at
+    Vec3 vup        = Vec3  {  0.0, 1.0, 0.0 }; // Camera-relative "up" direction
 };
 
 struct LensProperties {
@@ -99,7 +99,7 @@ class Camera {
 
 // A utility function to print camera properties
 template <typename T>
-inline void print_camera_property_formatted(const std::string& property, const T& value) {
+inline void print_camera_property_formatted(std::string_view property, const T& value) {
     constexpr int format_width_left{ 18 }; // Length of "Samples per pixel" + 1
     constexpr int format_width_right{ 4 };
     std::cout << std::left << std::setw(format_width_left) << property
@@ -107,7 +107,7 @@ inline void print_camera_property_formatted(const std::string& property, const T
 }
 
 // Overload for Vec3
-inline void print_camera_property_formatted(const std::string& property, const Vec3& v) {
+inline void print_camera_property_formatted(std::string_view property, const Vec3& v) {
     constexpr int format_width_left{ 15 };
     constexpr int format_width_component{ 2 };
     std::cout << std::left << std::setw(format_width_left) << property
