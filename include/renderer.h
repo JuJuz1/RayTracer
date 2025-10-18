@@ -1,7 +1,7 @@
 #ifndef INCLUDE_RENDERER_H_
 #define INCLUDE_RENDERER_H_
 
-#include <string>
+#include <string_view>
 #include <vector>
 #include <thread>
 
@@ -12,9 +12,9 @@
 class Renderer {
  public:
     Renderer(
-        Camera& cam,
+        const Camera& cam,
         HittableList& world,
-        const std::string& output_filename,
+        std::string_view output_filename,
         int num_threads) noexcept;
 
     // Handles rendering and writing to the file
@@ -23,13 +23,13 @@ class Renderer {
  private:
     Camera cam;
     HittableList world;
-    std::string output_filename;
+    std::string_view output_filename;
     int num_threads;
 
     // Populates the world with spheres
     void populate_world();
 
-    // Setups threads and emplaces them in threads
+    // Setups threads and emplaces them in the vector threads
     void setup_threads(
         std::vector<std::thread>& threads,
         std::vector<Color>& color_buffer,

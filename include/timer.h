@@ -2,7 +2,7 @@
 #define INCLUDE_TIMER_H_
 
 #include <chrono>
-#include <string>
+#include <string_view>
 
 class Timer {
  public:
@@ -26,7 +26,7 @@ class Timer {
     // If the timer was paused at any moment, returns the accumulated time instead
     [[nodiscard]] double elapsed() const noexcept;
 
-    void print_elapsed(const std::string& prefix = "", bool show_minutes = true) const noexcept;
+    void print_elapsed(std::string_view prefix = "", bool show_minutes = true) const noexcept;
 
  private:
     using clock = std::chrono::high_resolution_clock;
