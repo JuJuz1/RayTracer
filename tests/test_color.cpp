@@ -27,7 +27,7 @@ struct ColorData {
 
 TEST_CASE("Color value to gamma and byte range produces correct result", "[color]") {
     const auto [a, exp]{ GENERATE(table<double, int>({
-        { 50, 255 }, { 0.7, 214 }, { 0.97, 252 },
+        { 50.0, 255 }, { 0.7, 214 }, { 0.97, 252 },
         { 1.001, 255 }, { 300, 255 }, { -12.32, 0 }
     }))};
 
