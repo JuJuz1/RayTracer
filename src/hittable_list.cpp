@@ -18,7 +18,7 @@ std::optional<HitRecord> HittableList::process_ray(const Ray& r, const Interval&
     double closest_so_far{ ray_t.max };
 
     for (const auto& obj : objects) {
-        if (auto hit_rec = obj->hit(r, Interval{ ray_t.min, closest_so_far })) {
+        if (auto hit_rec{ obj->hit(r, Interval{ ray_t.min, closest_so_far }) }) {
             closest_hit = *hit_rec;
             closest_so_far = hit_rec->t;
         }

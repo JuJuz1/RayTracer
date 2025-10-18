@@ -32,7 +32,7 @@ class Timer {
 
  private:
     std::chrono::time_point<clock> start_time;
-    double accumulated_time{ 0 };
+    double accumulated_time{ 0.0 };
     bool paused{ false };
 };
 

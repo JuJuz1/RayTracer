@@ -14,10 +14,10 @@
 #include "ray.h"
 
 struct ViewportProperties {
-    double vfov     = 20.0;               // Vertical field of view
-    Point3 lookfrom = Point3{ 13, 2, 3 }; // The point the camera is looking from
-    Point3 lookat   = Point3{  0, 0, 0 }; // The point the camera is looking at
-    Vec3 vup        = Vec3  {  0, 1, 0 }; // Camera-relative "up" direction
+    double vfov     = 20.0;                     // Vertical field of view
+    Point3 lookfrom = Point3{ 13.0, 2.0, 3.0 }; // The point the camera is looking from
+    Point3 lookat   = Point3{  0.0, 0.0, 0.0 }; // The point the camera is looking at
+    Vec3 vup        = Vec3  {  0.0, 1.0, 0.0 }; // Camera-relative "up" direction
 };
 
 struct LensProperties {
